@@ -430,6 +430,21 @@ html{overflow:hidden}
   .chips{max-width:250px; gap:5px} #gWon{display:none}
 }
 
+/* ---------- wheel icon + quote strip ---------- */
+.ibtn{position:relative}
+.wheelbtn{color:#e6c8ff}
+.wheelbtn::before{content:""; position:absolute; inset:-4px; border-radius:50%; background:conic-gradient(#d89bff calc(var(--p,0) * 1%),rgba(226,187,98,.2) 0); -webkit-mask:radial-gradient(circle,transparent 60%,#000 62%); mask:radial-gradient(circle,transparent 60%,#000 62%)}
+.wheelbtn.ready{animation:rdy .9s ease-in-out infinite alternate; border-color:#d89bff; color:#fff}
+.wheelbtn.ready svg{animation:spinr3 2.2s linear infinite}
+@keyframes spinr3{to{transform:rotate(360deg)}}
+#qstrip{display:none; align-items:center; justify-content:center; text-align:center; min-height:34px; padding:6px 14px; border-radius:99px; background:rgba(8,16,12,.6); border:1px solid rgba(226,187,98,.45); box-shadow:0 0 18px rgba(255,200,90,.18);
+  font:700 clamp(11px,3vw,14px)/1.2 var(--ui); letter-spacing:.07em; text-transform:uppercase; color:#fff3c4}
+body.qn #qstrip{display:flex}
+body.qn #stage{grid-template-rows:auto auto minmax(0,1fr) auto auto}
+#qtxt{display:inline-block} #qtxt.pop{animation:qpop .9s cubic-bezier(.2,1.6,.3,1)}
+@keyframes qpop{0%{opacity:0; transform:scale(.4,1.5)}40%{opacity:1; transform:scale(1.15,.85)}70%{transform:scale(.96,1.05)}100%{transform:none}}
+@media (max-height:480px){ #qstrip{display:none!important} #stage,body.qn #stage{grid-template-rows:auto minmax(0,1fr) auto} }
+
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -536,12 +551,14 @@ html{overflow:hidden}
         <div class="mt"><span id="lvl">BRO 1</span><div class="bar"><i id="xpbar"></i></div></div>
         <div class="mt"><span>WHEEL</span><div class="bar lucky" id="lbar"><i id="lucky"></i></div></div>
       </div>
+      <button class="ibtn wheelbtn" id="btnWheel" aria-label="Lucky wheel"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2"/><path d="M12 3v7M12 14v7M3 12h7M14 12h7M5.6 5.6l5 5M13.4 13.4l5 5M18.4 5.6l-5 5M10.6 13.4l-5 5"/></svg></button>
       <button class="ibtn" id="btnMusic" aria-label="Music"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="17" cy="16" r="2.5"/></svg></button>
       <button class="ibtn" id="btnSound" aria-label="Sound"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path id="sndWave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button>
       <button class="ibtn" id="btnMenu" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     </div>
   </header>
 
+  <div id="qstrip"><span id="qtxt"></span></div>
   <main id="mid">
     <div id="cabinet">
       <div class="bulbs"></div><div class="bulbs b"></div>
@@ -1012,6 +1029,7 @@ function layout(){
   let cell=Math.floor(Math.min((availW-4*gap)/5,availH/3)); cell=Math.max(36,Math.min(160,cell));
   cab.style.setProperty('--cell',cell+'px'); cab.style.setProperty('--gap',gap+'px'); cab.style.setProperty('--cp',cp+'px'); state.H=cell;
   const w=5*cell+4*gap, h=3*cell, ln=$('#lines'); ln.setAttribute('width',w); ln.setAttribute('height',h); ln.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  document.body.classList.toggle('qn',innerWidth<1180);
   if(!state.busy) showStatic();
 }
 new ResizeObserver(layout).observe($('#mid')); addEventListener('resize',layout);
@@ -1096,6 +1114,7 @@ function renderHUD(){
 function renderMeters(){
   $('#lvl').textContent='LV '+state.level; $('#lvl').title=tierName(state.level)+' VIP'; $('#xpbar').style.width=Math.min(100,state.xp/xpNeed(state.level)*100)+'%';
   $('#lucky').style.width=Math.min(100,state.meter*100)+'%'; $('#lbar').classList.toggle('full',state.meter>=1);
+  const wb=$('#btnWheel'); wb.style.setProperty('--p',Math.min(100,state.meter*100)); wb.classList.toggle('ready',state.meter>=1); wb.title=state.meter>=1?'Lucky wheel ready':'Lucky wheel '+Math.floor(state.meter*100)+'%';
 }
 function renderJP(){ $('#jpMini').textContent=fmt(J.mini); $('#jpMajor').textContent=fmt(J.major); $('#jpGrand').textContent=fmt(J.grand); }
 setInterval(()=>{ J.mini+=Math.random()*.06; J.major+=Math.random()*.4; J.grand+=Math.random()*2.6; renderJP(); },140);
@@ -1262,7 +1281,7 @@ async function doSpin(){
   if(ui.lossLimit>0&&state.sessionStart-state.bal>=ui.lossLimit){ Snd.err(); stopAuto(); openResponsible(true); return; }
   if(state.bal<state.bet){ const aff=[...BETS].reverse().find(b=>b<=state.bal); if(!aff){ Snd.err(); stopAuto(); showBroke(); return; } setBet(aff); toast('Bet lowered to '+fmt(aff)); }
   state.busy=true; state.lastWin=null; const bet=state.bet; state.bal-=bet; S.spins++; S.wagered+=bet; state.spinNo++; S.maxBet=Math.max(S.maxBet,bet);
-  state.meter=Math.min(1,state.meter+cfg.meterStep); gainXp(Math.round(8+bet/20)); renderMeters(); tweenBal(state.bal,220); setSpinUI();
+  const wasFull=state.meter>=1; state.meter=Math.min(1,state.meter+cfg.meterStep); if(!wasFull&&state.meter>=1) toastAch('Lucky wheel ready','Tap the wheel icon at the top to spin'); gainXp(Math.round(8+bet/20)); renderMeters(); tweenBal(state.bal,220); setSpinUI();
   const out=decideOutcome(bet,takeForce(),{fs:false}); await spinCore(out); await settle(out,bet);
 }
 async function settle(out,bet){
@@ -1271,14 +1290,14 @@ async function settle(out,bet){
   if(pay>0) S.wins++; if(out.ldw) S.ldw++; if(near) S.near++; if(net<0) S.lost++; if(pay>S.best) S.best=pay; S.bestX=Math.max(S.bestX,pay/bet); S.wilds+=ev.exp.length;
   if(ev.wins.some(w=>w.sym==='SEVEN')) S.sevens++;
   S.log.unshift({n:state.spinNo,bet,pay,net,tag:out.kind+(out.ldw?' ldw':'')+(near?' near':'')}); S.log.length=Math.min(S.log.length,50);
-  const bonusFS=ev.spins>0, wheelDue=state.meter>=1, bonus=bonusFS||wheelDue;
+  const bonusFS=ev.spins>0, wheelDue=state.meter>=1&&state.auto, bonus=bonusFS||wheelDue;
   if(!bonus){ state.busy=false; state.lastWin=pay>0?{pay,bet}:null; setSpinUI(); } renderHUD(); renderDebug(); renderMeters(); initMissions(); checkAch(); save();
   let p=Promise.resolve(), wait=900;
   if(pay>0){ p=present(out,pay,bet,{noCycle:bonus}); wait=bonus?600:{win:1700,nice:2600,big:5200,super:7000,mega:8800,jackpot:11500}[tierOf(pay,bet)]; }
   else{ $('#win').textContent='$0'; state.balShown=state.bal; renderHUD(); wait=700; }
   if(bonus){ await p;
     if(bonusFS){ await freeSpins(ev.spins,bet); }
-    if(state.meter>=1){ await wheelBonus(bet); }
+    if(wheelDue){ await wheelBonus(bet); }
     state.busy=false; state.lastWin=null; setSpinUI(); checkAch(); save(); flushLevels(); }
   maybeReality();
   if(state.auto){
@@ -1440,6 +1459,10 @@ $('#chAuto').onclick=()=>{ wake(); Snd.click(); openAuto(); };
 $('#chTurbo').onclick=e=>{ wake(); state.turbo=!state.turbo; e.currentTarget.classList.toggle('on',state.turbo); Snd.click(); };
 $('#chBuy').onclick=()=>{ wake(); Snd.click(); openBuy(); };
 $('#chGamble').onclick=()=>{ wake(); Snd.click(); openGamble(); };
+$('#btnWheel').onclick=()=>{ wake(); Snd.click();
+  if(state.busy||state.fs){ toast('Finish the current spin first'); return; }
+  if(state.meter>=1){ runBonus(()=>wheelBonus(state.bet)).then(()=>{ flushLevels(); checkAch(); }); }
+  else toast('Lucky wheel '+Math.floor(state.meter*100)+'% charged \u2014 keep spinning'); };
 $('#btnMenu').onclick=()=>{ wake(); Snd.click(); openMenu(); };
 $('#btnSound').onclick=e=>{ wake(); const m=!Snd.muted; Snd.setMuted(m); e.currentTarget.classList.toggle('off',m); $('#sndWave').style.display=m?'none':''; Snd.click(); };
 $('#btnMusic').onclick=e=>{ wake(); musicOn=!musicOn; Snd.setMusicMuted(!musicOn); e.currentTarget.classList.toggle('off',!musicOn); };
@@ -1472,16 +1495,20 @@ addEventListener('focus',()=>{ if(away) Snd.siren(false); });
 $('#cbBtn').onclick=resume;
 
 /* ============================== QUOTES / TICKER ============================== */
-const QUOTES=['99% of gamblers quit before the big win.','You miss 100% of the spins you don’t take.','Winners never quit. Quitters never win. Spin again.','The next spin is always the one.','Fortune favours the persistent.','Your lucky streak is loading…','Today is your day. Probably.','Every spin is a win. Technically.','One more spin. Just one.','The big win is closer than it looks.','99 gamblers quit. 1 Claude didn’t.','Luck is just persistence wearing a hat.','Close counts here.','Big wins hide behind small bets.'];
+const QUOTES=['99% of gamblers quit before the big win.','You miss 100% of the spins you don\u2019t take.','Winners never quit. Quitters never win. Spin again.','The next spin is always the one.','Fortune favours the persistent.','Your lucky streak is loading\u2026','Today is your day. Probably.','Every spin is a win. Technically.','One more spin. Just one.','The big win is closer than it looks.','99 gamblers quit. 1 Claude didn\u2019t.','Luck is just persistence wearing a hat.','Close counts here.','Big wins hide behind small bets.',
+'Every legend started with one more spin.','The reels remember who stayed.','You\u2019re 1 spin away from a different mood.','Quitters see a loss. Winners see a warm-up.','Almost is just early.','The jackpot doesn\u2019t knock. It waits for the one still spinning.','Seven is lucky. So is the person who keeps going.','Don\u2019t leave now. The wheel is warming up.','Fortune loves a regular.','Somebody wins today. Might as well be someone who stayed.','The best time to quit is right after the big win.','Your balance is just a number. Your streak is a story.','Hot machines stay hot for the loyal.','Champions spin through the quiet part.','You\u2019ve come this far. The reels noticed.','Scatters are shy. Be patient.','The wild is coming. Hold the line.','Calm hands. Steady spins. Golden outcomes.','Nobody remembers who left early.','A bad spin is a good spin in disguise.','Every near miss is a vote for the next one.','The house has a plan. So do you: spin.','Tonight\u2019s forecast: sevens, with a chance of jackpot.','Big dreams. Small bets. Many spins.','The 100th spin is where it gets interesting.','Press on. Gold is a patient colour.','Believe in the next reel.','Lucky people just spin more.','Your future self wants you to spin this one.','Stay a little longer. The best part is coming.'];
 let qi=0; const nextQuote=()=>QUOTES[(qi++)%QUOTES.length];
 let qSide=0;
 function spawnQuote(){
-  if(state.paused||document.hidden) return; const q=document.createElement('div'); q.className='qt'; q.textContent=nextQuote(); $('#quotes').appendChild(q);
-  const cw=cab.offsetWidth, g=(innerWidth-cw)/2-14; qSide^=1; let x,y,w;
-  if(g>150){ w=Math.min(250,g-10); q.style.maxWidth=w+'px'; x=qSide?8:innerWidth-g-4+(g-w-12)/2+6; if(!qSide) x=innerWidth-w-8; y=100+Math.random()*(innerHeight-300); }
-  else{ w=Math.min(300,innerWidth-24); q.style.maxWidth=w+'px'; x=12+Math.random()*Math.max(0,innerWidth-w-24); y=qSide?64:innerHeight-112; }
-  q.style.left=x+'px'; q.style.top=y+'px'; setTimeout(()=>q.remove(),9200);
+  if(state.paused||document.hidden) return; const txt=nextQuote();
   const b=document.createElement('div'); b.className='bq'; b.textContent=nextQuote(); b.style.left=(4+Math.random()*50)+'vw'; $('#qback').appendChild(b); setTimeout(()=>b.remove(),22500);
+  if(document.body.classList.contains('qn')){
+    const t=$('#qtxt'); t.textContent=txt; t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop'); return;
+  }
+  if(innerHeight<480) return;
+  const q=document.createElement('div'); q.className='qt'; q.textContent=txt; $('#quotes').appendChild(q);
+  const cw=cab.offsetWidth, g=(innerWidth-cw)/2-14; qSide^=1; const w=Math.min(250,g-10); q.style.maxWidth=w+'px';
+  q.style.left=(qSide?8:innerWidth-w-8)+'px'; q.style.top=(100+Math.random()*(innerHeight-300))+'px'; setTimeout(()=>q.remove(),9200);
 }
 setInterval(spawnQuote,5200); setTimeout(spawnQuote,1500);
 const FEED=['Lucky_Larry','SpinDoctor','7Sevens','GoldRush','JellyBean','NightOwl','BigBetBetty','CoinCollector','WildCard','HotHandHank','ReelDeal','Jackpot_Jo','Maria_K','Tomek88','Anna_W'];
@@ -1510,7 +1537,7 @@ $('#dGridRead').onclick=()=>{ $$('#dGrid select').forEach(s=>{ s.value=state.gri
 function setBal(v){ state.bal=Math.max(0,Math.round(v)); state.balShown=state.bal; renderHUD(); renderDebug(); save(); }
 $('#dBalSet').onclick=()=>setBal(+$('#dBalIn').value||0); $('#dAdd1').onclick=()=>setBal(state.bal+1000); $('#dAdd10').onclick=()=>setBal(state.bal+10000); $('#dBroke').onclick=()=>setBal(5);
 $('#dReset').onclick=()=>{ Object.assign(S,freshS()); state.xp=0; state.level=1; state.meter=0; ACH_DONE.clear(); state.mDay=''; initMissions(); state.sessionStart=10000; state.sessionT0=Date.now(); setBal(10000); renderMeters(); closeModal(); };
-$('#dWheelNow').onclick=()=>{ if(!state.busy) runBonus(()=>wheelBonus(state.bet)); }; $('#dMeter').onclick=()=>{ state.meter=1; renderMeters(); toast('Wheel unlocks after the next spin'); };
+$('#dWheelNow').onclick=()=>{ if(!state.busy) runBonus(()=>wheelBonus(state.bet)); }; $('#dMeter').onclick=()=>{ state.meter=1; renderMeters(); toast('Wheel is ready: tap the wheel icon'); };
 $('#dFsNow').onclick=()=>{ if(!state.busy) runBonus(()=>freeSpins(10,state.bet)); }; $('#dFs5').onclick=()=>{ if(!state.busy) runBonus(()=>freeSpins(25,state.bet)); };
 $('#dGift').onclick=()=>{ giftAt=Date.now()-1; updateGift(); }; $('#dXp').onclick=()=>{ gainXp(500); flushLevels(); };
 $('#dWheelSel').onchange=e=>{ dbg.wheel=e.target.value; };
