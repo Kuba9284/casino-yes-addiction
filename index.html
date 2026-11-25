@@ -712,7 +712,7 @@ body.lite .hbox.act{box-shadow:none}
   </main>
 
   <footer id="panel">
-    <div class="grp" id="gBal"><div class="lbl">Balance</div><div class="val" id="bal">$10,000</div><div class="sub" id="net" hidden></div></div>
+    <div class="grp" id="gBal"><div class="lbl">Balance</div><div class="val" id="bal">$100,000</div><div class="sub" id="net" hidden></div></div>
     <div class="grp" id="gWon"><div class="lbl">Winnings</div><div class="val sm" id="won">$0</div><div class="sub">Win rate <b id="rate">&mdash;</b></div></div>
     <div class="grp" id="gBet"><div class="lbl">Total bet</div>
       <div class="stepper"><button id="betDn" aria-label="Lower bet">&minus;</button><div class="val" id="betv">$50</div><button id="betUp" aria-label="Raise bet">+</button></div>
@@ -752,7 +752,7 @@ body.lite .hbox.act{box-shadow:none}
     <div id="bjp"></div>
   </main>
   <footer id="bjpanel">
-    <div class="bjinfo"><div class="grp"><div class="lbl">Balance</div><div class="val" id="bjBal">$10,000</div></div><div class="grp"><div class="lbl">Bet</div><div class="val" id="bjBet">$0</div></div></div>
+    <div class="bjinfo"><div class="grp"><div class="lbl">Balance</div><div class="val" id="bjBal">$100,000</div></div><div class="grp"><div class="lbl">Bet</div><div class="val" id="bjBet">$0</div></div></div>
     <div id="bjAsk" hidden></div>
     <div class="bjchips" id="bjChips"></div>
     <div class="bjact" id="bjBetRow"><button class="chip" id="bjClear">Clear</button><button class="chip" id="bjRebet">Rebet</button><button class="chip" id="bjX2">x2</button><button class="chip gold" id="bjDeal">Deal</button></div>
@@ -767,7 +767,7 @@ body.lite .hbox.act{box-shadow:none}
 <div id="cb"><div><h1>COME BACK GAMBLE MORE!!!!!!</h1><p>Your big win is waiting for you</p><button class="btn" id="cbBtn">I&rsquo;m back &mdash; spin!</button></div></div>
 <div id="welcome"><h2>Welcome to</h2><h1>99G1C</h1><h2>99Gamblers1Claude</h2>
   <div class="games">
-    <button class="gtile" id="gSlots"><div class="gart"><svg viewBox="0 0 100 100"><use href="#s-SEVEN"/></svg><svg viewBox="0 0 100 100"><use href="#s-SEVEN"/></svg><svg viewBox="0 0 100 100"><use href="#s-SEVEN"/></svg></div><b>Gilded Sevens</b><span>5 reels, 10 lines, wilds, free spins and a lucky wheel</span><em id="gSlotsStat"></em></button>
+    <button class="gtile" id="gSlots"><div class="gart"><svg viewBox="0 0 100 100"><use href="#s-SEVEN"/></svg><svg viewBox="0 0 100 100"><use href="#s-SEVEN"/></svg><svg viewBox="0 0 100 100"><use href="#s-SEVEN"/></svg></div><b>Slots</b><span>5 reels, 10 lines, wilds, free spins and a lucky wheel</span><em id="gSlotsStat"></em></button>
     <button class="gtile" id="gBj"><div class="gart"><div class="mc">A&#9824;&#xFE0E;</div><div class="mc r">K&#9829;&#xFE0E;</div></div><b>Blackjack</b><span>3 to 2, double, split, insurance and win streaks</span><em id="gBjStat"></em></button>
   </div>
   <button class="chip gold" id="olBtn">Online leaderboards</button> <span id="olStat" class="olstat">Offline mode</span>
@@ -805,8 +805,8 @@ body.lite .hbox.act{box-shadow:none}
   <div class="dg"><button id="dWheelNow">Open wheel now</button><button id="dMeter">Fill lucky meter</button><button id="dFsNow">Free spins now (10)</button><button id="dFs5">Free spins now (25)</button><button id="dGift">Make gift ready</button><button id="dXp">+ 500 XP</button></div>
   <div class="dsl"><span>Wheel result</span><select id="dWheelSel"><option value="random">random</option><option value="cash">cash</option><option value="fs">free spins</option><option value="mini">mini jackpot</option><option value="major">major jackpot</option><option value="grand">GRAND jackpot</option></select><span></span></div>
   <h3>Bankroll</h3>
-  <div class="dg"><input type="number" id="dBalIn" min="0" step="100" value="10000"><button id="dBalSet">Set balance</button>
-    <button id="dAdd1">+ $1,000</button><button id="dAdd10">+ $10,000</button><button id="dReset">Reset game</button><button id="dBroke">Drain to $5</button></div>
+  <div class="dg"><input type="number" id="dBalIn" min="0" step="1000" value="100000"><button id="dBalSet">Set balance</button>
+    <button id="dAdd1">+ $10,000</button><button id="dAdd10">+ $100,000</button><button id="dReset">Reset game</button><button id="dBroke">Drain to $5</button></div>
   <h3>Tuning</h3>
   <div class="dsl"><span>Near-miss %</span><input type="range" id="dNear2" min="0" max="100" value="20"><output id="oNear">20</output></div>
   <div class="dsl"><span>Big-win chance %</span><input type="range" id="dBoost" min="0" max="100" value="0"><output id="oBoost">0</output></div>
@@ -877,11 +877,12 @@ function evalFull(g,bet){
 }
 function runLen(g,L,s){ let n=0; while(n<5&&(g[n][L[n]]===s||g[n][L[n]]==='WILD')) n++; return n; }
 function maxRun(g,s){ return Math.max(...LINES.map(L=>runLen(g,L,s))); }
+const TOP=['SEVEN','DIAMOND','CROWN','BAR','CLOVER'];
 function nearMiss(sym,k){
   k=k||2;
+  const ups=LINES.filter(L=>L[k]>=1);
   for(let t=0;t<400;t++){
-    const g=randGrid(NOSPEC), L=LINES[rnd(10)], row=L[k];
-    const alts=[0,1,2].filter(x=>Math.abs(x-row)===1), alt=alts[rnd(alts.length)];
+    const g=randGrid(NOSPEC), L=ups[rnd(ups.length)], row=L[k], alt=row-1;   // the symbol ends one row ABOVE the payline: it looks like landing, then jumps back up
     for(let x=0;x<k;x++) g[x][L[x]]=sym; g[k][alt]=sym; g[k][row]=rndSym([sym,...NOSPEC],k);
     if(maxRun(g,sym)>k) continue;
     const locked=new Set(); for(let x=0;x<k;x++) locked.add(`${x},${L[x]}`); locked.add(`${k},${alt}`); locked.add(`${k},${row}`);
@@ -890,9 +891,9 @@ function nearMiss(sym,k){
   return {g:randGrid(NOSPEC),locked:new Set()};
 }
 function teasePick(){ const x=Math.random();
-  if(x<.7){ const y=Math.random(); return [2,y<.5?'SEVEN':y<.8?'DIAMOND':'CROWN']; }
-  if(x<.92) return [3,['BAR','BELL','CLOVER'][rnd(3)]];
-  return [4,['BELL','PLUM','LEMON'][rnd(3)]]; }
+  if(x<.84){ const y=Math.random(); return [2,y<.45?'SEVEN':y<.7?'DIAMOND':y<.85?'CROWN':y<.93?'BAR':'CLOVER']; }
+  if(x<.96) return [3,['BAR','CLOVER'][rnd(2)]];
+  return [4,['BAR','CLOVER'][rnd(2)]]; }
 function nearMissScatter(){
   const g=randGrid(NOSPEC), a=rnd(3), b=a+1+rnd(3-a), locked=new Set();
   [a,b].forEach(r=>{ const w=rnd(3); g[r][w]='SCATTER'; locked.add(`${r},${w}`); });
@@ -926,8 +927,8 @@ function buildForced(mode){
     case 'nearmiss': { const [k,s]=teasePick(); return nearMiss(s,k); }
     case 'nearmiss_gem': return nearMiss('DIAMOND',2);
     case 'tease7': return nearMiss('SEVEN',2);
-    case 'tease3': return nearMiss(['BAR','BELL','CLOVER'][rnd(3)],3);
-    case 'tease4': return nearMiss(['BELL','PLUM','LEMON'][rnd(3)],4);
+    case 'tease3': return nearMiss(['BAR','CLOVER','CROWN'][rnd(3)],3);
+    case 'tease4': return nearMiss(['BAR','CLOVER'][rnd(2)],4);
     case 'nearmiss_scatter': return nearMissScatter();
     case 'wild': { const g=randGrid(NOSPEC), L=LINES[rnd(10)]; [0,1,3].forEach(r=>g[r][L[r]]='SEVEN'); g[4][L[4]]=rndSym(['SEVEN',...NOSPEC],4); g[2][rnd(3)]='WILD'; return {g}; }
     case 'freespins': case 'freespins5': {
@@ -970,7 +971,7 @@ function anticipation(g){
     for(const L of LINES){
       const s=g[0][L[0]]; if(s==='SCATTER'||s==='WILD') continue;
       let n=1; while(n<i){ const c=g[n][L[n]]; if(c===s||c==='WILD') n++; else break; }
-      if(n===i&&PAY[s][i+1]>=20) best=Math.max(best,PAY[s][i+1]);
+      if(n===i&&TOP.includes(s)) best=1;
     }
     if(best) out[i]={a:true,strong:true,scat:false,k:i};
   }
@@ -1168,10 +1169,10 @@ const Snd=(()=>{
 
 const welcomeOpen=()=>!$('#welcome').classList.contains('gone');
 /* ============================== STATE ============================== */
-const BETS=[10,20,50,100,200,500,1000,2500];
+const START=100000, BETS=[100,200,500,1000,2000,5000,10000,25000];
 const BUY={fs:40,wheel:10};
-const state={bal:10000,balShown:10000,bet:50,betIdx:2,busy:false,auto:false,autoLeft:0,autoStop:{big:true,bonus:true,below:0},turbo:false,grid:null,presId:0,spinNo:0,H:110,autoT:0,plan:null,ant:null,
-  meter:0,xp:0,level:1,fs:null,quick:false,lastGrid:null,paused:false,lastWin:null,breakUntil:0,sessionStart:10000,sessionT0:Date.now(),lastRc:Date.now(),mDay:'',mBase:{},mDone:{},lastDaily:'',dayStreak:0};
+const state={bal:START,balShown:START,bet:500,betIdx:2,busy:false,auto:false,autoLeft:0,autoStop:{big:true,bonus:true,below:0},turbo:false,grid:null,presId:0,spinNo:0,H:110,autoT:0,plan:null,ant:null,
+  meter:0,xp:0,level:1,fs:null,quick:false,lastGrid:null,paused:false,lastWin:null,breakUntil:0,sessionStart:START,sessionT0:Date.now(),lastRc:Date.now(),mDay:'',mBase:{},mDone:{},lastDaily:'',dayStreak:0};
 state.grid=randGrid();
 const freshS=()=>({spins:0,wagered:0,paid:0,wins:0,ldw:0,near:0,best:0,lost:0,log:[],wilds:0,fsCount:0,wheels:0,sevens:0,jps:0,maxBet:0,bestX:0,bonus:0,gambles:0,bjHands:0,bjWins:0,bjBJ:0,bjSplits:0,bjDoubles:0,bjPush:0,bjBest:0,dbgUsed:0});
 const S=freshS();
@@ -1195,15 +1196,16 @@ const tierOf=(p,b)=>{ const r=p/b; return r>=100?'jackpot':r>=40?'mega':r>=15?'s
 const easeOut3=u=>1-Math.pow(1-u,3), easeOut2=u=>1-(1-u)*(1-u);
 const xpNeed=l=>120+l*60;
 const tierName=l=>l>=35?'Diamond':l>=20?'Platinum':l>=10?'Gold':l>=5?'Silver':'Bronze';
-const J={mini:612.48,major:8241.15,grand:1284903.18}, SEED={mini:500,major:5000,grand:1000000};
+const J={mini:6124.8,major:82411.5,grand:12849031.8}, SEED={mini:5000,major:50000,grand:10000000};
 
 /* ---------- persistence ---------- */
 const SAVE='99g1c-v1';
-function save(){ try{ olSchedule(); }catch(e){} try{ localStorage.setItem(SAVE,JSON.stringify({bal:state.bal,xp:state.xp,level:state.level,meter:state.meter,ach:[...ACH_DONE],S,ui,mDay:state.mDay,mBase:state.mBase,mDone:state.mDone,preset:cfgPreset,ld:state.lastDaily,ds:state.dayStreak})); }catch(e){} }
+function save(){ try{ olSchedule(); }catch(e){} try{ localStorage.setItem(SAVE,JSON.stringify({bal:state.bal,xp:state.xp,level:state.level,meter:state.meter,ach:[...ACH_DONE],S,ui,mDay:state.mDay,mBase:state.mBase,mDone:state.mDone,preset:cfgPreset,econ:2,ld:state.lastDaily,ds:state.dayStreak})); }catch(e){} }
 function load(){
   try{ const d=JSON.parse(localStorage.getItem(SAVE)||'null'); if(!d) return;
     if(typeof d.bal==='number') state.bal=state.balShown=d.bal; state.xp=d.xp||0; state.level=d.level||1; state.meter=d.meter||0;
     (d.ach||[]).forEach(a=>ACH_DONE.add(a)); Object.assign(S,d.S||{}); Object.assign(ui,d.ui||{}); state.mDay=d.mDay||''; state.mBase=d.mBase||{}; state.mDone=d.mDone||{};
+    if(!d.econ){ if(typeof d.bal==='number') state.bal=state.balShown=Math.round(d.bal*10); ui.lossLimit=(ui.lossLimit||0)*10; if(ui.bet) ui.bet*=10; }
     if(d.preset) cfgPreset=d.preset; state.lastDaily=d.ld||''; state.dayStreak=d.ds||0;
   }catch(e){}
 }
@@ -1317,7 +1319,7 @@ function renderHUD(){
   const bb=$('#bjBal'); if(bb) bb.textContent=fmt(state.balShown);
   $('#bal').textContent=fmt(state.balShown); $('#betv').textContent=fmt(state.bet); $('#perline').textContent=fmt(state.bet/10)+' per line';
   $('#won').textContent=fmt(S.paid); $('#rate').textContent=S.spins?Math.round(S.wins/S.spins*100)+'%':'—';
-  const net=$('#net'); net.hidden=!ui.reveal; if(ui.reveal){ const n=state.bal-10000; net.textContent='Real net '+fmt(n); net.className='sub '+(n<0?'neg':'pos'); }
+  const net=$('#net'); net.hidden=!ui.reveal; if(ui.reveal){ const n=state.bal-START; net.textContent='Real net '+fmt(n); net.className='sub '+(n<0?'neg':'pos'); }
   $('#chGamble').disabled=!(state.lastWin&&!state.busy&&!state.fs); $('#chBuy').disabled=state.busy||!!state.fs;
 }
 function renderMeters(){
@@ -1326,7 +1328,7 @@ function renderMeters(){
   const wb=$('#btnWheel'); wb.style.setProperty('--p',Math.min(100,state.meter*100)); wb.classList.toggle('ready',state.meter>=1); wb.title=state.meter>=1?'Lucky wheel ready':'Lucky wheel '+Math.floor(state.meter*100)+'%';
 }
 function renderJP(){ $('#jpMini').textContent=fmt(J.mini); $('#jpMajor').textContent=fmt(J.major); $('#jpGrand').textContent=fmt(J.grand); }
-setInterval(()=>{ if(document.hidden||game==='bj') return; J.mini+=Math.random()*.2; J.major+=Math.random()*1.3; J.grand+=Math.random()*8.5; renderJP(); },450);
+setInterval(()=>{ if(document.hidden||game==='bj') return; J.mini+=Math.random()*2; J.major+=Math.random()*13; J.grand+=Math.random()*85; renderJP(); },450);
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('show'),1700); }
 let balTok=0;
 function tweenBal(to,dur){ const from=state.balShown, id=++balTok, t0=gtime(); (function s(){ if(id!==balTok) return; const k=Math.min(1,(gtime()-t0)/dur); state.balShown=from+(to-from)*easeOut3(k); renderHUD(); if(k<1) requestAnimationFrame(s); else { state.balShown=to; renderHUD(); } })(); }
@@ -1351,7 +1353,7 @@ const ACH=[
  ['first','Opening Night','Place your first spin',()=>S.spins>=1],['wild','Wild Thing','Land a wild symbol',()=>S.wilds>=1],
  ['fs','Bonus Round','Trigger free spins',()=>S.fsCount>=1],['wheel','Wheel of Fortune','Spin the lucky wheel',()=>S.wheels>=1],
  ['seven','Lucky Sevens','Win with three sevens',()=>S.sevens>=1],['hundred','Century','Play 100 spins',()=>S.spins>=100],
- ['roller','High Roller','Bet $1,000 or more',()=>S.maxBet>=1000],['jp','Jackpot Hunter','Win a jackpot on the wheel',()=>S.jps>=1],
+ ['roller','High Roller','Bet $10,000 or more',()=>S.maxBet>=10000],['jp','Jackpot Hunter','Win a jackpot on the wheel',()=>S.jps>=1],
  ['big','Big Fish','Win 50x your bet',()=>S.bestX>=50],['gamble','Double or Nothing','Use the gamble feature',()=>S.gambles>=1],
  ['bj1','Natural','Get a blackjack',()=>S.bjBJ>=1],['bjw','Card Sharp','Win 10 blackjack hands',()=>S.bjWins>=10],['bjsp','Split Decision','Split a pair',()=>S.bjSplits>=1],['bjdb','Double Trouble','Win a doubled hand',()=>S.bjDoubles>=1],['bjst','On Fire','Win 3 blackjack hands in a row',()=>S.bjBest>=3]];
 function checkAch(){ for(const [id,t,d,fn] of ACH){ if(!ACH_DONE.has(id)&&fn()){ ACH_DONE.add(id); toastAch(t,d); } } }
@@ -1361,10 +1363,10 @@ async function runAch(){ achBusy=true; while(achQ.length){ const a=achQ.shift();
 
 /* ---------- missions ---------- */
 const MISSIONS=[
- {id:'m1',t:'Spin 25 times',r:500,get:()=>S.spins,goal:25},{id:'m2',t:'Land 3 wild reels',r:750,get:()=>S.wilds,goal:3},
- {id:'m3',t:'Wager $5,000',r:1000,get:()=>S.wagered,goal:5000},{id:'m4',t:'Trigger free spins',r:1500,get:()=>S.fsCount,goal:1},
- {id:'m5',t:'Spin the Lucky Wheel',r:1000,get:()=>S.wheels,goal:1},
- {id:'m6',t:'Play 10 blackjack hands',r:600,get:()=>S.bjHands,goal:10},{id:'m7',t:'Win 5 blackjack hands',r:900,get:()=>S.bjWins,goal:5}];
+ {id:'m1',t:'Spin 25 times',r:5000,get:()=>S.spins,goal:25},{id:'m2',t:'Land 3 wild reels',r:7500,get:()=>S.wilds,goal:3},
+ {id:'m3',t:'Wager $50,000',r:10000,get:()=>S.wagered,goal:50000},{id:'m4',t:'Trigger free spins',r:15000,get:()=>S.fsCount,goal:1},
+ {id:'m5',t:'Spin the Lucky Wheel',r:10000,get:()=>S.wheels,goal:1},
+ {id:'m6',t:'Play 10 blackjack hands',r:6000,get:()=>S.bjHands,goal:10},{id:'m7',t:'Win 5 blackjack hands',r:9000,get:()=>S.bjWins,goal:5}];
 function initMissions(){ if(state.mDay!==today()){ state.mDay=today(); state.mDone={}; state.mBase={}; MISSIONS.forEach(m=>state.mBase[m.id]=m.get()); } }
 
 /* ============================== FX ============================== */
@@ -1493,7 +1495,7 @@ async function spinCore(out){
   state.lastGrid=state.grid; state.grid=out.g; Snd.spinStart(); pullArm(); await runReels(out.g,out.tease); Snd.whirrStop(); setHot(0,false); Snd.tensionStop();
   state.grid=out.ev.g2; await expandPhase(out); $('#reels').classList.add('idle');
 }
-function showBroke(){ openModal({title:'Out of credits',html:`<p>Your balance is below the minimum bet of ${fmt(BETS[0])}.</p>`,actions:[{id:'reload',label:'Reload '+fmt(10000),cls:'btn',fn:()=>{ state.bal=10000; state.balShown=10000; state.sessionStart=10000; setBet(Math.min(state.bet,BETS[2])); closeModal(); renderHUD(); renderDebug(); save(); }}]}); }
+function showBroke(){ openModal({title:'Out of credits',html:`<p>Your balance is below the minimum bet of ${fmt(BETS[0])}.</p>`,actions:[{id:'reload',label:'Reload '+fmt(START),cls:'btn',fn:()=>{ state.bal=START; state.balShown=START; state.sessionStart=START; setBet(Math.min(state.bet,BETS[2])); closeModal(); renderHUD(); renderDebug(); save(); }}]}); }
 async function doSpin(){
   if(away||welcomeOpen()) return;
   if(state.busy){ quickStop(); return; }
@@ -1507,9 +1509,9 @@ async function doSpin(){
 }
 async function settle(out,bet){
   const ev=out.ev, pay=ev.total; state.bal+=pay; S.paid+=pay; const net=pay-bet, ant=state.ant||[];
-  const nearSeven=ant.some(a=>a.strong&&!a.scat)&&!ev.wins.some(w=>PAY[w.sym][w.count]>=20), nearScat=ant.some(a=>a.scat)&&ev.scat<3, near=nearSeven||nearScat;
+  const nearSeven=ant.some(a=>a.strong&&!a.scat)&&!ev.wins.some(w=>TOP.includes(w.sym)&&w.count>=3), nearScat=ant.some(a=>a.scat)&&ev.scat<3, near=nearSeven||nearScat;
   if(out.tease){ const c=$('#cap'); c.textContent='So close\u2026'; c.classList.add('show'); setTimeout(()=>c.classList.remove('show'),1500); }
-  if(pay>0) S.wins++; if(out.ldw) S.ldw++; if(near) S.near++; if(net<0) S.lost++; if(pay>S.best) S.best=pay; S.bestX=Math.max(S.bestX,pay/bet); S.wilds+=ev.exp.length; if(pay>=bet*20&&pay>=1000) olFeed('slots',pay);
+  if(pay>0) S.wins++; if(out.ldw) S.ldw++; if(near) S.near++; if(net<0) S.lost++; if(pay>S.best) S.best=pay; S.bestX=Math.max(S.bestX,pay/bet); S.wilds+=ev.exp.length; if(pay>=bet*20&&pay>=10000) olFeed('slots',pay);
   if(ev.wins.some(w=>w.sym==='SEVEN')) S.sevens++;
   S.log.unshift({n:state.spinNo,bet,pay,net,tag:out.kind+(out.ldw?' ldw':'')+(near?' near':'')}); S.log.length=Math.min(S.log.length,50);
   const bonusFS=ev.spins>0, wheelDue=state.meter>=1&&state.auto, bonus=bonusFS||wheelDue;
@@ -1648,7 +1650,7 @@ function sessionNumbers(){ const mins=Math.floor((Date.now()-state.sessionT0)/60
   return `<div class="kvs"><span>Session time</span><b>${mins} min</b><span>Total wagered</span><b>${fmt(S.wagered)}</b><span>Total returned</span><b>${fmt(S.paid)}</b><span>Real result this session</span><b class="${net<0?'neg':'pos'}">${net>=0?'+':''}${fmt(net)}</b><span>Real return rate</span><b>${S.wagered?(S.paid/S.wagered*100).toFixed(1)+'%':'—'}</b></div>`; }
 function openResponsible(limitHit){
   openModal({title:limitHit?'Loss limit reached':'Responsible play',html:`<p>${limitHit?'You reached the loss limit you set. Spins are blocked until you change it.':'This is a simulator with play money. Use these tools the way you would on a real site.'}</p>${sessionNumbers()}
-  <div class="field" style="margin-top:12px"><div><label for="rLim">Session loss limit</label><small>0 means no limit</small></div><input type="number" id="rLim" min="0" step="500" value="${ui.lossLimit}" style="width:110px"></div>
+  <div class="field" style="margin-top:12px"><div><label for="rLim">Session loss limit</label><small>0 means no limit</small></div><input type="number" id="rLim" min="0" step="5000" value="${ui.lossLimit}" style="width:110px"></div>
   <div class="field"><label>Take a break</label><div class="seg" id="rBr"><button data-s="30">30 sec</button><button data-s="120">2 min</button><button data-s="600">10 min</button></div></div>`,
   wire:c=>{ $('#rLim',c).onchange=e=>{ ui.lossLimit=Math.max(0,+e.target.value||0); save(); toast(ui.lossLimit?'Loss limit '+fmt(ui.lossLimit):'Loss limit removed'); };
     $$('#rBr button',c).forEach(b=>b.onclick=()=>{ state.breakUntil=Date.now()+b.dataset.s*1000; stopAuto(); closeModal(); toast('Break started'); }); }}); }
@@ -1665,7 +1667,7 @@ function openAuto(){
   let n=25; openModal({title:'Autoplay',html:`<div class="field"><label>Number of spins</label><div class="seg" id="aN">${[10,25,50,100,'∞'].map(v=>`<button data-v="${v}" class="${v===25?'on':''}">${v}</button>`).join('')}</div></div>
   <div class="field"><label for="aBig">Stop on a big win (15x bet or more)</label><input type="checkbox" id="aBig" ${state.autoStop.big?'checked':''}></div>
   <div class="field"><label for="aBon">Stop when a bonus triggers</label><input type="checkbox" id="aBon" ${state.autoStop.bonus?'checked':''}></div>
-  <div class="field"><div><label for="aLow">Stop if balance falls below</label><small>0 means off</small></div><input type="number" id="aLow" min="0" step="500" value="${state.autoStop.below}" style="width:110px"></div>`,
+  <div class="field"><div><label for="aLow">Stop if balance falls below</label><small>0 means off</small></div><input type="number" id="aLow" min="0" step="5000" value="${state.autoStop.below}" style="width:110px"></div>`,
   actions:[{id:'astart',label:'Start',cls:'btn',fn:()=>{ state.autoStop={big:$('#aBig').checked,bonus:$('#aBon').checked,below:+$('#aLow').value||0}; state.auto=true; state.autoLeft=n==='∞'?1e9:n; updateAutoChip(); closeModal(); if(!state.busy) doSpin(); }}],
   wire:c=>$$('#aN button',c).forEach(b=>b.onclick=()=>{ n=b.dataset.v==='∞'?'∞':+b.dataset.v; $$('#aN button',c).forEach(x=>x.classList.toggle('on',x===b)); })});
 }
@@ -1693,7 +1695,7 @@ $('#btnMusic').onclick=e=>{ wake(); musicOn=!musicOn; Snd.setMusicMuted(!musicOn
 let giftAt=Date.now()+90000;
 function updateGift(){ const ms=giftAt-Date.now(), b=$('#chGift'); if(ms<=0){ b.textContent='Collect gift'; b.classList.add('ready'); } else { const s=Math.ceil(ms/1000); b.textContent='Gift '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); b.classList.remove('ready'); } }
 setInterval(updateGift,1000); updateGift();
-$('#chGift').onclick=()=>{ wake(); if(giftAt>Date.now()){ Snd.err(); return; } if(state.busy){ toast('Collect after the spin'); return; } const amt=[250,400,500,750,1000,1500][rnd(6)]; state.bal+=amt; S.bonus+=amt; Snd.chest(); const c=frameCenter(); burst(30,c.x,c.y,10,'coin'); coinRain(1200); tweenBal(state.bal,800); toastAch('Gift collected','+'+fmt(amt)); giftAt=Date.now()+120000; updateGift(); save(); };
+$('#chGift').onclick=()=>{ wake(); if(giftAt>Date.now()){ Snd.err(); return; } if(state.busy){ toast('Collect after the spin'); return; } const amt=[2500,4000,5000,7500,10000,15000][rnd(6)]; state.bal+=amt; S.bonus+=amt; Snd.chest(); const c=frameCenter(); burst(30,c.x,c.y,10,'coin'); coinRain(1200); tweenBal(state.bal,800); toastAch('Gift collected','+'+fmt(amt)); giftAt=Date.now()+120000; updateGift(); save(); };
 let logoTaps=0, logoT=0; $('#logo').addEventListener('click',()=>{ logoTaps++; clearTimeout(logoT); logoT=setTimeout(()=>logoTaps=0,900); if(logoTaps>=5){ logoTaps=0; toggleDebug(); } });
 document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('button'); if(b&&e.detail>0) b.blur(); });
 addEventListener('keydown',e=>{
@@ -1750,7 +1752,7 @@ const dGrid=$('#dGrid'); for(let row=0;row<3;row++) for(let r=0;r<5;r++){ const 
 function forceMode(m){ dbg.force={mode:m}; renderDebugForce(); toast('Next spin: '+m.replace('_',' ')); }
 function renderDebugForce(){ $$('#dModes button[data-mode]').forEach(b=>b.classList.toggle('act',!!dbg.force&&dbg.force.mode===b.dataset.mode)); $('#dNext').innerHTML=dbg.force?`<span class="chipnext">NEXT: ${dbg.force.mode||'custom grid'}${dbg.sticky?' (sticky)':''}</span>`:''; }
 function renderDebug(){
-  const net=state.bal-10000, cl=v=>v<0?'neg':v>0?'pos':'';
+  const net=state.bal-START, cl=v=>v<0?'neg':v>0?'pos':'';
   $('#dBal').textContent=fmt(state.bal); const n=$('#dNet'); n.textContent=fmt(net); n.className=cl(net); $('#dSpins').textContent=S.spins; $('#dWag').textContent=fmt(S.wagered); $('#dPaid').textContent=fmt(S.paid);
   $('#dRtp').textContent=S.wagered?(S.paid/S.wagered*100).toFixed(1)+'%':'—'; $('#dLdw').textContent=S.ldw; $('#dNear').textContent=S.near;
   $('#dLost').textContent=S.spins?S.lost+' ('+Math.round(S.lost/S.spins*100)+'%)':'0'; $('#dBest').textContent=fmt(S.best); $('#dFsC').textContent=S.fsCount; $('#dWh').textContent=S.wheels; $('#dWl').textContent=S.wilds; $('#dLb').textContent=fmt(S.bonus);
@@ -1761,8 +1763,8 @@ $('#dClose').onclick=toggleDebug; $('#dSticky').onchange=e=>{ dbg.sticky=e.targe
 $('#dGridApply').onclick=()=>{ const g=Array.from({length:5},()=>Array(3)); $$('#dGrid select').forEach(s=>{ g[+s.dataset.r][+s.dataset.w]=s.value; }); dbg.force={grid:g}; renderDebugForce(); toast('Custom grid armed'); };
 $('#dGridRead').onclick=()=>{ $$('#dGrid select').forEach(s=>{ s.value=state.grid[+s.dataset.r][+s.dataset.w]; }); };
 function setBal(v){ state.bal=Math.max(0,Math.round(v)); state.balShown=state.bal; renderHUD(); renderDebug(); save(); }
-$('#dBalSet').onclick=()=>setBal(+$('#dBalIn').value||0); $('#dAdd1').onclick=()=>setBal(state.bal+1000); $('#dAdd10').onclick=()=>setBal(state.bal+10000); $('#dBroke').onclick=()=>setBal(5);
-$('#dReset').onclick=()=>{ Object.assign(S,freshS()); state.xp=0; state.level=1; state.meter=0; ACH_DONE.clear(); state.mDay=''; initMissions(); state.sessionStart=10000; state.sessionT0=Date.now(); setBal(10000); renderMeters(); closeModal(); };
+$('#dBalSet').onclick=()=>setBal(+$('#dBalIn').value||0); $('#dAdd1').onclick=()=>setBal(state.bal+10000); $('#dAdd10').onclick=()=>setBal(state.bal+100000); $('#dBroke').onclick=()=>setBal(5);
+$('#dReset').onclick=()=>{ Object.assign(S,freshS()); state.xp=0; state.level=1; state.meter=0; ACH_DONE.clear(); state.mDay=''; initMissions(); state.sessionStart=START; state.sessionT0=Date.now(); setBal(START); renderMeters(); closeModal(); };
 $('#dWheelNow').onclick=()=>{ if(!state.busy) runBonus(()=>wheelBonus(state.bet)); }; $('#dMeter').onclick=()=>{ state.meter=1; renderMeters(); toast('Wheel is ready: tap the wheel icon'); };
 $('#dFsNow').onclick=()=>{ if(!state.busy) runBonus(()=>freeSpins(10,state.bet)); }; $('#dFs5').onclick=()=>{ if(!state.busy) runBonus(()=>freeSpins(25,state.bet)); };
 $('#dGift').onclick=()=>{ giftAt=Date.now()-1; updateGift(); }; $('#dXp').onclick=()=>{ gainXp(500); flushLevels(); };
@@ -1782,7 +1784,7 @@ function lobbyStats(){
 function renderDaily(){
   const el=$('#daily'), t=today();
   if(state.lastDaily===t){ el.innerHTML=`<span class="dstreak">Day streak <b>${state.dayStreak}</b> · come back tomorrow for a bigger bonus</span>`; return; }
-  const next=state.lastDaily===yesterday()?state.dayStreak+1:1, amt=Math.min(3000,250+next*250);
+  const next=state.lastDaily===yesterday()?state.dayStreak+1:1, amt=Math.min(30000,2500+next*2500);
   el.innerHTML=`<button class="chip gold" id="dailyBtn">Claim daily bonus ${fmt(amt)} · day ${next}</button>`;
   $('#dailyBtn').onclick=()=>{ wake(); state.lastDaily=t; state.dayStreak=next; state.bal+=amt; S.bonus+=amt; state.balShown=state.bal; Snd.chest();
     burst(30,innerWidth/2,innerHeight/2,10,'coin'); renderHUD(); save(); renderDaily(); lobbyStats(); };
@@ -1804,7 +1806,7 @@ function openLobby(){
 /* ============================== BLACKJACK ============================== */
 const SUITS=['♠','♥','♦','♣'], RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'], VS='︎';
 const bj={shoe:[],run:0,rig:[],phase:'bet',busy:false,bet:0,last:0,hands:[],dealer:[],cur:0,streak:0,luck:'fair',disg:.7,peek:false,force:null,sticky:false,wager:0,ins:0};
-const BJ_CHIPS=[[10,'#2f6fd0'],[50,'#d9263f'],[100,'#25272b'],[500,'#7a35d6'],[1000,'#e0ad40'],[2500,'#12985f']];
+const BJ_CHIPS=[[100,'#2f6fd0'],[500,'#d9263f'],[1000,'#25272b'],[5000,'#7a35d6'],[10000,'#e0ad40'],[25000,'#12985f']];
 const BJ_LUCK={fair:{p:0,k:[]},hot:{p:.22,k:['win','bj','dbust','double']},fire:{p:.5,k:['win','bj','dbust','double','win','dbust']},cold:{p:.25,k:['dbj','pbust']}};
 const RIGS={
   bj:[['A','♠'],['6','♦'],['K','♥'],['10','♣']],
@@ -1941,7 +1943,7 @@ async function bjFinish(){
   bj.hands.forEach(h=>{ const rs=h.box.querySelector('.res'), pt=bjev(h.cards).t;
     const txt=h.res==='bj'?'BLACKJACK':h.res==='win'?'WIN':h.res==='push'?'PUSH':pt>21?'BUST':(dt<=21&&dt-pt<=2?'SO CLOSE':'—');
     rs.textContent=txt; rs.className='res '+(h.res==='lose'?'lose':h.res==='push'?'push':'win'); });
-  if(net>0&&ret>=1000&&(bjw||ret>=wagered*2.5)) olFeed('bj',ret);
+  if(net>0&&ret>=10000&&(bjw||ret>=wagered*2.5)) olFeed('bj',ret);
   state.bal+=ret; S.paid+=ret; if(ret>S.best) S.best=ret; S.bjWins+=wins; if(bjw) S.bjBJ++; if(dbl) S.bjDoubles++;
   if(realNet>0){ bj.streak++; S.bjBest=Math.max(S.bjBest,bj.streak); } else if(realNet<0) bj.streak=0;
   S.log.unshift({n:'BJ'+S.bjHands,bet:wagered,pay:ret,net:real,tag:'blackjack'+(cons?' ldw':'')}); S.log.length=Math.min(S.log.length,50);
@@ -1979,7 +1981,7 @@ const bjChipsEl=$('#bjChips');
 BJ_CHIPS.forEach(([v,col])=>{ const b=document.createElement('button'); b.className='pchip'; b.style.setProperty('--c',col); b.setAttribute('aria-label','Add '+fmt(v)); b.textContent=v>=1000?(v/1000)+'K':v;
   b.onclick=()=>{ wake(); if(bj.phase!=='bet'||bj.busy) return; const nb=Math.min(state.bal,bj.bet+v); if(nb===bj.bet){ Snd.err(); toast('Not enough balance'); return; } bj.bet=nb; Snd.chip(); bjRender(); }; bjChipsEl.appendChild(b); });
 $('#bjDeal').onclick=bjDeal; $('#bjClear').onclick=()=>{ bj.bet=0; Snd.click(); bjRender(); };
-$('#bjRebet').onclick=()=>{ wake(); if(bj.busy||bj.phase!=='bet') return; bj.bet=Math.min(bj.last||50,state.bal); Snd.chip(); bjRender(); };
+$('#bjRebet').onclick=()=>{ wake(); if(bj.busy||bj.phase!=='bet') return; bj.bet=Math.min(bj.last||500,state.bal); Snd.chip(); bjRender(); };
 $('#bjX2').onclick=()=>{ wake(); if(bj.busy||bj.phase!=='bet') return; bj.bet=Math.min(state.bal,bj.bet*2); Snd.chip(); bjRender(); };
 $('#bjHit').onclick=()=>bjAct('hit'); $('#bjStand').onclick=()=>bjAct('stand'); $('#bjDouble').onclick=()=>bjAct('double'); $('#bjSplit').onclick=()=>bjAct('split');
 $('#bjLobby').onclick=()=>{ wake(); Snd.click(); openLobby(); }; $('#btnLobby').onclick=()=>{ wake(); Snd.click(); openLobby(); };
