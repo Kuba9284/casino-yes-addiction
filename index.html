@@ -880,7 +880,7 @@ function maxRun(g,s){ return Math.max(...LINES.map(L=>runLen(g,L,s))); }
 const TOP=['SEVEN','DIAMOND','CROWN','BAR','CLOVER'];
 function nearMiss(sym,k){
   k=k||2;
-  const ups=LINES.filter(L=>L[k]>=1);
+  const ups=LINES.filter(L=>L[k]>=1&&L[k]===L[k-1]);   // flat continuation: the tease reel's payline row equals the row of the symbols before it
   for(let t=0;t<400;t++){
     const g=randGrid(NOSPEC), L=ups[rnd(ups.length)], row=L[k], alt=row-1;   // the symbol ends one row ABOVE the payline: it looks like landing, then jumps back up
     for(let x=0;x<k;x++) g[x][L[x]]=sym; g[k][alt]=sym; g[k][row]=rndSym([sym,...NOSPEC],k);
@@ -1242,15 +1242,16 @@ function reelY(u,t){
   yb+=u.v*TA/2; tt-=TA; if(tt<u.dAc) return yb+u.v*tt;
   yb+=u.v*u.dAc; tt-=u.dAc; const k=Math.min(1,tt/u.dB); return yb+(u.v*u.dB/u.p)*(1-Math.pow(1-k,u.p));
 }
-const TZ_HOLD=430, TZ_GLIDE=360;
+const TZ_HOLD=700, TZ_GLIDE=420;
 function planReels(g,tease){
   const H=state.H, turbo=state.turbo, ant=anticipation(g); state.ant=ant;
   const gap=turbo?110:270, base=turbo?[380,500,620,740,860]:[900,1150,1400,1650,1900]; const plan=[]; let prev=0, prevHot=false;
   for(let i=0;i<5;i++){
     const start=i*(turbo?35:75); let stop=Math.max(base[i],prev+gap), dB=turbo?340:680, p=3, hot=null;
     if(ui.anticip&&ant[i].a){
-      let ext=turbo?800:(ant[i].scat?2100:[0,0,1500,2000,2700][i]); if(prevHot) ext*=.7;
-      if(ext>0){ stop=Math.max(stop,prev+ext); dB=ext; p=5; hot={strong:i>=3||ant[i].scat,ext,scat:ant[i].scat}; }
+      const isT=tease&&tease.reel===i;
+      let ext=turbo?(isT?1500:800):(ant[i].scat?2100:isT?[0,0,3000,3600,4300][i]:[0,0,1500,2000,2700][i]); if(prevHot&&!isT) ext*=.7;
+      if(ext>0){ stop=Math.max(stop,prev+ext); dB=ext; p=isT?9:5; hot={strong:i>=3||ant[i].scat,ext,scat:ant[i].scat}; }
     }
     prevHot=!!hot; stop=Math.max(stop,start+TP+TA+dB+80);
     const T=stop-start, dAc=T-TP-TA-dB, vT=(turbo?.040:.030)*H, pull=.2*H, sum=TA/2+dAc+dB/p;
