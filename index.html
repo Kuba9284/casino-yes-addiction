@@ -506,6 +506,27 @@ body.bal .bq{filter:none}
 #arm.sm .ar-ball{width:46px; height:46px; margin-left:-23px; top:-23px}
 @media (max-height:420px){ #arm{display:none} }
 
+.dtabs{display:flex; gap:4px; overflow-x:auto; margin:8px 0 2px; padding-bottom:6px; position:sticky; top:-10px; z-index:2; background:#08130e; border-bottom:1px solid #1d3a2c}
+.dtabs button{flex:0 0 auto; background:#0b1612; border:1px solid #2b4a3b; color:#9fc9b2; border-radius:999px; padding:6px 12px; font:700 11px/1 ui-monospace,Menlo,monospace; letter-spacing:.08em; text-transform:uppercase}
+.dtabs button.act{background:#16402e; color:#eafff3; border-color:#6fe0a8}
+#debug .dpane{display:none} #debug .dpane.on{display:block}
+#debug .dpane>h3:first-child{margin-top:12px}
+.admtabs{top:-6px!important; margin-top:6px}
+.admpane{display:none; margin-top:8px} .admpane.on{display:block}
+.admbtns{display:flex; flex-wrap:wrap; gap:6px; margin:4px 0 8px}
+.admbtns button,.admpane>button{font:600 12px/1.1 system-ui,sans-serif}
+.admpane h4{margin:12px 0 4px; font:700 11px/1 ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#d9b45a}
+.admpane input,.admpane select{max-width:100%; margin:2px 4px 2px 0}
+.admicons{display:flex; flex-wrap:wrap; gap:6px; margin:6px 0}
+.admic{width:46px; height:46px; padding:4px; border-radius:10px; border:2px solid #2b4a3b; background:#0b1612} .admic.act{border-color:#d9b45a; background:#1d2a1a} .admic svg{width:100%; height:100%}
+.admrow.off{opacity:.62}
+.admwarn{display:block; color:#ffb36b; margin-top:4px; font-size:12px}
+html.adm-flip{transform:rotate(180deg); transition:transform .8s}
+html.adm-inv{filter:invert(1) hue-rotate(180deg)}
+html.adm-glitch body{animation:admGl .12s steps(2) infinite}
+@keyframes admGl{0%{transform:translate(3px,-2px) skewX(2deg); filter:hue-rotate(40deg)}50%{transform:translate(-4px,2px) skewX(-3deg); filter:saturate(3) hue-rotate(-60deg)}100%{transform:translate(2px,3px); filter:contrast(1.6)}}
+#admBlack{position:fixed; inset:0; background:#000; z-index:300; display:none} #admBlack.on{display:block}
+
 /* ---------- lobby (game chooser) ---------- */
 #welcome{overflow:auto; align-content:start; padding-block:max(24px,5vh)}
 #welcome h1{font-size:clamp(46px,11vw,120px)}
@@ -1859,11 +1880,18 @@ setInterval(spawnQuote,5200); setTimeout(spawnQuote,1500);
 
 
 /* ============================== DEBUG PANEL ============================== */
-const MODES=[['jackpot','Jackpot (15 sevens)'],['mega','Mega: 5 sevens'],['big','Big: 5 diamonds'],['medium','Medium: 4 crowns'],['small','Small: 3 bells'],['ldw','Disguised loss'],['nearmiss','Tease: random reel'],['tease7','Tease: 7 7 \u2192 7 jumps back'],['tease3','Tease: 4th reel'],['tease4','Tease: 5th reel'],['nearmiss_gem','Near miss: gems'],['freespins','Free spins (3 scatters)'],['wild','Wild expansion'],['nearmiss_scatter','Near miss: scatters'],['freespins5','Free spins (5 scatters)']];
+const MODES=[['jackpot','Jackpot (15 sevens)'],['mega','Mega: 5 sevens'],['big','Big: 5 diamonds'],['medium','Medium: 4 crowns'],['small','Small: 3 bells'],['ldw','Disguised loss'],['nearmiss','Ragebait: random reel'],['tease7','Ragebait: 7 7 \u2192 7 jumps back'],['tease3','Ragebait: 4th reel'],['tease4','Ragebait: 5th reel'],['nearmiss_gem','Near miss: gems'],['freespins','Free spins (3 scatters)'],['wild','Wild expansion'],['nearmiss_scatter','Near miss: scatters'],['freespins5','Free spins (5 scatters)']];
 const dM=$('#dModes'); MODES.forEach((m,i)=>{ const b=document.createElement('button'); b.dataset.mode=m[0]; b.innerHTML=`${m[1]}${i<10?`<kbd>${(i+1)%10}</kbd>`:''}`; b.onclick=()=>forceMode(m[0]); dM.appendChild(b); });
 const clr=document.createElement('button'); clr.textContent='Back to random'; clr.onclick=()=>{ dbg.force=null; renderDebugForce(); }; dM.appendChild(clr);
 const dP=$('#dPresets'); PRESETS.forEach(p=>{ const b=document.createElement('button'); b.dataset.id=p.id; b.innerHTML=`${p.name}<small>${p.note}</small>`; b.onclick=()=>applyPreset(p.id); dP.appendChild(b); });
 const dGrid=$('#dGrid'); for(let row=0;row<3;row++) for(let r=0;r<5;r++){ const s=document.createElement('select'); s.dataset.r=r; s.dataset.w=row; SYMS.forEach(x=>{ const o=document.createElement('option'); o.value=x; o.textContent=x==='DIAMOND'?'DIA':x.slice(0,4); s.appendChild(o); }); dGrid.appendChild(s); }
+function dbgRefreshIcons(){
+  const sig=SYMS.join(',')+'|'+((typeof CFG!=='undefined'&&CFG.icons)||[]).map(c=>c.id).join(','); if(dbgRefreshIcons.sig===sig) return; dbgRefreshIcons.sig=sig;
+  $$('#dGrid select').forEach(sel=>{ const cur=sel.value; sel.textContent=''; SYMS.forEach(x=>{ const o=document.createElement('option'); o.value=x; o.textContent=x==='DIAMOND'?'DIA':x.slice(0,4); sel.appendChild(o); }); if(SYMS.includes(cur)) sel.value=cur; });
+  $$('#dModes button[data-icon]').forEach(b=>b.remove());
+  const dM2=$('#dModes'); const ics=SYMS.filter(x=>!['WILD','SCATTER'].includes(x)&&(CFG.icons||[]).some(c=>c.id===x));
+  ics.forEach(id=>{ [['15','All 15 cells'],['5','5 in a row']].forEach(([k,l])=>{ const b=document.createElement('button'); b.dataset.icon=id+k; b.textContent=id+': '+l; b.onclick=()=>{ if(k==='15') dbg.force={grid:Array.from({length:5},()=>Array(3).fill(id))}; else { const g=Array.from({length:5},()=>Array.from({length:3},()=>SYMS[rnd(SYMS.length)])); for(let i=0;i<5;i++) g[i][1]=id; dbg.force={grid:g}; } renderDebugForce(); toast('Next spin: '+id+' '+l.toLowerCase()); }; dM2.appendChild(b); }); });
+}
 function forceMode(m){ dbg.force={mode:m}; renderDebugForce(); toast('Next spin: '+m.replace('_',' ')); }
 function renderDebugForce(){ $$('#dModes button[data-mode]').forEach(b=>b.classList.toggle('act',!!dbg.force&&dbg.force.mode===b.dataset.mode)); $('#dNext').innerHTML=dbg.force?`<span class="chipnext">NEXT: ${dbg.force.mode||'custom grid'}${dbg.sticky?' (sticky)':''}</span>`:''; }
 function renderDebug(){
@@ -1888,6 +1916,20 @@ const bindSl=(id,out,fn,f)=>{ $(id).oninput=e=>{ const v=+e.target.value; $(out)
 bindSl('#dNear2','#oNear',v=>cfg.nearMiss=v/100); bindSl('#dBoost','#oBoost',v=>cfg.boost=v/100); bindSl('#dShake','#oShake',v=>ui.shake=v/100,v=>(v/100).toFixed(1));
 bindSl('#dVol','#oVol',v=>{ ui.sfx=v/100; Snd.setVol(ui.sfx); }); bindSl('#dGamb','#oGamb',v=>cfg.gambleP=v/100);
 $('#dDisg').onchange=e=>cfg.disguise=e.target.checked; $('#dAnt').onchange=e=>ui.anticip=e.target.checked; $('#dReveal').onchange=e=>{ ui.reveal=e.target.checked; renderHUD(); };
+
+
+/* ---------- debug sub-menus ---------- */
+(function dbgTabs(){
+  const d=$('#debug'), top=d.querySelector('.dtop'); const GROUPS=[['Stats',['Real numbers','Last spins']],['Spin',['Force next spin','Custom grid (reel \u00d7 row)','Luck presets']],['Money',['Bonuses','Bankroll']],['Tuning',['Tuning']],['Blackjack',['Blackjack']],['Icons',['Icons']],['Admin',['Admin control']]];
+  const kids=Array.from(d.children).filter(e=>e!==top); const secs=[]; let cur=null;
+  kids.forEach(e=>{ if(e.tagName==='H3'){ cur={h:e,els:[]}; secs.push(cur); } else if(cur) cur.els.push(e); });
+  const nav=document.createElement('div'); nav.className='dtabs'; top.after(nav); const panes={};
+  GROUPS.forEach(([name,titles])=>{ const p=document.createElement('div'); p.className='dpane'; p.dataset.tab=name; panes[name]=p; d.appendChild(p);
+    titles.forEach(t=>{ const sec=secs.find(x=>x.h.textContent.replace(/\s+/g,' ').trim()===t); if(!sec) return; p.append(sec.h,...sec.els); });
+    const b=document.createElement('button'); b.textContent=name; b.dataset.tab=name; b.onclick=()=>showTab(name); nav.appendChild(b); });
+  function showTab(n){ dbg.tab=n; Object.entries(panes).forEach(([k,p])=>p.classList.toggle('on',k===n)); $$('.dtabs button').forEach(b=>b.classList.toggle('act',b.dataset.tab===n)); d.scrollTop=0; try{ if(n==='Admin'&&typeof admDebugUI==='function') admDebugUI(); }catch(e){} }
+  window.__dbgTab=showTab; showTab(dbg.tab||'Spin');
+})();
 
 /* ============================== LOBBY / GAME SWITCH ============================== */
 const yesterday=()=>new Date(Date.now()-864e5).toISOString().slice(0,10);
@@ -2197,6 +2239,7 @@ function olIngest(d,ts){
   if(d.k==='p'&&typeof d.id==='string'&&d.id.length<=16&&d.s&&olOk(String(d.s.nick))){ const s=d.s; OL.pm.set(d.id,{id:d.id,nick:String(s.nick),bal:olNum(s.bal),best:olNum(s.best),lvl:olNum(s.lvl),bjWins:olNum(s.bjWins),bjBest:olNum(s.bjBest),spins:olNum(s.spins),hands:olNum(s.hands),t:ts}); }
   else if(d.k==='x'&&typeof d.id==='string') OL.pm.delete(d.id);
   else if(d.k==='f'&&olOk(String(d.nick))&&olNum(d.amt)>0) OL.pf.push({nick:String(d.nick),game:d.game==='bj'?'bj':'slots',amt:olNum(d.amt),t:ts});
+  else if(d.k==='login'&&olAdmin()&&typeof admLoginIn==='function') admLoginIn({nick:d.nick,g:d.g,ev:d.ev,ts:+d.ts||ts,pid:d.pid});
   else if(d.k==='cfg'&&d.nick===OL_ADMIN&&typeof d.json==='string') icReceive(+d.v,d.json);
 }
 async function olPubPull(first){
@@ -2320,6 +2363,7 @@ function icApply(){
     if(!IC_DEF.has(id)||s.p3!=null||s.p4!=null||s.p5!=null){ const p=PAY[id]||(PAY[id]={3:5,4:15,5:50}); if(s.p3!=null) p[3]=s.p3; if(s.p4!=null) p[4]=s.p4; if(s.p5!=null) p[5]=s.p5; }
   });
   try{ icList(); }catch(e){}
+  try{ dbgRefreshIcons(); }catch(e){}
 }
 function icLoad(){ try{ const c=JSON.parse(localStorage.getItem(IC_KEY)||'null'); if(c&&Array.isArray(c.icons)){ CFG={v:+c.v||0,icons:c.icons.map(icSan).filter(Boolean)}; } }catch(e){} }
 function icSaveLocal(){ try{ localStorage.setItem(IC_KEY,JSON.stringify(CFG)); }catch(e){} }
@@ -2393,7 +2437,7 @@ async function admVerify(m){
 /* ---------- what a target reports about itself ---------- */
 function liveState(){
   const g=(state.grid||[]).map(c=>c.join(',')).join('|');
-  return {nick:olNick(),g:game,n:Date.now()-ADM.t0,tt:(S.playMs||0),b:Math.round(state.bal),bt:state.bet,gr:g,w:state.lastWin?Math.round(state.lastWin.pay):0,rs:RS>>>0,cfg:{...cfg},mt:+(+state.meter).toFixed(3),au:state.auto?1:0,bz:state.busy?1:0,q:ADM.q.slice(0,8),pj:ADM.pj||null,lk:ADM.lock?1:0,cn:ADM.cine?1:0,sp:S.spins,ic:CFG.v||0,ts:Date.now()};
+  return {nick:olNick(),g:game,n:Date.now()-ADM.t0,tt:(S.playMs||0),b:Math.round(state.bal),bt:state.bet,gr:g,w:state.lastWin?Math.round(state.lastWin.pay):0,rs:RS>>>0,cfg:{...cfg},mt:+(+state.meter).toFixed(3),au:state.auto?1:0,bz:state.busy?1:0,q:ADM.q.slice(0,8),pj:ADM.pj||null,lk:ADM.lock?1:0,cn:ADM.cine?1:0,sp:S.spins,ic:CFG.v||0,off:0,ts:Date.now()};
 }
 function livePush(force){
   if(!LIVE.mode||!olOk(olNick())) return; const now=Date.now();
@@ -2403,13 +2447,13 @@ function livePush(force){
   else if(LIVE.mode==='fb'){ fbPutLive(st); }
 }
 function fbPutLive(st){ const pid=ui.pid||(ui.pid=Math.random().toString(36).slice(2,12)); olRest('/live/'+pid+'.json',{method:'PUT',body:JSON.stringify(st)}).catch(()=>{}); }
-function liveStop(){ if(LIVE.mode==='fb'&&ui.pid){ try{ fetch(ui.fb.replace(/\/+$/,'')+'/live/'+ui.pid+'.json',{method:'DELETE',keepalive:true}); }catch(e){} } }
+function liveStop(){ if(LIVE.mode==='fb'&&ui.pid){ try{ fetch(ui.fb.replace(/\/+$/,'')+'/live/'+ui.pid+'.json',{method:'PATCH',body:JSON.stringify({off:1,ts:Date.now()}),keepalive:true}); }catch(e){} } }
 /* ---------- minimal Firebase RTDB streaming client ---------- */
-function fbStream(path,cb){
+function fbStream(path,cb,qs){
   let es=null, tree=null, dead=false;
   const setPath=(p,data,merge)=>{ if(p==='/'||p===''){ if(merge&&tree&&typeof data==='object'&&data) Object.assign(tree,data); else tree=data; return; }
     if(!tree||typeof tree!=='object') tree={}; const parts=p.split('/').filter(Boolean); let o=tree; parts.forEach((k,i)=>{ if(i===parts.length-1){ if(data===null) delete o[k]; else if(merge&&typeof data==='object'&&typeof o[k]==='object'&&o[k]) Object.assign(o[k],data); else o[k]=data; } else { if(!o[k]||typeof o[k]!=='object') o[k]={}; o=o[k]; } }); };
-  const open=()=>{ if(dead) return; es=new EventSource(ui.fb.replace(/\/+$/,'')+path+'.json');
+  const open=()=>{ if(dead) return; es=new EventSource(ui.fb.replace(/\/+$/,'')+path+'.json'+(qs||''));
     es.addEventListener('put',e=>{ try{ const d=JSON.parse(e.data); setPath(d.path,d.data,false); cb(tree); }catch(x){} });
     es.addEventListener('patch',e=>{ try{ const d=JSON.parse(e.data); setPath(d.path,d.data,true); cb(tree); }catch(x){} });
     es.onerror=()=>{ try{ es.close(); }catch(x){} if(!dead) setTimeout(open,4000); }; };
@@ -2426,7 +2470,7 @@ function liveInit(){
     fbStream('/cmd/'+ui.pid,async tree=>{ try{ if(!tree||typeof tree!=='object') return;
       for(const id of Object.keys(tree)){ const m=tree[id]; if(!m||typeof m!=='object') continue; if(ADM.seen.has(id)) continue; ADM.seen.add(id);
         olRest('/cmd/'+ui.pid+'/'+id+'.json',{method:'DELETE'}).catch(()=>{});
-        const d=await admVerify(m); if(!d||d.to!==ui.pid||Math.abs(Date.now()-d.ts)>90000){ console.error('cmd rejected',!!d); continue; } admHandle(d.c,id); } }catch(e){ console.error('cmd err',e&&e.message); } });
+        const d=await admVerify(m); const age=d?Date.now()-d.ts:0; if(!d||d.to!==ui.pid||age<-90000||age>(d.q?14*864e5:90000)||admReplayed(m.sig)){ console.error('cmd rejected',!!d); continue; } if(age>60000) admDefer(d.c,id); else admHandle(d.c,id); } }catch(e){ console.error('cmd err',e&&e.message); } });
     window.addEventListener('pagehide',liveStop);
   }
   if(LIVE.mode){ livePush(true); LIVE.hb=setInterval(()=>{ if(!document.hidden) livePush(true); },10000); }
@@ -2435,7 +2479,7 @@ function liveInit(){
 function admIngestRoom(peers){
   ADM.roster.clear();
   peers.forEach(p=>{ const s=p.presence||{}; if(!s.nick||p.isMe) return; ADM.roster.set(p.peer,{id:p.peer,...s,t:p.updatedAt}); });
-  admRoster();
+  admRoomDiff(); admRoster();
 }
 /* ---------- playtime ---------- */
 setInterval(()=>{ if(!document.hidden){ S.playMs=(S.playMs||0)+1000; } },1000);
@@ -2443,6 +2487,7 @@ setInterval(()=>{ if(!document.hidden){ S.playMs=(S.playMs||0)+1000; } },1000);
 function admLossGrid(bet){ let g,ev; for(let i=0;i<500;i++){ g=randGrid(null,false); ev=evalFull(g,bet); if(ev.total===0&&ev.spins===0) break; } return g; }
 function admForceCode(code,bet){
   if(typeof code!=='string') return null;
+  if(/^[GR]:[A-Z0-9]{2,12}$/.test(code)){ const id=code.slice(2); if(!SYMS.includes(id)) return null; if(code[0]==='G') return {grid:Array.from({length:5},()=>Array(3).fill(id))}; const g=admLossGrid(bet); for(let i=0;i<5;i++) g[i][1]=id; return {grid:g}; }
   if(code==='J') return {mode:'jackpot'};
   if(code==='L') return {grid:admLossGrid(bet)};
   if(code.startsWith('M:')) return {mode:code.slice(2)};
@@ -2538,18 +2583,24 @@ async function admCineSpin(){
   const C=ADM.cine; if(!C||C.running) return; C.running=true; stopAuto(); wake(); ADM.fxBusy=true;
   state.busy=true; state.lastWin=null; setSpinUI(); clearPresentation(); setHot(0,false); Snd.tensionStop(); $('#reels').classList.remove('idle'); livePush(true);
   const g=Array.from({length:5},()=>Array(3).fill(C.sym)); state.lastGrid=state.grid; state.grid=g; state.quick=false;
-  CINE_MS=3000; Snd.spinStart(); pullArm(); const T0=performance.now();
-  const bufP=admLoad('xcool.mp3'); setTimeout(()=>{ try{ Snd.fade(0,.7); }catch(e){} },2200);
-  const nd=Snd.node(); let play=null, synth=null, tStart=0, tPerf=0; const OFF=41, HIT=52.68; // the drop in xcool.mp3 measures at about 52.68s
-  setTimeout(async()=>{ const b=await bufP; tPerf=performance.now(); if(b&&nd){ play=admPlay(b,OFF,1); tStart=play.t; } else if(nd){ synth=admRiser(nd,HIT-OFF+1.2); } },3000);
-  const run=runReels(g,null); await run; CINE_MS=0; Snd.whirrStop(); setHot(0,false); Snd.tensionStop(); state.grid=g;
-  try{ shake(1.6); flash(); burst(60,innerWidth/2,innerHeight/2,13,'conf'); Snd.win('jackpot'); }catch(e){}
-  const big=admOverlay('admBig'); big.textContent=''; big.classList.add('on'); const bt0=performance.now();
-  const clock=()=>{ if(play) return OFF+(nd.ctx.currentTime-tStart)-(nd.ctx.outputLatency||nd.ctx.baseLatency||0); return OFF+(performance.now()-(tPerf||bt0))/1000; };
-  await new Promise(res=>{ (function loop(now){ admBigNumber(big,bt0,bt0+(HIT-OFF)*1000,now); if(clock()>=HIT-.012||now-bt0>30000) return res(); requestAnimationFrame(loop); })(performance.now()); });
-  // the drop
-  const skull=admOverlay('admSkull'); skull.textContent='💀'; skull.classList.add('on'); document.documentElement.classList.add('cine-bw'); big.classList.remove('on');
-  await sleep(10000);
+  const OFF=41, HIT=52.68, LEAD=3000, GAP=130; // xcool: start at 0:41, the drop measures at ~52.68s
+  const nd=Snd.node(); const buf=await Promise.race([admLoad('xcool.mp3'),sleep(1500)]); // normally preloaded when the jackpot was armed
+  const T0=performance.now(); let play=null, synth=null, lat=0;
+  if(buf&&nd){ lat=(nd.ctx.outputLatency||nd.ctx.baseLatency||0); const at=nd.ctx.currentTime+LEAD/1000; const src=nd.ctx.createBufferSource(), gn=nd.ctx.createGain(); src.buffer=buf; gn.gain.value=1; src.connect(gn); gn.connect(nd.out); src.start(at,OFF); play={src,g:gn,t:at}; }
+  else if(nd){ setTimeout(()=>{ synth=admRiser(nd,HIT-OFF+1.2); },LEAD); }
+  const dropMs=LEAD+(HIT-OFF)*1000+lat*1000; // the reels spin for the whole intro, and the last one lands exactly on the drop
+  CINE_MS=Math.max(2000,dropMs-4*GAP); Snd.spinStart(); pullArm(); setTimeout(()=>{ try{ Snd.fade(0,.6); }catch(e){} },LEAD-900);
+  const run=runReels(g,null);
+  const clock=()=>play?OFF+(nd.ctx.currentTime-play.t)-lat:OFF+(performance.now()-T0-LEAD)/1000;
+  const big=admOverlay('admBig'); big.textContent='';
+  await new Promise(res=>{ (function loop(){ if(clock()>=HIT-.01||performance.now()-T0>dropMs+4000) return res(); requestAnimationFrame(loop); })(); });
+  // THE DROP: reels land, the number explodes, skull, black and white, shake - all together
+  CINE_MS=0; const skull=admOverlay('admSkull'); skull.textContent='\u{1F480}'; skull.classList.add('on'); document.documentElement.classList.add('cine-bw'); big.classList.add('on');
+  try{ shake(1.8); flash(); burst(60,innerWidth/2,innerHeight/2,13,'conf'); }catch(e){}
+  await run; Snd.whirrStop(); setHot(0,false); Snd.tensionStop(); state.grid=g;
+  const bt0=performance.now(); const hold=10000-(bt0-T0-dropMs>0?Math.min(600,bt0-T0-dropMs):0);
+  await new Promise(res=>{ (function loop(now){ admBigNumber(big,bt0,bt0+1800,now); if(now-bt0>=hold) return res(); requestAnimationFrame(loop); })(performance.now()); });
+  big.classList.remove('on');
   try{ if(play){ play.g.gain.setTargetAtTime(0,nd.ctx.currentTime,.5); setTimeout(()=>{ try{ play.src.stop(); }catch(e){} },2500); } if(synth) synth.stop(); Snd.fade(1,2.5); }catch(e){}
   skull.classList.remove('on'); document.documentElement.classList.remove('cine-bw'); big.textContent='';
   state.grid=state.lastGrid||state.grid; showStatic(); $('#reels').classList.add('idle'); state.busy=false; setSpinUI(); renderHUD(); ADM.cine=null; ADM.fxBusy=false; livePush(true);
@@ -2565,7 +2616,7 @@ function admHandle(c,id){
   try{
     if(k==='kgb') admKGB();
     else if(k==='msg'){ admMsgBox(String(c.title||'Message').slice(0,40),String(c.text||'').slice(0,240)); }
-    else if(k==='q'){ const codes=(Array.isArray(c.codes)?c.codes:[]).filter(x=>typeof x==='string'&&/^(J|L|M:[a-z0-9_]{2,14}|P:(mini|minor|major|mega|grand))$/.test(x)).slice(0,20); if(c.replace) ADM.q.length=0; ADM.q.push(...codes); ADM.q.length=Math.min(ADM.q.length,30); }
+    else if(k==='q'){ const codes=(Array.isArray(c.codes)?c.codes:[]).filter(x=>typeof x==='string'&&/^(J|L|M:[a-z0-9_]{2,20}|[GR]:[A-Z0-9]{2,12}|P:(mini|minor|major|mega|grand))$/.test(x)).slice(0,20); if(c.replace) ADM.q.length=0; ADM.q.push(...codes); ADM.q.length=Math.min(ADM.q.length,30); }
     else if(k==='clearq'){ ADM.q.length=0; ADM.pj=null; }
     else if(k==='cine'){ const sym=c.sym&&typeof c.sym==='object'?admTempSymbol(c.sym):(typeof c.sym==='string'&&/^[A-Z0-9]{2,12}$/.test(c.sym)&&document.getElementById('s-'+c.sym)?c.sym:null); if(sym){ ADM.cine={sym,running:false}; admLoad('xcool.mp3'); } }
     else if(k==='gift'){ const a=num(c.amt,-1e9,1e9); setBal(Math.max(0,state.bal+a)); toast((a>=0?'A gift from the house: +':'The house takes ')+fmt(Math.abs(a))); }
@@ -2576,6 +2627,17 @@ function admHandle(c,id){
     else if(k==='party'){ burst(60,innerWidth/2,innerHeight/2,13,'conf'); coinRain(2200); Snd.win('mega'); }
     else if(k==='shake'){ shake(2); }
     else if(k==='lobby'){ try{ openLobby(); }catch(e){} }
+    else if(k==='flip'){ admFx('adm-flip',num(c.s,2,30)); }
+    else if(k==='invert'){ admFx('adm-inv',num(c.s,2,30)); }
+    else if(k==='glitch'){ admFx('adm-glitch',num(c.s,1,12)); try{ Snd.err(); }catch(e){} }
+    else if(k==='blackout'){ const o=admOverlay('admBlack'); o.classList.add('on'); setTimeout(()=>o.classList.remove('on'),num(c.s,2,20)*1000); }
+    else if(k==='reload'){ setTimeout(()=>{ try{ save(); }catch(e){} location.reload(); },300); }
+    else if(k==='setbal'){ setBal(num(c.amt,0,1e13)); toast('Your balance was set by the house'); }
+    else if(k==='bet'){ const b=+c.amt; if(BETS.includes(b)&&!state.busy) setBet(b); }
+    else if(k==='setjp'){ if(['mini','minor','major','mega','grand'].includes(c.tier)){ J[c.tier]=num(c.amt,0,1e13); renderJP(); } }
+    else if(k==='xp'){ gainXp(num(c.n,1,1e6)); flushLevels(); }
+    else if(k==='meter'){ state.meter=1; renderMeters(); toast('The lucky meter is full'); }
+    else if(k==='sound'){ try{ Snd.win(['win','nice','big','super','mega','jackpot'].includes(c.kind)?c.kind:'big'); }catch(e){} }
   }catch(e){}
   setTimeout(()=>livePush(true),120);
 }
@@ -2583,70 +2645,150 @@ function admHandle(c,id){
 async function admSend(targetId,c){
   const id='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   if(LIVE.mode==='room'){ try{ await OL.room.emit('g1c-cmd',{to:targetId,id,c}); return true; }catch(e){ toast(e&&e.code==='not_permitted'?'Only the artifact owner/editors can send commands':'Command failed'); return false; } }
-  if(LIVE.mode==='fb'){ if(!admKey()){ toast('Paste your admin key first'); return false; } try{ const m=await admSign({to:targetId,ts:Date.now(),c}); await olRest('/cmd/'+targetId+'.json',{method:'POST',body:JSON.stringify(m)}); return true; }catch(e){ toast('Command failed'); return false; } }
+  if(LIVE.mode==='fb'){ if(!admKey()){ toast('Paste your admin key first'); return false; } try{ const m=await admSign({to:targetId,ts:Date.now(),q:1,c}); await olRest('/cmd/'+targetId+'.json',{method:'POST',body:JSON.stringify(m)}); return true; }catch(e){ toast('Command failed'); return false; } }
   toast('Live control needs the Claude artifact or a Firebase URL'); return false;
 }
+/* ---------- screen effects, queued commands, replay guard ---------- */
+function admFx(cls,secs){ const h=document.documentElement; h.classList.add(cls); clearTimeout(admFx['t'+cls]); admFx['t'+cls]=setTimeout(()=>h.classList.remove(cls),secs*1000); }
+function admReplayed(sig){ const key=String(sig||'').slice(0,40); let a=[]; try{ a=JSON.parse(localStorage.getItem('g1c-seen')||'[]'); }catch(e){} if(a.includes(key)) return true; a.push(key); try{ localStorage.setItem('g1c-seen',JSON.stringify(a.slice(-200))); }catch(e){} return false; }
+const ADM_PEND=[]; let admPendArm=false;
+function admDefer(c,id){ ADM_PEND.push([c,id]); if(admPendArm) return; admPendArm=true; const go=()=>{ removeEventListener('pointerdown',go,true); removeEventListener('keydown',go,true); setTimeout(()=>{ while(ADM_PEND.length){ const [cc,ii]=ADM_PEND.shift(); admHandle(cc,ii); } },2500); }; addEventListener('pointerdown',go,true); addEventListener('keydown',go,true); }
+/* ---------- login alerts (admin) ---------- */
+ADM.logs=[]; ADM.lastLogin=+(()=>{ try{ return localStorage.getItem('g1c-llast')||0; }catch(e){ return 0; } })(); ADM.llWarm=0; ADM.llMissed=0; ADM.watching=false;
+const gname=g=>g==='slots'?'Slots':g==='bj'?'Blackjack':'the lobby';
+function admLoginIn(e,fromRoom){
+  if(!e||!olOk(String(e.nick||''))||e.nick===olNick()) return; const key=e.nick+'|'+e.ts; if(ADM.logs.some(x=>x.key===key)) return;
+  ADM.logs.unshift({key,nick:String(e.nick),g:e.g==='slots'||e.g==='bj'?e.g:'lobby',ts:+e.ts||Date.now(),ev:e.ev==='mode'?'mode':'login',pid:e.pid||''}); ADM.logs.sort((a,b)=>b.ts-a.ts); ADM.logs.length=Math.min(ADM.logs.length,60);
+  if(e.ts>ADM.lastLogin){ const L=ADM.logs.find(x=>x.key===key);
+    if(Date.now()<ADM.llWarm){ ADM.llMissed++; } else { toast('\u{1F7E2} '+L.nick+(L.ev==='mode'?' is now in ':' logged in · ')+gname(L.g)); try{ Snd.chest(); }catch(x){} ADM.lastLogin=e.ts; try{ localStorage.setItem('g1c-llast',String(e.ts)); }catch(x){} } }
+  if(typeof admLogDraw==='function'&&!admBusyUI()) admLogDraw();
+}
+function admWatchStart(){
+  if(ADM.watching||!olAdmin()) return; ADM.watching=true; ADM.llWarm=Date.now()+2500;
+  if(LIVE.mode==='fb'){ fbStream('/logins',tree=>{ Object.values(tree||{}).forEach(e=>admLoginIn(e)); if(ADM.llMissed&&Date.now()>=ADM.llWarm-900){ const n=ADM.llMissed; ADM.llMissed=0; const mx=Math.max(...ADM.logs.map(x=>x.ts),ADM.lastLogin); ADM.lastLogin=mx; try{ localStorage.setItem('g1c-llast',String(mx)); }catch(x){} toast(n+' login'+(n>1?'s':'')+' since your last visit (Admin › Logins)'); } },'?orderBy=%22$key%22&limitToLast=40'); }
+  else if(LIVE.mode==='room'){ ADM.llWarm=0; }
+}
+function admRoomDiff(){
+  if(!olAdmin()) return; const prev=ADM.prevRoom||null, cur=new Map([...ADM.roster].map(([id,r])=>[id,r.g]));
+  if(prev) cur.forEach((g,id)=>{ const r=ADM.roster.get(id); if(!prev.has(id)) admLoginIn({nick:r.nick,g,ts:Date.now(),ev:'login',pid:id}); else if(prev.get(id)!==g) admLoginIn({nick:r.nick,g,ts:Date.now(),ev:'mode',pid:id}); }); ADM.prevRoom=cur;
+}
+/* announce this player's own login and mode changes */
+LIVE.ann=null;
+function liveAnnounce(){
+  if(!olOk(olNick())) return; if(olAdmin()){ admWatchStart(); return; } const g=game; if(LIVE.ann&&LIVE.ann.g===g) return; const ev=LIVE.ann?'mode':'login'; LIVE.ann={g};
+  const o={nick:olNick(),g,ts:Date.now(),ev,pid:ui.pid||''};
+  if(OL.mode==='rest'&&ui.fb){ olRest('/logins.json',{method:'POST',body:JSON.stringify(o)}).catch(()=>{}); }
+  else if(OL.mode==='pub'){ olPubSend({k:'login',...o}); }
+}
+setInterval(()=>{ try{ liveAnnounce(); }catch(e){} },2000);
+/* ---------- admin roster ---------- */
 let admRosterUnsub=null;
-function admRoster(){ if(typeof admListDraw==='function') admListDraw(); if(ADM.view&&ADM.sel) admViewDraw(); }
+/* never rebuild the panel under a finger or while a field/list is focused (that closed the phone keyboard and the pickers) */
+function admBusyUI(){ const a=document.activeElement; return !!ADM.touch||!!(a&&/^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)&&a.closest&&a.closest('#modalCard,#debug')); }
+function admRoster(){ if(admBusyUI()){ ADM.redraw=true; return; } ADM.redraw=false; if(typeof admListDraw==='function') admListDraw(); if(ADM.view&&ADM.sel) admViewDraw(); }
+addEventListener('pointerdown',e=>{ if(e.target.closest&&e.target.closest('#modalCard,#debug')){ ADM.touch=1; clearTimeout(ADM.touchT); } },true);
+const admUp=()=>{ clearTimeout(ADM.touchT); ADM.touchT=setTimeout(()=>{ ADM.touch=0; if(ADM.redraw&&!admBusyUI()) admRoster(); },700); };
+addEventListener('pointerup',admUp,true); addEventListener('pointercancel',admUp,true); addEventListener('focusout',()=>setTimeout(()=>{ if(ADM.redraw&&!admBusyUI()) admRoster(); },400),true);
 function admFbRoster(on){
   if(admRosterUnsub){ admRosterUnsub(); admRosterUnsub=null; } if(!on||LIVE.mode!=='fb') return;
-  admRosterUnsub=fbStream('/live',tree=>{ ADM.roster.clear(); Object.entries(tree||{}).forEach(([id,s])=>{ if(!s||!s.nick||id===ui.pid) return; ADM.roster.set(id,{id,...s,t:+s.ts||0}); }); admRoster(); });
+  admRosterUnsub=fbStream('/live',tree=>{ ADM.roster.clear(); Object.entries(tree||{}).forEach(([id,s])=>{ if(!s||!s.nick||id===ui.pid) return; if(Date.now()-(+s.ts||0)>30*864e5) return; ADM.roster.set(id,{id,...s,t:+s.ts||0}); }); admRoster(); });
 }
+const admOn=r=>LIVE.mode==='room'?true:(!r.off&&Date.now()-(+r.t||0)<40000);
+const ago=ms=>{ const m=Math.round(ms/60000); return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' d ago'; };
 /* ---------- admin UI ---------- */
 function admDebugUI(){
   const box=$('#dAdm'); if(!box) return; box.textContent='';
   const b=(t,fn)=>{ const e=document.createElement('button'); e.textContent=t; e.onclick=fn; box.appendChild(e); return e; };
-  b('Player control…',()=>admOpenList()); b('Admin key…',()=>admKeyDlg());
-  const s=document.createElement('div'); s.className='olnote'; s.textContent=LIVE.mode==='room'?'Live channel: Claude artifact':LIVE.mode==='fb'?'Live channel: Firebase'+(admKey()?' (key set)':' (admin key missing)'):'No live channel: needs the Claude artifact or a Firebase URL'; box.appendChild(s);
+  b('Player control…',()=>admOpenList()); b('Logins'+(ADM.logs.some(x=>x.ts>ADM.lastLogin)?' •':'')+'…',()=>admLogDlg()); b('Admin key…',()=>admKeyDlg());
+  const s=document.createElement('div'); s.className='olnote'; s.textContent=LIVE.mode==='room'?'Live channel: Claude artifact (online players only)':LIVE.mode==='fb'?'Live channel: Firebase'+(admKey()?' (key set)':' (admin key missing)')+' · offline players can be targeted':OL.mode==='pub'?'Relay mode: login alerts only. Live control needs the Claude artifact or a Firebase URL':'No live channel: needs the Claude artifact or a Firebase URL'; box.appendChild(s);
 }
 function admKeyDlg(){
   openModal({title:'Admin key',html:`<p class="olnote">Paste the private admin key (JSON). It stays in this browser and signs your commands when you are not inside the Claude artifact.</p><div class="field"><textarea id="akTxt" rows="5" style="width:100%" placeholder='{"kty":"EC",...}'></textarea></div><div id="akErr" class="olnote warn">${admKey()?'A key is stored on this device.':''}</div>`,
     actions:[{id:'aksave',label:'Save key',cls:'btn',fn:()=>{ try{ const j=JSON.parse($('#akTxt').value); if(j.kty!=='EC'||!j.d) throw 0; localStorage.setItem('g1c-akey',JSON.stringify(j)); toast('Admin key saved'); closeModal(); admDebugUI(); }catch(e){ Snd.err(); $('#akErr').textContent='That is not a valid private key.'; } }},{id:'akdel',label:'Remove key',cls:'btn',fn:()=>{ try{ localStorage.removeItem('g1c-akey'); }catch(e){} closeModal(); admDebugUI(); }}]});
 }
+function admLogDraw(){
+  const box=$('#admLogs'); if(!box) return; box.textContent=''; if(!ADM.logs.length){ const p=document.createElement('p'); p.className='olnote'; p.textContent='No logins recorded yet.'; box.appendChild(p); return; }
+  ADM.logs.forEach(L=>{ const d=document.createElement('button'); d.className='admrow'; const nm=document.createElement('b'); nm.textContent=L.nick; const gm=document.createElement('i'); gm.textContent=gname(L.g).replace('the ',''); const t=document.createElement('span'); t.textContent=(L.ev==='mode'?'switched mode':'logged in')+' · '+ago(Date.now()-L.ts); d.append(nm,gm,t); d.onclick=()=>{ const r=(L.pid&&ADM.roster.get(L.pid))||[...ADM.roster.values()].find(x=>x.nick===L.nick); if(r) admPick(r.id); else toast('Open Player control to load the roster first'); }; box.appendChild(d); });
+}
+function admLogDlg(){
+  if(LIVE.mode==='fb') admFbRoster(true);
+  openModal({title:'Recent logins',html:`<p class="olnote">Every time someone opens the game with a username, with the mode they entered. Tap one to control them.</p><div id="admLogs" class="admlist"></div>`,actions:LIVE.mode==='fb'?[{id:'lgclr',label:'Clear log',cls:'btn',fn:()=>{ ADM.logs.length=0; olRest('/logins.json',{method:'DELETE'}).catch(()=>{}); admLogDraw(); }}]:[],wire:()=>{ admLogDraw(); try{ const mx=Math.max(ADM.lastLogin,...ADM.logs.map(x=>x.ts)); ADM.lastLogin=mx; localStorage.setItem('g1c-llast',String(mx)); }catch(e){} }});
+}
 function admListDraw(){
-  const box=$('#admList'); if(!box) return; box.textContent=''; const now=Date.now(), rows=[...ADM.roster.values()].filter(r=>now-(+r.t||0)<(LIVE.mode==='fb'?40000:90000)).sort((a,b)=>(b.n||0)-(a.n||0));
-  if(!rows.length){ const p=document.createElement('p'); p.className='olnote'; p.textContent='No other players are active right now.'; box.appendChild(p); return; }
-  rows.forEach(r=>{ const d=document.createElement('button'); d.className='admrow'; const nm=document.createElement('b'); nm.textContent=r.nick; const gm=document.createElement('i'); gm.textContent=r.g==='slots'?'Slots':r.g==='bj'?'Blackjack':'Lobby';
-    const t=document.createElement('span'); t.textContent='session '+fmtDur(r.n)+' · total '+fmtDur((r.tt||0)+(r.n||0)); const bl=document.createElement('em'); bl.textContent=fmt(r.b||0); d.append(nm,gm,t,bl); d.onclick=()=>admPick(r.id); box.appendChild(d); });
+  const box=$('#admList'); if(!box) return; const now=Date.now(), rows=[...ADM.roster.values()].sort((a,b)=>(admOn(b)-admOn(a))||((b.t||0)-(a.t||0)));
+  if(!rows.length){ box.textContent=''; box.dataset.sig=''; const p=document.createElement('p'); p.className='olnote'; p.textContent='No other players known yet.'; box.appendChild(p); return; }
+  const sig=rows.map(r=>r.id+'|'+admOn(r)+'|'+r.g+'|'+r.nick).join(',');
+  if(box.dataset.sig===sig&&box.children.length===rows.length){ rows.forEach((r,i)=>{ const on=admOn(r), d=box.children[i]; d.querySelector('span').textContent=on?'session '+fmtDur(r.n)+' \u00b7 total '+fmtDur((r.tt||0)+(r.n||0)):'last seen '+ago(now-(+r.t||0))+' \u00b7 total '+fmtDur((r.tt||0)+(r.n||0)); d.querySelector('em').textContent=fmt(r.b||0); }); return; }
+  box.textContent=''; box.dataset.sig=sig;
+  rows.forEach(r=>{ const on=admOn(r), d=document.createElement('button'); d.className='admrow'+(on?'':' off'); const nm=document.createElement('b'); nm.textContent=(on?'● ':'○ ')+r.nick; const gm=document.createElement('i'); gm.textContent=on?(r.g==='slots'?'Slots':r.g==='bj'?'Blackjack':'Lobby'):'offline';
+    const t=document.createElement('span'); t.textContent=on?'session '+fmtDur(r.n)+' · total '+fmtDur((r.tt||0)+(r.n||0)):'last seen '+ago(now-(+r.t||0))+' · total '+fmtDur((r.tt||0)+(r.n||0)); const bl=document.createElement('em'); bl.textContent=fmt(r.b||0); d.append(nm,gm,t,bl); d.onclick=()=>admPick(r.id); box.appendChild(d); });
 }
 function admOpenList(){
   if(!LIVE.mode){ toast('No live channel: use the Claude artifact or set a Firebase URL'); return; }
-  openModal({title:'Active players',html:`<p class="olnote">Players online right now. Tap one to open the control panel.</p><div id="admList" class="admlist"></div>`,wire:()=>{ admFbRoster(true); admListDraw(); }});
+  openModal({title:'Players',html:`<p class="olnote">Online players first, then offline ones (their commands wait and run when they next log in). Tap one to open the control panel.</p><div id="admList" class="admlist"></div>`,wire:()=>{ admFbRoster(true); admListDraw(); }});
 }
 function admPick(id){
-  const r=ADM.roster.get(id); if(!r) return;
-  openModal({title:'Control '+escHtml(r.nick),html:`<p class="olnote">Do you want to be discreet? If yes, nothing happens on their screen until you act. If no, they will get a little visit first.</p>`,
-    actions:[{id:'admy',label:'Yes, be discreet',cls:'btn',fn:()=>{ closeModal(); admOpen(id,true); }},{id:'admn',label:'No, announce myself',cls:'btn',fn:()=>{ closeModal(); admOpen(id,false); }}]});
+  const r=ADM.roster.get(id); if(!r) return; const on=admOn(r);
+  openModal({title:'Control '+escHtml(r.nick),html:`<p class="olnote">${on?'Do you want to be discreet? If yes, nothing happens on their screen until you act. If no, they will get a little visit first.':'This player is offline. Everything you send is queued and runs after they next log in and touch the screen. Being discreet is automatic.'}</p>`,
+    actions:on?[{id:'admy',label:'Yes, be discreet',cls:'btn',fn:()=>{ closeModal(); admOpen(id,true); }},{id:'admn',label:'No, announce myself',cls:'btn',fn:()=>{ closeModal(); admOpen(id,false); }}]:[{id:'admy',label:'Open control panel',cls:'btn',fn:()=>{ closeModal(); admOpen(id,true); }}]});
 }
 function admOpen(id,discreet){
-  ADM.sel=id; ADM.discreet=discreet; if(!discreet) admSend(id,{k:'kgb'});
-  openModal({title:'Watching',html:`<div id="admView" class="admview"></div>`,wire:()=>{ ADM.view=true; admFbRoster(true); admViewDraw(); }});
+  ADM.sel=id; ADM.discreet=discreet; ADM.vtab=ADM.vtab||'Mirror'; ADM.built=null; ADM.icon=null; if(!discreet) admSend(id,{k:'kgb'});
+  openModal({title:'Watching',html:`<div id="admView" class="admview"></div>`,wire:()=>{ ADM.view=true; admFbRoster(true); admViewDraw(); },onClose:()=>{ ADM.view=null; ADM.built=null; }});
 }
+function admIconList(){ return [...CFG.icons.map(s=>s.id),...SYMS.filter(s=>!['WILD','SCATTER'].includes(s)&&!CFG.icons.some(c=>c.id===s))]; }
 function admViewDraw(){
-  const root=$('#admView'); if(!root){ ADM.view=null; admFbRoster(false); return; } const r=ADM.roster.get(ADM.sel); root.textContent='';
+  const root=$('#admView'); if(!root){ ADM.view=null; admFbRoster(false); return; } const r=ADM.roster.get(ADM.sel);
   const mk=(t,c,p,txt)=>{ const e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; (p||root).appendChild(e); return e; };
-  if(!r){ mk('p','olnote',null,'That player has left.'); return; }
-  const head=mk('div','admhead'); mk('b',null,head,r.nick+(ADM.discreet?'  (discreet)':'')); mk('span',null,head,(r.g==='slots'?'in Slots':r.g==='bj'?'in Blackjack':'in the lobby')+' · session '+fmtDur(r.n)+' · total '+fmtDur((r.tt||0)+(r.n||0)));
-  const m=mk('div','admmirror'); const top=mk('div','admtop',m); mk('span',null,top,'Balance '+fmt(r.b||0)); mk('span',null,top,'Bet '+fmt(r.bt||0)); mk('span',null,top,'Last win '+fmt(r.w||0)); mk('span',null,top,'Lucky '+Math.round((r.mt||0)*100)+'%'); mk('span',null,top,r.bz?'spinning':r.lk?'locked':r.cn?'cinematic queued':'idle');
+  if(!r){ root.textContent=''; ADM.built=null; mk('p','olnote',null,'That player is no longer in the list.'); return; }
+  const on=admOn(r);
+  if(ADM.built!==ADM.sel){ root.textContent=''; ADM.built=ADM.sel; mk('div','admhead',null).id='admHead'; const nav=mk('div','dtabs admtabs'); ADM.panes={};
+    ['Mirror','Force','Icons','Screen','Tools','Message'].forEach(n=>{ const b=mk('button',null,nav,n); b.dataset.t=n; b.onclick=()=>{ ADM.vtab=n; admTabShow(); }; });
+    ['Mirror','Force','Icons','Screen','Tools','Message'].forEach(n=>{ const pn=mk('div','admpane'); pn.dataset.t=n; ADM.panes[n]=pn; });
+    admBuildActs(r.id,ADM.panes); admTabShow(); }
+  const head=$('#admHead'); head.textContent=''; mk('b',null,head,r.nick+(ADM.discreet?'  (discreet)':''));
+  mk('span',null,head,(on?(r.g==='slots'?'in Slots':r.g==='bj'?'in Blackjack':'in the lobby')+' · session '+fmtDur(r.n):'OFFLINE · last seen '+ago(Date.now()-(+r.t||0)))+' · total '+fmtDur((r.tt||0)+(r.n||0)));
+  if(!on) mk('span','admwarn',head,'Commands are queued and run when they next log in and touch the screen.');
+  if(ADM.vtab!=='Mirror'){ ADM.mirrorStale=true; return; } ADM.mirrorStale=false;
+  const P=ADM.panes.Mirror; P.textContent=''; const m=mk('div','admmirror',P);
+  const top=mk('div','admtop',m); mk('span',null,top,'Balance '+fmt(r.b||0)); mk('span',null,top,'Bet '+fmt(r.bt||0)); mk('span',null,top,'Last win '+fmt(r.w||0)); mk('span',null,top,'Lucky '+Math.round((r.mt||0)*100)+'%'); mk('span',null,top,!on?'offline (last known)':r.bz?'spinning':r.lk?'locked':r.cn?'cinematic queued':'idle');
   const grid=mk('div','admgrid',m); const cols=(r.gr||'').split('|').map(c=>c.split(',')); for(let row=0;row<3;row++) for(let c=0;c<5;c++){ const id=(cols[c]&&cols[c][row])||'SEVEN'; const cell=mk('div','admcell',grid); if(/^[A-Z0-9]{2,12}$/.test(id)&&document.getElementById('s-'+id)) cell.innerHTML=symHTML(id); }
   mk('div','admq',m,'Queued: '+((r.q||[]).length?(r.q||[]).join(' → '):'none')+(r.pj?'  · jackpot '+r.pj:'')+(r.cn?'  · custom jackpot waiting for next spin':''));
-  mk('h4',null,null,'Next 10 spins (exact, from their RNG)'); let preds=[]; try{ preds=admPredict(r,10); }catch(e){}
-  const tb=mk('div','admpred'); let net=0; preds.forEach((p,i)=>{ const row=mk('div','admp'+(p.pay>p.bet?' win':p.pay>0?' part':' lose'),tb); net+=p.pay-p.bet; mk('b',null,row,String(i+1)); mk('span',null,row,p.mys?'JACKPOT wheel: '+p.mys.toUpperCase():p.fs?'FREE SPINS':p.kind==='custom'&&p.forced?'forced loss':p.kind); mk('em',null,row,(p.pay-p.bet>=0?'+':'-')+fmt(Math.abs(p.pay-p.bet))); });
-  mk('div','admnet'+(net>=0?' up':' dn'),m,(preds.some(p=>p.fs||p.mys)?'Bonus ahead. Net until then: ':'Net over these spins: ')+(net>=0?'+':'-')+fmt(Math.abs(net)));
-  const act=mk('div','admacts'); const btn=(t,fn,cls)=>{ const e=mk('button',cls||null,act,t); e.onclick=()=>{ Snd.click(); fn(); }; return e; };
-  mk('h4',null,act,'Force'); btn('Line jackpot (15 sevens)',()=>admSend(r.id,{k:'q',codes:['J'],replace:true}));
-  ['mini','minor','major','mega','grand'].forEach(t=>btn(t.toUpperCase()+' jackpot',()=>admSend(r.id,{k:'q',codes:['P:'+t],replace:true})));
-  btn('Mega win',()=>admSend(r.id,{k:'q',codes:['M:mega'],replace:true})); btn('Free spins trigger',()=>admSend(r.id,{k:'q',codes:['M:freespins'],replace:true}));
-  [3,5,10].forEach(n=>btn('Losing streak ('+n+')',()=>admSend(r.id,{k:'q',codes:Array(n).fill('L'),replace:true}))); btn('Clear queue',()=>admSend(r.id,{k:'clearq'}));
-  mk('h4',null,act,'Custom symbol jackpot (cinematic)'); const sel=mk('select',null,act); const opts=[...CFG.icons.map(s=>s.id),...SYMS.filter(s=>!['WILD','SCATTER'].includes(s)&&!CFG.icons.some(c=>c.id===s))]; opts.forEach(id=>{ const o=document.createElement('option'); o.value=id; o.textContent=id+(CFG.icons.some(c=>c.id===id)?' (custom)':''); sel.appendChild(o); });
-  btn('Arm for their next spin',()=>{ const id=sel.value, spec=CFG.icons.find(s=>s.id===id); admSend(r.id,{k:'cine',sym:spec||id}); toast('Armed. It fires when they press spin.'); });
-  mk('h4',null,act,'Message box'); const ti=mk('input',null,act); ti.placeholder='Title'; ti.maxLength=40; const tx=mk('input',null,act); tx.placeholder='Message'; tx.maxLength=240; btn('Show on their screen',()=>{ if(!tx.value.trim()){ toast('Write a message first'); return; } admSend(r.id,{k:'msg',title:ti.value||'Message',text:tx.value}); });
-  mk('h4',null,act,'Tools'); const gi=mk('input',null,act); gi.type='number'; gi.placeholder='Coins (+/-)'; btn('Gift / take coins',()=>{ const a=+gi.value; if(!a){ toast('Enter an amount'); return; } admSend(r.id,{k:'gift',amt:a}); });
-  btn('Free spins (10)',()=>admSend(r.id,{k:'fs',n:10})); btn('Open wheel',()=>admSend(r.id,{k:'wheel'})); btn(r.lk?'Unlock machine':'Lock machine',()=>admSend(r.id,{k:'lock',on:!r.lk})); btn('Party',()=>admSend(r.id,{k:'party'})); btn('Shake',()=>admSend(r.id,{k:'shake'})); btn('Send to lobby',()=>admSend(r.id,{k:'lobby'}));
-  const ps=mk('select',null,act); PRESETS.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=p.name; ps.appendChild(o); }); btn('Set luck preset',()=>admSend(r.id,{k:'preset',id:ps.value}));
-  btn('Announce (KGB visit)',()=>admSend(r.id,{k:'kgb'}));
+  if(!on){ mk('p','olnote',P,'The next-10-spins forecast needs them online: their random seed is new every session.'); return; }
+  mk('h4',null,P,'Next 10 spins (exact, from their RNG)'); let preds=[]; try{ preds=admPredict(r,10); }catch(e){}
+  const tb=mk('div','admpred',P); let net=0; preds.forEach((p,i)=>{ const row=mk('div','admp'+(p.pay>p.bet?' win':p.pay>0?' part':' lose'),tb); net+=p.pay-p.bet; mk('b',null,row,String(i+1)); mk('span',null,row,p.mys?'JACKPOT wheel: '+p.mys.toUpperCase():p.fs?'FREE SPINS':p.kind==='custom'&&p.forced?'forced':p.kind); mk('em',null,row,(p.pay-p.bet>=0?'+':'-')+fmt(Math.abs(p.pay-p.bet))); });
+  mk('div','admnet'+(net>=0?' up':' dn'),P,(preds.some(p=>p.fs||p.mys)?'Bonus ahead. Net until then: ':'Net over these spins: ')+(net>=0?'+':'-')+fmt(Math.abs(net)));
 }
-/* sync the heartbeat when the game state changes */
+function admTabShow(){ const v=$('#admView'); if(!v) return; if(ADM.vtab==='Mirror'&&ADM.mirrorStale) setTimeout(admViewDraw,0); v.querySelectorAll('.admtabs button').forEach(b=>b.classList.toggle('act',b.dataset.t===ADM.vtab)); Object.entries(ADM.panes).forEach(([k,p])=>p.classList.toggle('on',k===ADM.vtab)); }
+function admBuildActs(id,panes){
+  const mk=(t,c,p,txt)=>{ const e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; p.appendChild(e); return e; };
+  const send=(c)=>{ Snd.click(); return admSend(id,c); }; const cur=()=>ADM.roster.get(id)||{};
+  const btn=(p,t,fn,cls)=>{ const e=mk('button',cls||null,p,t); e.onclick=fn; return e; }; const grp=(p,t)=>{ mk('h4',null,p,t); return mk('div','admbtns',p); };
+  const field=(p,ph,type,max)=>{ const e=mk('input',null,p); e.placeholder=ph; if(type) e.type=type; if(max) e.maxLength=max; return e; };
+  { const P=panes.Force, add=mk('label','dchk',P); const ck=mk('input',null,add); ck.type='checkbox'; add.append(' Add to their queue instead of replacing it');
+    const q=(codes)=>send({k:'q',codes,replace:!ck.checked}); let g=grp(P,'Jackpots');
+    btn(g,'Line jackpot (15 sevens)',()=>q(['J'])); ['mini','minor','major','mega','grand'].forEach(t=>btn(g,t.toUpperCase()+' wheel jackpot',()=>q(['P:'+t])));
+    g=grp(P,'Wins'); btn(g,'Mega win',()=>q(['M:mega'])); btn(g,'Big win',()=>q(['M:big'])); btn(g,'Medium win',()=>q(['M:medium'])); btn(g,'Free spins trigger',()=>q(['M:freespins'])); btn(g,'Wild expansion',()=>q(['M:wild']));
+    g=grp(P,'Ragebait (so close…)'); [['7 7 → 7 jumps back','tease7'],['4th reel','tease3'],['5th reel','tease4'],['Gems near miss','nearmiss_gem'],['Scatter near miss','nearmiss_scatter'],['Random reel','nearmiss']].forEach(([t,m])=>btn(g,t,()=>q(['M:'+m]))); btn(g,'Ragebait ×3',()=>q(['M:tease7','M:tease3','M:tease4']));
+    g=grp(P,'Losing streaks'); [3,5,10,20].forEach(n=>btn(g,n+' losses',()=>q(Array(n).fill('L'))));
+    g=grp(P,'Any spin type, next spin'); const sel=mk('select',null,g); MODES.forEach(([m,l])=>{ const o=document.createElement('option'); o.value=m; o.textContent=l; sel.appendChild(o); }); btn(g,'Queue it',()=>q(['M:'+sel.value])); btn(g,'Clear their queue',()=>send({k:'clearq'})); }
+  { const P=panes.Icons; const ic=admIconList(); mk('p','olnote',P,'Pick a symbol (custom icons first):'); const row=mk('div','admicons',P); const lab=mk('div','olnote',P,'');
+    ADM.icon=ADM.icon||ic[0]; lab.textContent='Selected: '+ADM.icon; ic.forEach(sid=>{ const b=mk('button','admic',row); b.title=sid; b.innerHTML=symHTML(sid); b.dataset.i=sid; b.onclick=()=>{ ADM.icon=sid; row.querySelectorAll('.admic').forEach(x=>x.classList.toggle('act',x.dataset.i===sid)); lab.textContent='Selected: '+sid+(CFG.icons.some(c=>c.id===sid)?' (custom)':''); }; if(sid===ADM.icon) b.classList.add('act'); });
+    const ck=mk('label','dchk',P); const cb=mk('input',null,ck); cb.type='checkbox'; ck.append(' Add to their queue instead of replacing it'); const q=c=>send({k:'q',codes:[c],replace:!cb.checked});
+    const g=grp(P,'Forced wins with the selected icon');
+    btn(g,'All 15 cells (normal payout)',()=>{ if(ADM.icon) q('G:'+ADM.icon); }); btn(g,'5 in a row on the middle line',()=>{ if(ADM.icon) q('R:'+ADM.icon); });
+    const g2=grp(P,'Cinematic jackpot (music + skull)'); btn(g2,'Arm for their next spin',()=>{ const sid=ADM.icon; if(!sid) return; const spec=CFG.icons.find(s=>s.id===sid); send({k:'cine',sym:spec||sid}); toast('Armed. It fires when they press spin.'); }); }
+  { const P=panes.Screen; let g=grp(P,'Visit'); btn(g,'KGB visit',()=>send({k:'kgb'})); btn(g,'Party',()=>send({k:'party'})); btn(g,'Shake',()=>send({k:'shake'})); btn(g,'Win sound',()=>send({k:'sound',kind:'jackpot'}));
+    g=grp(P,'Mess with the screen'); btn(g,'Flip upside down (10s)',()=>send({k:'flip',s:10})); btn(g,'Invert colours (8s)',()=>send({k:'invert',s:8})); btn(g,'Glitch (4s)',()=>send({k:'glitch',s:4})); btn(g,'Blackout (6s)',()=>send({k:'blackout',s:6}));
+    g=grp(P,'Control'); btn(g,'Lock / unlock machine',()=>send({k:'lock',on:!cur().lk})); btn(g,'Send to lobby',()=>send({k:'lobby'})); btn(g,'Reload their page',()=>send({k:'reload'})); }
+  { const P=panes.Tools; let g=grp(P,'Coins'); const gi=field(g,'Amount','number'); btn(g,'Gift / take (+/-)',()=>{ const a=+gi.value; if(!a){ toast('Enter an amount'); return; } send({k:'gift',amt:a}); }); btn(g,'Set balance to',()=>{ const a=+gi.value; if(gi.value===''||!(a>=0)){ toast('Enter an amount'); return; } send({k:'setbal',amt:a}); });
+    g=grp(P,'Bet and jackpots'); const bs=mk('select',null,g); BETS.forEach(b=>{ const o=document.createElement('option'); o.value=b; o.textContent=fmt(b); bs.appendChild(o); }); btn(g,'Set their bet',()=>send({k:'bet',amt:+bs.value}));
+    const ts=mk('select',null,g); ['mini','minor','major','mega','grand'].forEach(t=>{ const o=document.createElement('option'); o.value=t; o.textContent=t.toUpperCase(); ts.appendChild(o); }); const ji=field(g,'Pool amount','number'); btn(g,'Set that jackpot pool',()=>{ if(!(+ji.value>0)){ toast('Enter an amount'); return; } send({k:'setjp',tier:ts.value,amt:+ji.value}); });
+    g=grp(P,'Bonuses'); btn(g,'Free spins (10)',()=>send({k:'fs',n:10})); btn(g,'Free spins (25)',()=>send({k:'fs',n:25})); const ws=mk('select',null,g); ['random','cash','fs','mini','minor','major','mega','grand'].forEach(w=>{ const o=document.createElement('option'); o.value=w; o.textContent=w==='random'?'wheel: random':'wheel: '+w; ws.appendChild(o); }); btn(g,'Open wheel',()=>send({k:'wheel',kind:ws.value})); btn(g,'Fill lucky meter',()=>send({k:'meter'})); btn(g,'+500 XP',()=>send({k:'xp',n:500}));
+    g=grp(P,'Luck'); const ps=mk('select',null,g); PRESETS.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=p.name; ps.appendChild(o); }); btn(g,'Set luck preset',()=>send({k:'preset',id:ps.value})); }
+  { const P=panes.Message; const ti=field(P,'Title',null,40), tx=field(P,'Message',null,240); const g=mk('div','admbtns',P); btn(g,'Show on their screen',()=>{ if(!tx.value.trim()){ toast('Write a message first'); return; } send({k:'msg',title:ti.value||'Message',text:tx.value}); });
+    const g2=grp(P,'Quick messages'); [['Hello','I see you.'],['House notice','The house is feeling generous.'],['Warning','Your luck is being reviewed.'],['Congratulations','You have been selected for something special.']].forEach(([t,x])=>btn(g2,t,()=>send({k:'msg',title:t,text:x}))); }
+}
 setTimeout(()=>{ try{ admDebugUI(); }catch(e){} },1500);
 
 /* ============================== INIT ============================== */
