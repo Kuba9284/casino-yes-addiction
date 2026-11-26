@@ -1389,7 +1389,7 @@ function planReels(g,tease){
       if(ext>0){ stop=Math.max(stop,prev+ext); dB=ext; p=5; hot={strong:i>=3||ant[i].scat,ext,scat:ant[i].scat}; }
     }
     prevHot=!!hot; stop=Math.max(stop,start+TP+TA+dB+80);
-    const T=stop-start, dAc=T-TP-TA-dB, vT=(turbo?.040:.030)*H, pull=.2*H, sum=TA/2+dAc+dB/p;
+    const T=stop-start, dAc=T-TP-TA-dB, vT=((ADM.cine&&ADM.cine.running)?.011:turbo?.040:.030)*H, pull=.2*H, sum=TA/2+dAc+dB/p;
     const N=Math.max(5,Math.round((vT*sum-pull)/H));
     let tz=null; if(tease&&tease.reel===i){ tz={idx:tease.alt+1,d:-(tease.alt-tease.row)*H,hold:turbo?TZ_HOLD*.55:TZ_HOLD,glide:turbo?TZ_GLIDE*.7:TZ_GLIDE}; }
     const v=(N*H+(tz?tz.d:0)+pull)/sum;
@@ -1438,7 +1438,7 @@ function runReels(g,tease){
         }
         r.strip.style.transform=`translate3d(0,${y}px,0)`;
         const sp=Math.abs(y-u.lastY)/state.H*60; u.lastY=y;
-        if(!u.landed){ const lv=sp>22?3:sp>11?2:sp>4.5?1:0; if(lv!==u.lv){ u.lv=lv; r.el.classList.remove('mb1','mb2','mb3'); if(lv) r.el.classList.add('mb'+lv); } }
+        if(!u.landed){ let lv=sp>22?3:sp>11?2:sp>4.5?1:0; if(ADM.cine&&ADM.cine.running) lv=Math.min(lv,1); if(lv!==u.lv){ u.lv=lv; r.el.classList.remove('mb1','mb2','mb3'); if(lv) r.el.classList.add('mb'+lv); } }
       }
       if(live) raf=requestAnimationFrame(frame); else resolve();
     }
