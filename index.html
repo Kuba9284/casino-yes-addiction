@@ -2146,6 +2146,8 @@ $('#dBjStreak').onclick=()=>{ bj.streak++; bjRender(); };
 
 /* ============================== ONLINE (experimental) ============================== */
 let icReceive=()=>{};
+const FB_DEFAULT='https://g1c-4b741-default-rtdb.europe-west1.firebasedatabase.app';
+if(!ui.fb) ui.fb=FB_DEFAULT;
 const OL={pm:new Map(),pf:[],mode:'off',db:null,room:null,uid:null,rows:[],feed:[],peers:0,err:'',tab:'bal',t:0,timer:0,poll:0,ready:false};
 const OL_TABS=[['bal','Net worth',r=>r.bal],['best','Biggest win',r=>r.best],['bjWins','BJ wins',r=>r.bjWins],['bjBest','BJ streak',r=>r.bjBest],['lvl','Level',r=>r.lvl]];
 const olNick=()=>String(ui.nick||'').trim();
@@ -2281,13 +2283,13 @@ $('#olBtn').onclick=()=>{ wake(); Snd.click(); openOnline(); };
 olInit(); tkRender(); window.addEventListener('online',async()=>{ if(!OL.db&&OL.mode==='off'){ if(ui.fb){ OL.mode='rest'; olBadge(); olRestPull(); } else { OL.mode='pub'; if(await olPubPull(true)){ olBadge(); } else OL.mode='off'; } } });
 
 /* ============================== ICON EDITOR (debug / admin, shared online) ============================== */
-const IC_KEY='g1c-cfg';
+const IC_KEY='g1c-cfg'; let IC_IMG='';
 let CFG={v:0,icons:[]}; const IC_ORIG={}, IC_DEF=new Set(SYMS);
 const icHex=s=>/^#[0-9a-fA-F]{6}$/.test(s);
 function icSan(s){
   if(!s||typeof s!=='object') return null; const id=String(s.id||'').toUpperCase(); if(!/^[A-Z0-9]{2,12}$/.test(id)||id==='WILD'||id==='SCATTER') return null;
-  const g=Array.from(String(s.glyph||'')).slice(0,4).join(''); if(!g) return null; const cl=(x,d)=>icHex(x)?x:d, nm=(x,lo,hi,d)=>{ x=+x; return isFinite(x)?Math.max(lo,Math.min(hi,x)):d; };
-  const o={id,name:String(s.name||id).slice(0,18),glyph:g,fg:cl(s.fg,'#ffffff'),bg1:cl(s.bg1,'#d8312f'),bg2:cl(s.bg2,'#5b0f12'),shape:['circle','round','gem'].includes(s.shape)?s.shape:'circle'};
+  const g=Array.from(String(s.glyph||'')).slice(0,4).join(''), img=(typeof s.img==='string'&&s.img.length<=26000&&/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+\/=]+$/.test(s.img))?s.img:''; if(!g&&!img) return null; const cl=(x,d)=>icHex(x)?x:d, nm=(x,lo,hi,d)=>{ x=+x; return isFinite(x)?Math.max(lo,Math.min(hi,x)):d; };
+  const o={id,name:String(s.name||id).slice(0,18),glyph:g,fg:cl(s.fg,'#ffffff'),bg1:cl(s.bg1,'#d8312f'),bg2:cl(s.bg2,'#5b0f12'),shape:['circle','round','gem','none'].includes(s.shape)?s.shape:'circle'}; if(img) o.img=img;
   if(s.w!=null&&s.w!=='') o.w=nm(s.w,0,40,8); if(s.p3!=null&&s.p3!=='') o.p3=nm(s.p3,1,1000,5); if(s.p4!=null&&s.p4!=='') o.p4=nm(s.p4,1,3000,15); if(s.p5!=null&&s.p5!=='') o.p5=nm(s.p5,1,10000,50);
   return o;
 }
@@ -2295,9 +2297,10 @@ function icBuild(sym,s){
   const NS='http://www.w3.org/2000/svg', mk=(t,a,p)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; };
   while(sym.firstChild) sym.removeChild(sym.firstChild); const gid='gi-'+s.id;
   const df=mk('defs',{},sym), lg=mk('linearGradient',{id:gid,x1:0,y1:0,x2:0,y2:1},df); mk('stop',{offset:0,'stop-color':s.bg1},lg); mk('stop',{offset:1,'stop-color':s.bg2},lg);
-  if(s.shape==='circle') mk('circle',{cx:50,cy:50,r:44,fill:'url(#'+gid+')',stroke:'#f3d68a','stroke-width':4},sym);
+  if(s.shape==='none'){} else if(s.shape==='circle') mk('circle',{cx:50,cy:50,r:44,fill:'url(#'+gid+')',stroke:'#f3d68a','stroke-width':4},sym);
   else if(s.shape==='round') mk('rect',{x:8,y:8,width:84,height:84,rx:22,fill:'url(#'+gid+')',stroke:'#f3d68a','stroke-width':4},sym);
   else mk('polygon',{points:'50,5 90,30 90,70 50,95 10,70 10,30',fill:'url(#'+gid+')',stroke:'#f3d68a','stroke-width':4,'stroke-linejoin':'round'},sym);
+  if(s.img){ const pad=s.shape==='none'?3:14, im=mk('image',{x:pad,y:pad,width:100-2*pad,height:100-2*pad,preserveAspectRatio:'xMidYMid meet'},sym); im.setAttribute('href',s.img); return; }
   mk('ellipse',{cx:42,cy:26,rx:24,ry:9,fill:'#fff','fill-opacity':.28},sym);
   const n=Array.from(s.glyph).length, t=mk('text',{x:50,y:52,'text-anchor':'middle','dominant-baseline':'central',fill:s.fg,'font-size':n>=4?24:n===3?30:n===2?40:54,'font-weight':900,'font-family':'system-ui,"Apple Color Emoji","Segoe UI Emoji",sans-serif'},sym); t.textContent=s.glyph;
 }
@@ -2321,7 +2324,7 @@ function icApply(){
 function icLoad(){ try{ const c=JSON.parse(localStorage.getItem(IC_KEY)||'null'); if(c&&Array.isArray(c.icons)){ CFG={v:+c.v||0,icons:c.icons.map(icSan).filter(Boolean)}; } }catch(e){} }
 function icSaveLocal(){ try{ localStorage.setItem(IC_KEY,JSON.stringify(CFG)); }catch(e){} }
 icReceive=function(v,json){
-  v=+v||0; if(v<=CFG.v||typeof json!=='string'||json.length>60000) return;
+  v=+v||0; if(v<=CFG.v||typeof json!=='string'||json.length>900000) return;
   try{ const c=JSON.parse(json); if(!c||!Array.isArray(c.icons)) return; CFG={v,icons:c.icons.slice(0,24).map(icSan).filter(Boolean)}; icSaveLocal(); icApply(); try{ if(OL.mode!=='off') toast('Icon pack updated'); }catch(e){} }catch(e){}
 };
 async function icPublish(){
@@ -2331,7 +2334,7 @@ async function icPublish(){
   try{
     if(OL.mode==='artifact') await OL.db.doc('config/icons').set({v:CFG.v,json});
     else if(OL.mode==='rest') await olRest('/cfg.json',{method:'PUT',body:JSON.stringify({v:CFG.v,json})});
-    else if(!await olPubSend({k:'cfg',v:CFG.v,json,nick:OL_ADMIN})) throw new Error('send');
+    else if(json.length>3000){ toast('Image icons need the Firebase database or the artifact to sync'); return; } else if(!await olPubSend({k:'cfg',v:CFG.v,json,nick:OL_ADMIN})) throw new Error('send');
     toast('Icons published to all players');
   }catch(e){ toast(OL.mode==='artifact'?'Publish refused: only the artifact owner/editors can write config':'Could not publish icons'); }
 }
@@ -2349,20 +2352,23 @@ function icEdit(id){
   openModal({title:id?'Edit '+escHtml(id):'Add icon',html:`<div class="icprev"><svg viewBox="0 0 100 100" width="84" height="84"><use id="icPv" href="#s-${id||'SEVEN'}"/></svg><svg id="icPvs" viewBox="0 0 100 100" width="0" height="0" style="position:absolute"><symbol id="s-ICPREVIEW" viewBox="0 0 100 100"></symbol></svg></div>
   <div class="field"><label>ID (A-Z, 0-9)</label><input id="icId" maxlength="12" value="${v('id','')}" ${id?'disabled':''}></div>
   <div class="field"><label>Name</label><input id="icName" maxlength="18" value="${v('name','')}"></div>
+  <div class="field"><label>PNG / image (optional, overrides the icon text)</label><span class="icc"><input id="icFile" type="file" accept="image/png,image/jpeg,image/webp"><button id="icNoImg" type="button">Remove</button></span></div>
   <div class="field"><label>Icon (emoji or 1-4 characters)</label><input id="icGlyph" maxlength="8" value="${v('glyph','')}"></div>
   <div class="field"><label>Colors: text / top / bottom</label><span class="icc"><input id="icFg" type="color" value="${v('fg','#ffffff')}"><input id="icB1" type="color" value="${v('bg1','#d8312f')}"><input id="icB2" type="color" value="${v('bg2','#5b0f12')}"></span></div>
-  <div class="field"><label>Shape</label><select id="icShape">${['circle','round','gem'].map(x=>`<option ${s.shape===x?'selected':''}>${x}</option>`).join('')}</select></div>
+  <div class="field"><label>Shape</label><select id="icShape">${['circle','round','gem','none'].map(x=>`<option ${s.shape===x?'selected':''}>${x}</option>`).join('')}</select></div>
   <div class="field"><label>Appearance weight</label><input id="icW" type="number" min="0" max="40" step="0.5" value="${v('w',8)}"></div>
   <div class="field"><label>Pays (x line bet / 10) for 3 / 4 / 5</label><span class="icc"><input id="icP3" type="number" min="1" value="${v('p3',5)}"><input id="icP4" type="number" min="1" value="${v('p4',15)}"><input id="icP5" type="number" min="1" value="${v('p5',50)}"></span></div>
   <div id="icErr" class="olnote warn"></div>`,
-  actions:[{id:'icsave',label:'Save and publish',cls:'btn',fn:async()=>{ const o=icSan({id:id||$('#icId').value,name:$('#icName').value,glyph:$('#icGlyph').value,fg:$('#icFg').value,bg1:$('#icB1').value,bg2:$('#icB2').value,shape:$('#icShape').value,w:$('#icW').value,p3:$('#icP3').value,p4:$('#icP4').value,p5:$('#icP5').value});
+  actions:[{id:'icsave',label:'Save and publish',cls:'btn',fn:async()=>{ const o=icSan({id:id||$('#icId').value,name:$('#icName').value,img:IC_IMG,glyph:$('#icGlyph').value,fg:$('#icFg').value,bg1:$('#icB1').value,bg2:$('#icB2').value,shape:$('#icShape').value,w:$('#icW').value,p3:$('#icP3').value,p4:$('#icP4').value,p5:$('#icP5').value});
       if(!o){ Snd.err(); $('#icErr').textContent='Need an ID of 2-12 letters/numbers (not WILD/SCATTER) and an icon.'; return; }
       if(!id&&(IC_DEF.has(o.id)||SYMS.includes(o.id))){ Snd.err(); $('#icErr').textContent='That ID already exists. Pick the existing icon to edit it.'; return; }
       CFG.icons=CFG.icons.filter(x=>x.id!==o.id); CFG.icons.push(o); if(CFG.icons.length>24){ Snd.err(); $('#icErr').textContent='Limit is 24 custom icons.'; return; }
       closeModal(); Snd.chest(); await icPublish(); }},
    ...(cur?[{id:'icdel',label:isDef?'Reset to original':'Delete icon',cls:'btn',fn:async()=>{ CFG.icons=CFG.icons.filter(x=>x.id!==id); closeModal(); await icPublish(); }}]:[])],
-  wire:c=>{ const upd=()=>{ const o=icSan({id:'ICPREVIEW',glyph:$('#icGlyph').value||'?',fg:$('#icFg').value,bg1:$('#icB1').value,bg2:$('#icB2').value,shape:$('#icShape').value}); if(!o) return; const sym=document.getElementById('s-ICPREVIEW'); icBuild(sym,o); $('#icPv').setAttribute('href','#s-ICPREVIEW'); };
-    ['icGlyph','icFg','icB1','icB2','icShape'].forEach(k=>{ $('#'+k,c).oninput=upd; $('#'+k,c).onchange=upd; }); upd(); }});
+  wire:c=>{ let imgData=s.img||''; IC_IMG=imgData; const upd=()=>{ IC_IMG=imgData; const o=icSan({id:'ICPREVIEW',img:imgData,glyph:$('#icGlyph').value||(imgData?'':'?'),fg:$('#icFg').value,bg1:$('#icB1').value,bg2:$('#icB2').value,shape:$('#icShape').value}); if(!o) return; const sym=document.getElementById('s-ICPREVIEW'); icBuild(sym,o); $('#icPv').setAttribute('href','#s-ICPREVIEW'); };
+    ['icGlyph','icFg','icB1','icB2','icShape'].forEach(k=>{ $('#'+k,c).oninput=upd; $('#'+k,c).onchange=upd; }); upd();
+    $('#icNoImg',c).onclick=()=>{ imgData=''; $('#icFile',c).value=''; upd(); };
+    $('#icFile',c).onchange=e=>{ const f=e.target.files[0]; if(!f) return; if(f.size>4e6){ toast('Image too large (4 MB max)'); return; } const im=new Image(), u=URL.createObjectURL(f); im.onload=()=>{ const cv=document.createElement('canvas'); cv.width=cv.height=96; const x=cv.getContext('2d'), k=Math.min(96/im.width,96/im.height); x.drawImage(im,(96-im.width*k)/2,(96-im.height*k)/2,im.width*k,im.height*k); URL.revokeObjectURL(u); let d=cv.toDataURL('image/png'); if(d.length>26000) d=cv.toDataURL('image/webp',.8); if(d.length>26000){ toast('Image too detailed, try a simpler one'); return; } imgData=d; upd(); }; im.onerror=()=>toast('Could not read that image'); im.src=u; }; }});
 }
 icLoad(); icApply();
 setTimeout(()=>{ if(olAdmin()&&CFG.icons.length&&OL.mode==='pub'&&Date.now()-(+localStorage.getItem('g1c-cfgpost')||0)>6*3600e3){ try{ localStorage.setItem('g1c-cfgpost',String(Date.now())); }catch(e){} olPubSend({k:'cfg',v:CFG.v,json:JSON.stringify({icons:CFG.icons}),nick:OL_ADMIN}); } },8000);
