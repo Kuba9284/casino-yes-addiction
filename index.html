@@ -592,6 +592,31 @@ body.lite .hbox.act{box-shadow:none}
 .jp.mega{border-color:#c05ab8}
 @media (max-width:560px){ .jp:not(.minor){min-width:0; padding:4px 8px 5px} .jps{gap:5px} .jp span{font-size:clamp(11px,3.4vw,15px)!important} .jp i{letter-spacing:.2em} .jp.minor{display:none} }
 
+#dIcons .icb{display:flex; flex-direction:column; align-items:center; gap:2px; padding:5px 4px} #dIcons .icb small{font-size:9px; letter-spacing:.04em} #dIcons .icb.act{outline:2px solid #ffd35a}
+.icprev{display:flex; justify-content:center; padding:6px 0} .icc{display:flex; gap:6px} .icc input[type=color]{width:42px; height:34px; padding:0; border:0; background:none} .icc input[type=number]{width:70px}
+
+/* ---- admin effects ---- */
+#admMsg{position:fixed; inset:0; z-index:140; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.6); padding:20px}
+#admMsg.on{display:flex} .admcard{max-width:420px; width:100%; background:linear-gradient(#1b1a22,#0d0c12); border:2px solid #b98a2a; border-radius:16px; padding:20px; text-align:center; color:#f6ecd2; box-shadow:0 20px 60px rgba(0,0,0,.7)}
+.admcard b{display:block; font:800 13px/1 var(--ui); letter-spacing:.24em; text-transform:uppercase; color:#e0ad40; margin-bottom:12px} .admcard p{font:600 18px/1.35 var(--ui); margin:0 0 16px}
+#admEye{position:fixed; inset:0; z-index:135; display:none; pointer-events:auto; background:rgba(0,0,0,.35)} #admEye.on{display:block} #admEye canvas{position:absolute; inset:0}
+.eyeflash{position:absolute; inset:0; background:#eaf2ff; opacity:0; pointer-events:none}
+#admBig{position:fixed; left:0; top:50%; transform:translateY(-50%); z-index:131; display:none; font:900 22vw/1 var(--ui); color:#ffe27a; text-shadow:0 0 30px #ff9d00,0 6px 0 #7a3b00; white-space:nowrap; pointer-events:none; font-variant-numeric:tabular-nums}
+#admBig.on{display:block}
+#admSkull{position:fixed; inset:0; z-index:138; display:none; align-items:center; justify-content:center; font-size:62vmin; line-height:1; pointer-events:none; background:rgba(0,0,0,.45); animation:cineShake .09s infinite}
+#admSkull.on{display:flex}
+html.cine-bw #stage, html.cine-bw #bj, html.cine-bw #welcome{filter:grayscale(1) brightness(.5) contrast(1.2); animation:cineShake .09s infinite}
+@keyframes cineShake{0%{transform:translate(0,0)}25%{transform:translate(-7px,4px) rotate(-.3deg)}50%{transform:translate(6px,-5px) rotate(.3deg)}75%{transform:translate(-4px,-6px)}100%{transform:translate(5px,5px) rotate(-.2deg)}}
+.admlist{display:flex; flex-direction:column; gap:8px} .admrow{display:grid; grid-template-columns:1fr auto; gap:2px 10px; text-align:left; padding:10px 12px; border-radius:12px} .admrow b{font-size:16px} .admrow i{font-style:normal; opacity:.7; justify-self:end} .admrow span{font-size:12px; opacity:.8} .admrow em{font-style:normal; justify-self:end; font-weight:700}
+.admhead b{display:block; font-size:20px} .admhead span{font-size:12px; opacity:.8}
+.admmirror{margin:10px 0; padding:10px; border-radius:14px; background:#120b1c; border:2px solid #b98a2a} .admtop{display:flex; flex-wrap:wrap; gap:4px 12px; font-size:12px; margin-bottom:8px} .admtop span{opacity:.9}
+.admgrid{display:grid; grid-template-columns:repeat(5,1fr); gap:3px; background:#000; padding:4px; border-radius:8px} .admcell{aspect-ratio:1; background:linear-gradient(#2a1d3a,#160e22); border-radius:6px; display:flex; align-items:center; justify-content:center} .admcell svg{width:84%; height:84%}
+.admq{font-size:11px; opacity:.8; margin-top:6px}
+.admview h4,.admacts h4{margin:12px 0 4px; font:800 11px/1 var(--ui); letter-spacing:.18em; text-transform:uppercase; color:#e0ad40}
+.admpred{display:flex; flex-direction:column; gap:2px} .admp{display:grid; grid-template-columns:24px 1fr auto; gap:8px; padding:4px 8px; border-radius:8px; font-size:13px; background:rgba(255,255,255,.05)} .admp.win{background:rgba(40,160,80,.28)} .admp.part{background:rgba(200,170,40,.18)} .admp.lose{background:rgba(190,50,50,.18)} .admp em{font-style:normal; font-weight:700}
+.admnet{margin-top:6px; font-weight:800; text-align:right} .admnet.up{color:#6fe39a} .admnet.dn{color:#ff8a8a}
+.admacts{display:flex; flex-wrap:wrap; gap:6px} .admacts h4{flex-basis:100%} .admacts input,.admacts select{flex:1 1 140px; min-width:0; padding:8px; border-radius:8px; border:1px solid #b98a2a; background:#120b1c; color:#fff}
+
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -846,6 +871,10 @@ body.lite .hbox.act{box-shadow:none}
   <h3>Bonuses</h3>
   <div class="dg"><button id="dWheelNow">Open wheel now</button><button id="dMeter">Fill lucky meter</button><button id="dFsNow">Free spins now (10)</button><button id="dFs5">Free spins now (25)</button><button id="dGift">Make gift ready</button><button id="dXp">+ 500 XP</button></div>
   <div class="dsl"><span>Wheel result</span><select id="dWheelSel"><option value="random">random</option><option value="cash">cash</option><option value="fs">free spins</option><option value="mini">mini jackpot</option><option value="minor">minor jackpot</option><option value="major">major jackpot</option><option value="mega">MEGA jackpot</option><option value="grand">GRAND jackpot</option></select><span></span></div>
+  <h3>Admin control</h3>
+  <div class="dg" id="dAdm"></div>
+  <h3>Icons</h3>
+  <div class="dg" id="dIcons"></div>
   <h3>Bankroll</h3>
   <div class="dg"><input type="number" id="dBalIn" min="0" step="10000" value="1000000"><button id="dBalSet">Set balance</button>
     <button id="dAdd1">+ $100,000</button><button id="dAdd10">+ $1,000,000</button><button id="dReset">Reset game</button><button id="dBroke">Drain to $5</button></div>
@@ -877,12 +906,16 @@ const PAY={
   SEVEN:{3:90,4:340,5:1800}, DIAMOND:{3:45,4:180,5:700}, STAR:{3:32,4:120,5:450}, CROWN:{3:26,4:90,5:340}, DICE:{3:19,4:66,5:240}, CLOVER:{3:16,4:55,5:200},
   HORSESHOE:{3:13,4:46,5:165}, BAR:{3:12,4:42,5:150}, BELL:{3:9,4:29,5:90}, MELON:{3:7,4:23,5:72}, PLUM:{3:6,4:20,5:64}, LEMON:{3:5,4:16,5:50}, CHERRY:{2:1.5,3:3,4:12,5:40}
 };
-for(const s in PAY) for(const k in PAY[s]) PAY[s][k]=Math.round(PAY[s][k]*1.2);
+for(const s in PAY) for(const k in PAY[s]) PAY[s][k]=Math.round(PAY[s][k]*1.1);
 const SC_PAY={3:2,4:10,5:50}, SC_SPINS={3:10,4:15,5:20};
 const LINES=[[1,1,1,1,1],[0,0,0,0,0],[2,2,2,2,2],[0,1,2,1,0],[2,1,0,1,2],[0,0,1,2,2],[2,2,1,0,0],[1,0,0,0,1],[1,2,2,2,1],[1,0,1,2,1]];
 const HI=['SEVEN','DIAMOND'];
 const WILD_REELS=[1,2,3];
-const rnd=n=>Math.floor(Math.random()*n);
+let RS=(Math.random()*4294967296)>>>0, VSEED=(Math.random()*4294967296)>>>0;
+function R(){ RS=(RS+0x6D2B79F5)>>>0; let t=RS; t=Math.imul(t^t>>>15,t|1); t^=t+Math.imul(t^t>>>7,t|61); return ((t^t>>>14)>>>0)/4294967296; }
+const rnd=n=>Math.floor(R()*n);
+const vSym=i=>vis(()=>rndSym(null,i));
+function vis(fn){ const a=RS; RS=VSEED; try{ return fn(); } finally{ VSEED=RS; RS=a; } }
 function rndSym(ex,reel,fs){
   const pool=[]; let tot=0;
   for(const s of SYMS){
@@ -893,7 +926,7 @@ function rndSym(ex,reel,fs){
     if(s==='SCATTER') w*=cfg.scatMult*(fs?1.3:1);
     pool.push([s,w]); tot+=w;
   }
-  let x=Math.random()*tot;
+  let x=R()*tot;
   for(const [s,w] of pool){ x-=w; if(x<0) return s; }
   return 'CHERRY';
 }
@@ -933,8 +966,8 @@ function nearMiss(sym,k){
   }
   return {g:randGrid(NOSPEC),locked:new Set()};
 }
-function teasePick(){ const x=Math.random();
-  if(x<.84){ const y=Math.random(); return [2,y<.45?'SEVEN':y<.7?'DIAMOND':y<.85?'CROWN':y<.93?'BAR':'CLOVER']; }
+function teasePick(){ const x=R();
+  if(x<.84){ const y=R(); return [2,y<.45?'SEVEN':y<.7?'DIAMOND':y<.85?'CROWN':y<.93?'BAR':'CLOVER']; }
   if(x<.96) return [3,['BAR','CLOVER'][rnd(2)]];
   return [4,['BAR','CLOVER'][rnd(2)]]; }
 function nearMissScatter(){
@@ -943,7 +976,7 @@ function nearMissScatter(){
   return {g,locked};
 }
 const LDW_COMBOS=[['CHERRY',2,45],['CHERRY',3,28],['LEMON',3,15],['PLUM',3,12]];
-function pickCombo(){ let x=Math.random()*100; for(const c of LDW_COMBOS){ x-=c[2]; if(x<0) return c; } return LDW_COMBOS[0]; }
+function pickCombo(){ let x=R()*100; for(const c of LDW_COMBOS){ x-=c[2]; if(x<0) return c; } return LDW_COMBOS[0]; }
 function injectSmall(g0,bet,locked){
   locked=locked||new Set();
   for(let k=0;k<250;k++){
@@ -975,7 +1008,7 @@ function buildForced(mode){
     case 'nearmiss_scatter': return nearMissScatter();
     case 'wild': { const g=randGrid(NOSPEC), L=LINES[rnd(10)]; [0,1,3].forEach(r=>g[r][L[r]]='SEVEN'); g[4][L[4]]=rndSym(['SEVEN',...NOSPEC],4); g[2][rnd(3)]='WILD'; return {g}; }
     case 'freespins': case 'freespins5': {
-      const g=randGrid(NOSPEC), rs=mode==='freespins5'?[0,1,2,3,4]:[0,1,2,3,4].sort(()=>Math.random()-.5).slice(0,3);
+      const g=randGrid(NOSPEC), rs=mode==='freespins5'?[0,1,2,3,4]:[0,1,2,3,4].sort(()=>R()-.5).slice(0,3);
       rs.forEach(r=>{ g[r][rnd(3)]='SCATTER'; }); return {g};
     }
   }
@@ -987,18 +1020,18 @@ function decideOutcome(bet,force,opts){
   else{
     let mode=force&&force.mode;
     if(!mode&&!fs){
-      const r=Math.random();
-      if(r<cfg.boost){ const q=Math.random(); mode=q<cfg.jpShare?'jackpot':q<.3?'mega':'big'; }
-      else if(r<cfg.boost+cfg.bonus) mode=Math.random()<.12?'freespins5':'freespins';
+      const r=R();
+      if(r<cfg.boost){ const q=R(); mode=q<cfg.jpShare?'jackpot':q<.3?'mega':'big'; }
+      else if(r<cfg.boost+cfg.bonus) mode=R()<.12?'freespins5':'freespins';
     }
     if(!mode){
       g=randGrid(null,fs);
       if(!fs&&evalFull(g,bet).total<bet){
-        if(Math.random()<cfg.assist) mode=['small','small','medium','medium','wild'][rnd(5)];
-        else if(Math.random()<cfg.nearMiss){ const q=Math.random(); mode=q<.6?'nearmiss':q<.8?'nearmiss_gem':'nearmiss_scatter'; }
+        if(R()<cfg.assist) mode=['small','small','medium','medium','wild'][rnd(5)];
+        else if(R()<cfg.nearMiss){ const q=R(); mode=q<.6?'nearmiss':q<.8?'nearmiss_gem':'nearmiss_scatter'; }
       }
     }
-    if(mode){ const o=buildForced(mode); g=o.g; locked=o.locked; kind=mode; tease=o.tease||null; if(tease&&!(force&&force.mode)&&Math.random()>.65) tease=null; }
+    if(mode){ const o=buildForced(mode); g=o.g; locked=o.locked; kind=mode; tease=o.tease||null; if(tease&&!(force&&force.mode)&&R()>.65) tease=null; }
   }
   let ev=evalFull(g,bet);
   if((fs?ev.lineTotal===0:ev.total===0)&&(cfg.disguise||fs)&&kind!=='custom'){ g=injectSmall(g,bet,locked); ev=evalFull(g,bet); }
@@ -1024,17 +1057,20 @@ function anticipation(g){
 }
 const WEDGES=[
  {t:'cash',v:3,l:'x3',w:14},{t:'cash',v:6,l:'x6',w:12},{t:'fs',v:6,l:'6 FREE',w:8},{t:'cash',v:4,l:'x4',w:13},
- {t:'jp',k:'mini',l:'MINI',w:3},{t:'jp',k:'minor',l:'MINOR',w:1.1},{t:'cash',v:10,l:'x10',w:9},{t:'fs',v:8,l:'8 FREE',w:5},{t:'cash',v:5,l:'x5',w:14},
+ {t:'jp',k:'mini',l:'MINI',w:5},{t:'jp',k:'minor',l:'MINOR',w:1.6},{t:'cash',v:10,l:'x10',w:9},{t:'fs',v:8,l:'8 FREE',w:5},{t:'cash',v:5,l:'x5',w:14},
  {t:'cash',v:20,l:'x20',w:4},{t:'cash',v:8,l:'x8',w:10},{t:'fs',v:10,l:'10 FREE',w:2.5},{t:'cash',v:12,l:'x12',w:6},
-  {t:'jp',k:'major',l:'MAJOR',w:.3},{t:'jp',k:'mega',l:'MEGA',w:.03},{t:'cash',v:6,l:'x6',w:12},{t:'cash',v:30,l:'x30',w:1.5},{t:'jp',k:'grand',l:'GRAND',w:.002}];
+  {t:'jp',k:'major',l:'MAJOR',w:.4},{t:'jp',k:'mega',l:'MEGA',w:.05},{t:'cash',v:6,l:'x6',w:12},{t:'cash',v:30,l:'x30',w:1.5},{t:'jp',k:'grand',l:'GRAND',w:.006}];
+const JP_ODDS={mini:74,minor:20,major:5,mega:.9,grand:.1};
+function mysteryJp(bet){ if(R()>=(bet/5000)/2000) return null; let x=R()*100.0; for(const k in JP_ODDS){ x-=JP_ODDS[k]; if(x<0) return k; } return 'mini'; }
 function pickWedge(kind){
   let pool=WEDGES.map((w,i)=>({w,i}));
   if(kind&&kind!=='random'){ const f=pool.filter(p=>kind==='cash'?p.w.t==='cash':kind==='fs'?p.w.t==='fs':p.w.t==='jp'&&p.w.k===kind); if(f.length) pool=f; }
-  const tot=pool.reduce((a,p)=>a+p.w.w,0); let x=Math.random()*tot;
+  const tot=pool.reduce((a,p)=>a+p.w.w,0); let x=R()*tot;
   for(const p of pool){ x-=p.w.w; if(x<0) return p.i; } return pool[0].i;
 }
 const fsMult=n=>Math.min(8,n);
 // ==ENGINE END==
+const vr=n=>Math.floor(Math.random()*n);
 
 /* ====================== LUCK PRESETS ====================== */
 const PRESETS=[
@@ -1064,7 +1100,7 @@ const Snd=(()=>{
   const M={on:false,mode:'base',step:0,next:0,timer:0};
   const MC={base:{bpm:112,rest:.34,vel:.9},bj:{bpm:94,rest:.5,vel:.8},fs:{bpm:152,rest:.12,vel:1.1}};
   const mtof=m=>440*Math.pow(2,(m-69)/12);
-  const musBase=()=>(mmuted||hushed)?0:mvol*.55;
+  let fadeMul=1; const musBase=()=>(mmuted||hushed)?0:mvol*.55*fadeMul;
   const sfxBase=()=>hushed?0:1;
   function init(){
     if(ctx){ if(ctx.state==='suspended') ctx.resume(); return; }
@@ -1173,7 +1209,9 @@ const Snd=(()=>{
   function startTimer(){ if(M.timer||!ctx) return; M.next=ctx.currentTime+.08; M.step=0; jLast=60; M.timer=setInterval(sched,70); }
   function duck(level,secs){ if(!ctx) return; mus.gain.cancelScheduledValues(ctx.currentTime); mus.gain.setTargetAtTime(musBase()*level,ctx.currentTime,.05); clearTimeout(duckTimer); duckTimer=setTimeout(unduck,secs*1000); }
   function unduck(){ if(!ctx) return; clearTimeout(duckTimer); mus.gain.setTargetAtTime(musBase(),ctx.currentTime,.4); }
-  const api={init,setVol,setMuted,setMusicVol,setMusicMuted,hush,duck,
+  function fade(to,secs){ fadeMul=to; if(!ctx) return; const t=ctx.currentTime; mus.gain.cancelScheduledValues(t); mus.gain.setValueAtTime(mus.gain.value,t); mus.gain.linearRampToValueAtTime(musBase(),t+Math.max(.02,secs)); }
+  const api={init,setVol,setMuted,setMusicVol,setMusicMuted,hush,duck,fade,
+    node(){ return ctx?{ctx,out:master}:null; },
     get muted(){return muted}, get ready(){return !!ctx},
     setAlarmVol(v){ alarmVol=v; },
     music(on){ M.on=on; if(!ctx) return; if(on) startTimer(); else if(M.timer){ clearInterval(M.timer); M.timer=0; } },
@@ -1276,7 +1314,7 @@ const J={mini:61248,minor:210000,major:824115,mega:7400000,grand:128490318}, SEE
 
 /* ---------- persistence ---------- */
 const SAVE='99g1c-v1';
-function save(){ try{ olSchedule(); }catch(e){} try{ localStorage.setItem(SAVE,JSON.stringify({bal:state.bal,xp:state.xp,level:state.level,meter:state.meter,ach:[...ACH_DONE],S,ui,mDay:state.mDay,mBase:state.mBase,mDone:state.mDone,preset:cfgPreset,econ:3,ld:state.lastDaily,ds:state.dayStreak})); }catch(e){} }
+function save(){ try{ olSchedule(); }catch(e){} try{ livePush(); }catch(e){} try{ localStorage.setItem(SAVE,JSON.stringify({bal:state.bal,xp:state.xp,level:state.level,meter:state.meter,ach:[...ACH_DONE],S,ui,mDay:state.mDay,mBase:state.mBase,mDone:state.mDone,preset:cfgPreset,econ:3,ld:state.lastDaily,ds:state.dayStreak})); }catch(e){} }
 function load(){
   try{ const d=JSON.parse(localStorage.getItem(SAVE)||'null'); if(!d) return;
     if(typeof d.bal==='number') state.bal=state.balShown=d.bal; state.xp=d.xp||0; state.level=d.level||1; state.meter=d.meter||0;
@@ -1296,7 +1334,7 @@ for(let i=0;i<5;i++){ const el=document.createElement('div'); el.className='reel
 for(let k=0;k<15;k++){ const c=document.createElement('div'); c.className='cell'; cellsEl.appendChild(c); }
 const cellEl=(reel,row)=>cellsEl.children[row*5+reel];
 const reelRect=i=>reels[i].el.getBoundingClientRect();
-function showStatic(){ reels.forEach(r=>{ r.strip.innerHTML=[rndSym(null,r.i),...state.grid[r.i],rndSym(null,r.i)].map(symHTML).join(''); r.strip.style.transform=`translate3d(0,${-state.H}px,0)`; r.el.classList.remove('mb1','mb2','mb3'); decorate(r.i,state.grid); }); }
+function showStatic(){ reels.forEach(r=>{ r.strip.innerHTML=[vSym(r.i),...state.grid[r.i],vSym(r.i)].map(symHTML).join(''); r.strip.style.transform=`translate3d(0,${-state.H}px,0)`; r.el.classList.remove('mb1','mb2','mb3'); decorate(r.i,state.grid); }); }
 function decorate(i,g){ g[i].forEach((s,w)=>{ const el=reels[i].strip.children[w+1]; if(el&&s==='SCATTER') el.classList.add('scat'); }); }
 function layout(){
   const mid=$('#mid'), small=innerWidth<600, cp=small?10:18, gap=small?3:5, armW=small?42:66;
@@ -1318,29 +1356,29 @@ function reelY(u,t){
   yb+=u.v*TA/2; tt-=TA; if(tt<u.dAc) return yb+u.v*tt;
   yb+=u.v*u.dAc; tt-=u.dAc; const k=Math.min(1,tt/u.dB); return yb+(u.v*u.dB/u.p)*(1-Math.pow(1-k,u.p));
 }
-const TZ_HOLD=700, TZ_GLIDE=420;
+const TZ_HOLD=620, TZ_GLIDE=420;
 function planReels(g,tease){
-  const H=state.H, turbo=state.turbo, ant=anticipation(g); state.ant=ant;
+  const H=state.H, turbo=state.turbo||!!CINE_MS, ant=anticipation(g); state.ant=ant;
   const gap=turbo?110:270, base=turbo?[380,500,620,740,860]:[900,1150,1400,1650,1900]; const plan=[]; let prev=0, prevHot=false;
   for(let i=0;i<5;i++){
-    const start=i*(turbo?35:75); let stop=Math.max(base[i],prev+gap), dB=turbo?340:680, p=3, hot=null;
-    if(ui.anticip&&ant[i].a){
+    const start=i*(turbo?35:75); let stop=Math.max(base[i],prev+gap), dB=turbo?340:680, p=3, hot=null; if(CINE_MS) stop=CINE_MS+i*130;
+    if(ui.anticip&&ant[i].a&&!CINE_MS){
       const isT=tease&&tease.reel===i;
-      let ext=turbo?(isT?1500:800):(ant[i].scat?2100:isT?[0,0,3000,3600,4300][i]:[0,0,1500,2000,2700][i]); if(prevHot&&!isT) ext*=.7;
-      if(ext>0){ stop=Math.max(stop,prev+ext); dB=ext; p=isT?9:5; hot={strong:i>=3||ant[i].scat,ext,scat:ant[i].scat}; }
+      let ext=turbo?800:(ant[i].scat?2100:[0,0,1500,2000,2700][i]); if(prevHot&&!isT) ext*=.7;
+      if(ext>0){ stop=Math.max(stop,prev+ext); dB=ext; p=5; hot={strong:i>=3||ant[i].scat,ext,scat:ant[i].scat}; }
     }
     prevHot=!!hot; stop=Math.max(stop,start+TP+TA+dB+80);
     const T=stop-start, dAc=T-TP-TA-dB, vT=(turbo?.040:.030)*H, pull=.2*H, sum=TA/2+dAc+dB/p;
     const N=Math.max(5,Math.round((vT*sum-pull)/H));
-    let tz=null; if(tease&&tease.reel===i&&hot){ tz={idx:tease.alt+1,d:-(tease.alt-tease.row)*H,hold:turbo?TZ_HOLD*.55:TZ_HOLD,glide:turbo?TZ_GLIDE*.7:TZ_GLIDE}; }
+    let tz=null; if(tease&&tease.reel===i){ tz={idx:tease.alt+1,d:-(tease.alt-tease.row)*H,hold:turbo?TZ_HOLD*.55:TZ_HOLD,glide:turbo?TZ_GLIDE*.7:TZ_GLIDE}; }
     const v=(N*H+(tz?tz.d:0)+pull)/sum;
     plan.push({i,start,stop,T,dAc,dB,p,hot,N,v,pull,tz,y0:-(1+N)*H,yEnd:-H}); prev=stop+(tz?tz.hold+tz.glide:0);
   }
   return plan;
 }
 function loadStrip(r,u,final){
-  const old=state.lastGrid?state.lastGrid[r.i]:state.grid[r.i], arr=[rndSym(null,r.i),...final];
-  for(let k=0;k<u.N-3;k++) arr.push(rndSym(null,r.i)); arr.push(...old,rndSym(null,r.i));
+  const old=state.lastGrid?state.lastGrid[r.i]:state.grid[r.i], arr=[vSym(r.i),...final];
+  for(let k=0;k<u.N-3;k++) arr.push(vSym(r.i)); arr.push(...old,vSym(r.i));
   r.strip.innerHTML=arr.map(symHTML).join('');
 }
 let hotTimer=0;
@@ -1367,7 +1405,7 @@ function runReels(g,tease){
       const now=gtime(); let live=false;
       for(const r of reels){ const u=r.run; if(!u||u.done) continue; live=true; let y;
         if(u.landed){ const s=Math.min(1,(now-u.landT)/SETTLE); y=u.yEnd+.1*state.H*Math.sin(s*Math.PI)*(1-s);
-          if(s>=1){ u.done=true; r.strip.innerHTML=[rndSym(null,r.i),...g[r.i],rndSym(null,r.i)].map(symHTML).join(''); r.strip.style.transform=`translate3d(0,${-state.H}px,0)`; r.el.classList.remove('mb1','mb2','mb3'); decorate(r.i,g); continue; } }
+          if(s>=1){ u.done=true; r.strip.innerHTML=[vSym(r.i),...g[r.i],vSym(r.i)].map(symHTML).join(''); r.strip.style.transform=`translate3d(0,${-state.H}px,0)`; r.el.classList.remove('mb1','mb2','mb3'); decorate(r.i,g); continue; } }
         else if(u.quick){ const k=Math.max(0,Math.min(1,(now-u.quick.t0)/u.quick.dur)); y=u.quick.y0+(u.yEnd-u.quick.y0)*easeOut3(k); if(k>=1) land(r,now); }
         else{ const t=now-u.base-u.start;
           if(u.tz&&t>=u.T){
@@ -1452,7 +1490,7 @@ function sizeFx(){ dpr=Math.min(LITE?1:BAL?1.5:2,devicePixelRatio||1); fx.width=
 sizeFx(); addEventListener('resize',sizeFx);
 function ensureFx(){ if(!fxOn){ fxOn=true; requestAnimationFrame(fxFrame); } }
 function burst(n,x,y,power,kind){ for(let i=0;i<n;i++){ const a=Math.random()*Math.PI*2, sp=(.3+Math.random())*power;
-  parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-power*.7,g:.32+Math.random()*.12,r:kind==='spark'?3+Math.random()*4:kind==='conf'?5+Math.random()*5:6+Math.random()*7,rot:Math.random()*6,vr:(Math.random()-.5)*.5,life:1,d:kind==='spark'?.03:.0045+Math.random()*.003,kind,c:['#ff4d6d','#ffd23f','#3ddc97','#4cc9f0','#c77dff','#fff'][rnd(6)]}); } ensureFx(); }
+  parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-power*.7,g:.32+Math.random()*.12,r:kind==='spark'?3+Math.random()*4:kind==='conf'?5+Math.random()*5:6+Math.random()*7,rot:Math.random()*6,vr:(Math.random()-.5)*.5,life:1,d:kind==='spark'?.03:.0045+Math.random()*.003,kind,c:['#ff4d6d','#ffd23f','#3ddc97','#4cc9f0','#c77dff','#fff'][vr(6)]}); } ensureFx(); }
 function coinRain(ms){ rain=performance.now()+ms; ensureFx(); }
 function fountain(ms){ fount=performance.now()+ms; ensureFx(); }
 function bolt(x1,y1,x2,y2,col){ const pts=[[x1,y1]], n=11; for(let i=1;i<n;i++){ const t=i/n; pts.push([x1+(x2-x1)*t+(Math.random()-.5)*70*(1-Math.abs(t-.5)),y1+(y2-y1)*t]); } pts.push([x2,y2]); bolts.push({pts,life:1,col}); ensureFx(); }
@@ -1476,8 +1514,9 @@ function fxFrame(now){
   if(parts.length||bolts.length||now<rain||now<fount) requestAnimationFrame(fxFrame); else { fxOn=false; fc.clearRect(0,0,innerWidth,innerHeight); }
 }
 let shakeId=0;
-function shake(level){ const k=level*ui.shake*(reduced?.25:1); if(k<=0) return; const el=$(game==='bj'?'#bj':'#stage'), id=++shakeId, amp=9*k, dur=420+620*level, t0=performance.now();
-  (function s(now){ if(id!==shakeId) return; const u=(now-t0)/dur; if(u>=1){ el.style.transform=''; return; } const a=Math.pow(1-u,1.3)*amp;
+function shake(level){ const k=level*ui.shake*(reduced?.25:1); if(k<=0) return; const el=$(game==='bj'?'#bj':'#stage'), id=++shakeId, amp=9*k, dur=420+620*level, t0=performance.now(), rod=$('#arm .ar-rod'), ball=$('#arm .ar-ball');
+  (function s(now){ if(id!==shakeId) return; const u=(now-t0)/dur; if(u>=1){ el.style.transform=''; if(rod){ rod.style.rotate=''; ball.style.translate=''; } return; } const a=Math.pow(1-u,1.3)*amp;
+    if(rod&&game==='slots'){ rod.style.rotate=((Math.random()*2-1)*a*.45)+'deg'; ball.style.translate=((Math.random()*2-1)*a*.7)+'px '+((Math.random()*2-1)*a*.5)+'px'; }
     el.style.transform=`translate(${(Math.random()*2-1)*a}px,${(Math.random()*2-1)*a}px) rotate(${(Math.random()*2-1)*a*.05}deg)`; requestAnimationFrame(s); })(t0); }
 function flash(){ const f=$('#flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
 function ring(){ const e=$('#ring'); e.classList.remove('go'); void e.offsetWidth; e.classList.add('go'); }
@@ -1533,7 +1572,7 @@ function splash(title,sub,amt,ms,count){
 }
 async function present(out,pay,bet,o){
   o=o||{}; const tok=state.presId, tier=tierOf(pay,bet), T=TIERS[tier], title=T[0], lvl=o.short?Math.min(T[1],1.5):T[1], wins=out.ev.wins, K=o.short?.55:1;
-  const ban=$('#banner'); $('#banner .tier').textContent=title; $('#banner .amt').textContent=fmt(0); $('#banner .bsub').textContent=o.mult>1?'x'+o.mult+' multiplier':SUBS[rnd(SUBS.length)];
+  const ban=$('#banner'); $('#banner .tier').textContent=title; $('#banner .amt').textContent=fmt(0); $('#banner .bsub').textContent=o.mult>1?'x'+o.mult+' multiplier':SUBS[vr(SUBS.length)];
   ban.className='show t-'+tier; void ban.offsetWidth; hl(wins.flatMap(cellsOf).concat(scatCells(out))); flash(); shake(lvl); Snd.win(tier); cab.classList.add('fast'); jelly(cab,'jig');
   const c=frameCenter(); burst(Math.round(8+lvl*14),c.x,c.y,6+lvl*3,'spark');
   if(lvl>=.65) burst(Math.round(10+lvl*22),c.x,c.y,9+lvl*3,'coin'); if(lvl>=1) coinRain(1200+lvl*1300);
@@ -1550,12 +1589,12 @@ async function present(out,pay,bet,o){
   await sleep(450); if(tok!==state.presId) return; ban.className='';
   const lines=o.short?wins.slice(0,3):wins, reps=o.noCycle?0:(o.short?1:4);
   for(let rep=0;rep<reps;rep++) for(const w of lines){ if(tok!==state.presId) return; drawLine(w); hl(cellsOf(w)); const cap=$('#cap');
-    cap.textContent=`Line ${w.line+1} · ${w.count} ${NAMES[w.sym]} · ${fmt(w.amount*(o.mult||1))}`; cap.classList.add('show'); Snd.tick(.5); await sleep(o.short?650:1050); }
+    cap.textContent=`Line ${w.line+1} · ${w.count} ${NAMES[w.sym]||w.sym} · ${fmt(w.amount*(o.mult||1))}`; cap.classList.add('show'); Snd.tick(.5); await sleep(o.short?650:1050); }
   if(tok===state.presId){ $('#lines').innerHTML=''; $('#cap').classList.remove('show'); $$('.cell').forEach(c=>c.className='cell'); $$('.sym.pop').forEach(e=>e.classList.remove('pop')); }
 }
 
 /* ============================== SPIN FLOW ============================== */
-function takeForce(){ const f=dbg.force; if(f&&!dbg.sticky){ dbg.force=null; renderDebugForce(); } return f; }
+function takeForce(){ const a=admTakeForce(); if(a) return a; const f=dbg.force; if(f&&!dbg.sticky){ dbg.force=null; renderDebugForce(); } return f; }
 async function expandPhase(out){
   const list=out.ev.exp; if(!list.length) return; const T=state.turbo?.5:1;
   for(const i of list){
@@ -1575,7 +1614,9 @@ async function spinCore(out){
 function showBroke(){ openModal({title:'Out of credits',html:`<p>Your balance is below the minimum bet of ${fmt(BETS[0])}.</p>`,actions:[{id:'reload',label:'Reload '+fmt(START),cls:'btn',fn:()=>{ state.bal=START; state.balShown=START; state.sessionStart=START; setBet(Math.min(state.bet,BETS[2])); closeModal(); renderHUD(); renderDebug(); save(); }}]}); }
 async function doSpin(){
   if(away||welcomeOpen()) return;
-  if(state.busy){ quickStop(); return; }
+  if(state.busy){ if(!(ADM.cine&&ADM.cine.running)) quickStop(); return; }
+  if(ADM.lock){ toast('This machine is locked'); Snd.err(); return; }
+  if(ADM.cine&&!ADM.cine.running){ admCineSpin(); return; }
   wake(); clearTimeout(state.autoT); flushLevels();
   if(state.breakUntil>Date.now()){ toast('Break active: '+Math.ceil((state.breakUntil-Date.now())/1000)+'s left'); Snd.err(); return; }
   if(ui.lossLimit>0&&state.sessionStart-state.bal>=ui.lossLimit){ Snd.err(); stopAuto(); openResponsible(true); return; }
@@ -1591,7 +1632,7 @@ async function settle(out,bet){
   if(pay>0) S.wins++; if(out.ldw) S.ldw++; if(near) S.near++; if(net<0) S.lost++; if(pay>S.best) S.best=pay; S.bestX=Math.max(S.bestX,pay/bet); S.wilds+=ev.exp.length; if(pay>=bet*5) olFeed('slots',pay,bet);
   if(ev.wins.some(w=>w.sym==='SEVEN')) S.sevens++;
   S.log.unshift({n:state.spinNo,bet,pay,net,tag:out.kind+(out.ldw?' ldw':'')+(near?' near':'')}); S.log.length=Math.min(S.log.length,50);
-  const bonusFS=ev.spins>0, wheelDue=state.meter>=1&&state.auto, bonus=bonusFS||wheelDue;
+  const bonusFS=ev.spins>0, wheelDue=state.meter>=1&&state.auto, mysJp=(!bonusFS&&!wheelDue)?(ADM.pj?(()=>{ const t=ADM.pj; ADM.pj=null; return t; })():mysteryJp(bet)):null, bonus=bonusFS||wheelDue||!!mysJp;
   if(!bonus){ state.busy=false; state.lastWin=pay>0?{pay,bet}:null; setSpinUI(); } renderHUD(); renderDebug(); renderMeters(); initMissions(); checkAch(); save();
   let p=Promise.resolve(), wait=900;
   if(pay>0){ p=present(out,pay,bet,{noCycle:bonus}); wait=bonus?600:{win:1700,nice:2600,big:5200,super:7000,mega:8800,jackpot:11500}[tierOf(pay,bet)]; }
@@ -1599,6 +1640,7 @@ async function settle(out,bet){
   if(bonus){ await p;
     if(bonusFS){ await freeSpins(ev.spins,bet); }
     if(wheelDue){ await wheelBonus(bet); }
+    else if(mysJp){ toast('MYSTERY JACKPOT!'); await wheelBonus(bet,mysJp); }
     state.busy=false; state.lastWin=null; setSpinUI(); checkAch(); save(); flushLevels(); }
   maybeReality();
   if(state.auto){
@@ -1648,10 +1690,10 @@ async function spinWheel(idx){
     const cur=Math.round((((-wRot)%(Math.PI*2))+Math.PI*2)%(Math.PI*2)/A)%n; if(cur!==last){ last=cur; Snd.wheelTick(); const p=$('.wptr'); p.classList.remove('tick'); void p.offsetWidth; p.classList.add('tick'); }
     if(k<1) requestAnimationFrame(s); else res(); })(); });
 }
-async function wheelBonus(bet){
-  state.meter=0; renderMeters(); S.wheels++; Snd.setMode('fs'); drawWheel(); wRot=0; wcv.style.transform='rotate(0rad)'; $('#wres').textContent='Spin the wheel'; $('#whub').hidden=false; $('#wheelOv').classList.add('open'); Snd.fsStart();
+async function wheelBonus(bet,force){
+  if(!force) state.meter=0; renderMeters(); S.wheels++; Snd.setMode('fs'); drawWheel(); wRot=0; wcv.style.transform='rotate(0rad)'; $('#wres').textContent='Spin the wheel'; $('#whub').hidden=false; $('#wheelOv').classList.add('open'); Snd.fsStart();
   await new Promise(res=>{ const go=()=>{ clearTimeout(t); $('#whub').onclick=null; res(); }; const t=setTimeout(go,state.auto?1200:6000); $('#whub').onclick=go; });
-  $('#whub').hidden=true; const idx=pickWedge(dbg.wheel); await spinWheel(idx); const pz=wheelPrize(idx,bet);
+  $('#whub').hidden=true; const idx=pickWedge(force||dbg.wheel); await spinWheel(idx); const pz=wheelPrize(idx,bet);
   Snd.win(pz.jp==='grand'?'jackpot':pz.jp?'mega':'big'); shake(pz.jp?2:1); const c=frameCenter(); burst(60,innerWidth/2,innerHeight/2,13,'conf'); burst(30,innerWidth/2,innerHeight/2,12,'coin'); coinRain(2500); scrFlash('#fff3b8',.4);
   if(pz.amt){ $('#wres').textContent=pz.label+' · '+fmt(0); state.bal+=pz.amt; S.paid+=pz.amt; if(pz.jp){ S.jps++; J[pz.jp]=SEED[pz.jp]; renderJP(); } if(pz.amt>S.best) S.best=pz.amt;
     const tok=++state.presId; tween(1800,k=>{ $('#wres').textContent=pz.label+' · '+fmt(Math.floor(pz.amt*easeOut3(k))); },tok); tweenBal(state.bal,1800); }
@@ -1770,7 +1812,7 @@ $('#btnMusic').onclick=e=>{ wake(); musicOn=!musicOn; Snd.setMusicMuted(!musicOn
 let giftAt=Date.now()+90000;
 function updateGift(){ const ms=giftAt-Date.now(), b=$('#chGift'); if(ms<=0){ b.textContent='Collect gift'; b.classList.add('ready'); } else { const s=Math.ceil(ms/1000); b.textContent='Gift '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); b.classList.remove('ready'); } }
 setInterval(updateGift,1000); updateGift();
-$('#chGift').onclick=()=>{ wake(); if(giftAt>Date.now()){ Snd.err(); return; } if(state.busy){ toast('Collect after the spin'); return; } const amt=[25000,40000,50000,75000,100000,150000][rnd(6)]; state.bal+=amt; S.bonus+=amt; Snd.chest(); const c=frameCenter(); burst(30,c.x,c.y,10,'coin'); coinRain(1200); tweenBal(state.bal,800); toastAch('Gift collected','+'+fmt(amt)); giftAt=Date.now()+120000; updateGift(); save(); };
+$('#chGift').onclick=()=>{ wake(); if(giftAt>Date.now()){ Snd.err(); return; } if(state.busy){ toast('Collect after the spin'); return; } const amt=[25000,40000,50000,75000,100000,150000][vr(6)]; state.bal+=amt; S.bonus+=amt; Snd.chest(); const c=frameCenter(); burst(30,c.x,c.y,10,'coin'); coinRain(1200); tweenBal(state.bal,800); toastAch('Gift collected','+'+fmt(amt)); giftAt=Date.now()+120000; updateGift(); save(); };
 let logoTaps=0, logoT=0; $('#logo').addEventListener('click',()=>{ logoTaps++; clearTimeout(logoT); logoT=setTimeout(()=>logoTaps=0,900); if(logoTaps>=5){ logoTaps=0; toggleDebug(); } });
 document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('button'); if(b&&e.detail>0) b.blur(); });
 addEventListener('keydown',e=>{
@@ -1894,7 +1936,7 @@ const BJ_TALK={
 let bjSayT=0, bjHelloed=false, bjLastSay=0;
 function bjSay(ctx,p){
   if(game!=='bj'||Math.random()>=p||Date.now()-bjLastSay<2500) return; const a=BJ_TALK[ctx]; if(!a) return;
-  const el=$('#bjsay'); if(!el) return; bjLastSay=Date.now(); const line=a[rnd(a.length)];
+  const el=$('#bjsay'); if(!el) return; bjLastSay=Date.now(); const line=a[vr(a.length)];
   el.querySelector('span').textContent=line; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
   clearTimeout(bjSayT); bjSayT=setTimeout(()=>el.classList.remove('show'),Math.min(6500,2600+line.length*55));
 }
@@ -1919,7 +1961,7 @@ function bjev(cards){ let t=0,a=0; for(const c of cards){ t+=bjcv(c); if(c.r==='
 const bjIsBJ=h=>h.cards.length===2&&!h.split&&bjev(h.cards).t===21;
 function bjShuffle(){
   const a=[]; for(let d=0;d<6;d++) for(const s of SUITS) for(const r of RANKS) a.push({r,s});
-  for(let i=a.length-1;i>0;i--){ const j=rnd(i+1); [a[i],a[j]]=[a[j],a[i]]; } bj.shoe=a; bj.run=0;
+  for(let i=a.length-1;i>0;i--){ const j=vr(i+1); [a[i],a[j]]=[a[j],a[i]]; } bj.shoe=a; bj.run=0;
 }
 function bjDraw(){
   if(bj.rig.length) return bj.rig.shift();
@@ -1978,7 +2020,7 @@ async function bjDeal(){
   if(ui.lossLimit>0&&state.sessionStart-state.bal>=ui.lossLimit){ Snd.err(); openResponsible(true); return; }
   wake(); bj.busy=true; bjClear(); const bet=bj.bet; bj.last=bet; state.bal-=bet; S.wagered+=bet; S.bjHands++; bj.ins=0;
   gainXp(Math.round(6+bet/25)); tweenBal(state.bal,220); Snd.chip(); bjSay('start',.2);
-  let kind=null; if(bj.force){ kind=bj.force; if(!bj.sticky) bj.force=null; } else { const L=BJ_LUCK[bj.luck]; if(L.p&&Math.random()<L.p) kind=L.k[rnd(L.k.length)]; }
+  let kind=null; if(bj.force){ kind=bj.force; if(!bj.sticky) bj.force=null; } else { const L=BJ_LUCK[bj.luck]; if(L.p&&Math.random()<L.p) kind=L.k[vr(L.k.length)]; }
   if(kind) bj.rig=RIGS[kind].map(([r,s])=>({r,s}));
   const h={cards:[],bet,done:false,dbl:false,split:false}; bj.hands=[h]; bjMkHand(h); bj.cur=0; bj.phase='deal'; bjRender();
   await bjDealTo(h); await bjDealTo(bj); await bjDealTo(h); await bjDealTo(bj,true);
@@ -2048,7 +2090,7 @@ async function bjFinish(){
   if(realNet>0){
     const r=ret/wagered, tier=bjw?(bj.streak>=3?'super':'big'):(r>=2&&(dbl||wins>=2||bonus>0))?'big':'nice';
     await bjPresent(tier,bjw?'BLACKJACK!':TIERS[tier][0],ret,bonus?'Streak bonus +'+fmt(bonus):(dbl?'Double down':wins>=2?'Split win':'Dealer loses'));
-  } else if(cons>0){ await bjPresent('win','WIN!',ret,['Cashback bonus','Loyalty bonus','Lucky cashback','Insurance bonus'][rnd(4)]); }
+  } else if(cons>0){ await bjPresent('win','WIN!',ret,['Cashback bonus','Loyalty bonus','Lucky cashback','Insurance bonus'][vr(4)]); }
   else if(real===0){ Snd.click(); bjMsg('Push — bet returned'); tweenBal(state.bal,400); await sleep(900); }
   else { tweenBal(state.bal,300); bjMsg(dt>21?'':'Dealer wins'); await sleep(700); }
   bjMsg(''); bj.busy=false; if(bj.last>state.bal) bj.bet=Math.max(0,Math.min(bj.last,[...BETS,50000].reverse().find(b=>b<=state.bal)||0)); else bj.bet=bj.last;
@@ -2103,16 +2145,17 @@ $('#dBjShuffle').onclick=()=>{ bjShuffle(); renderBjDebug(); toast('Shoe shuffle
 $('#dBjStreak').onclick=()=>{ bj.streak++; bjRender(); };
 
 /* ============================== ONLINE (experimental) ============================== */
-const OL={mode:'off',db:null,room:null,uid:null,rows:[],feed:[],peers:0,err:'',tab:'bal',t:0,timer:0,poll:0,ready:false};
+let icReceive=()=>{};
+const OL={pm:new Map(),pf:[],mode:'off',db:null,room:null,uid:null,rows:[],feed:[],peers:0,err:'',tab:'bal',t:0,timer:0,poll:0,ready:false};
 const OL_TABS=[['bal','Net worth',r=>r.bal],['best','Biggest win',r=>r.best],['bjWins','BJ wins',r=>r.bjWins],['bjBest','BJ streak',r=>r.bjBest],['lvl','Level',r=>r.lvl]];
 const olNick=()=>String(ui.nick||'').trim();
 const OL_ADMIN='appleiscool9284';
 const olOk=n=>n===OL_ADMIN||/^[A-Za-z0-9 ._\-]{3,14}$/.test(n);
 const olAdmin=()=>olNick()===OL_ADMIN;
 const olLocked=()=>!olAdmin()&&(OL.mode!=='off'||(!OL.ready&&navigator.onLine));
-const olTaken=n=>{ const me=OL.mode==='artifact'?OL.uid:ui.pid; return OL.rows.some(r=>r&&typeof r.nick==='string'&&r.nick.toLowerCase()===n.toLowerCase()&&r.id!==me); };
+const olTaken=n=>{ const me=OL.mode==='artifact'?OL.uid:ui.pid; return OL.rows.some(r=>r&&typeof r.nick==='string'&&r.nick.toLowerCase()===n.toLowerCase()&&r.id!==me&&r.id!==ui.pid); };
 function olAsk(cb){
-  openModal({title:'Choose a username',html:`<p class="olnote">Every player needs a username. It appears on the leaderboards and on the live winners ticker.</p>
+  openModal({title:'Choose a username',html:`<p class="olnote">Every player needs a username. It appears on the leaderboards and on the live winners ticker. While you are online the admin can also see your name, balance, play time and live slot machine state.</p>
   <div class="field"><div><label for="olNick2">Username</label><small>3-14 letters, numbers, space . _ -</small></div><input id="olNick2" maxlength="16" value="${escHtml(olNick())}" autocomplete="off" autocapitalize="off"></div><div id="olNickErr" class="olnote warn"></div>`,
   actions:[{id:'olok',label:'Play',cls:'btn',fn:()=>{ const n=$('#olNick2').value.trim(), er=$('#olNickErr');
       if(!olOk(n)){ Snd.err(); er.textContent='Use 3-14 letters, numbers, space . _ -'; return; }
@@ -2129,44 +2172,68 @@ async function olInit(){
       if(db&&user){ OL.db=db; OL.uid=await user.id(); OL.mode='artifact'; }
       if(room){ OL.room=room; try{ room.onPeers(ch=>{ OL.peers=(ch.peers||[]).length; olBadge(); }); }catch(e){} }
   } }catch(e){}
-  if(!OL.db){ OL.mode=ui.fb?'rest':'off'; }
+  if(!OL.db){ OL.mode=ui.fb?'rest':(navigator.onLine?'pub':'off'); }
+  if(OL.mode==='pub'){ if(!await olPubPull(true)) OL.mode='off'; else setInterval(()=>{ if(!document.hidden&&OL.mode==='pub') olPubPull(); },12000); }
   OL.ready=true; olBadge(); if(olLocked()&&document.body.classList.contains('dbg')){ document.body.classList.remove('dbg'); try{ renderDebug(); }catch(e){} }
   if(OL.mode==='artifact'){ try{
       OL.db.collection('players').limit(300).onSnapshot(s=>{ OL.rows=s.docs.map(d=>({id:d.id,...d.data()})); olRender(); },e=>{ OL.err='Leaderboard unavailable ('+(e&&e.code||'error')+')'; olRender(); });
+      OL.db.collection('config').onSnapshot(s=>{ s.docs.forEach(d=>{ if(d.id==='icons'){ const v=d.data(); icReceive(v.v,v.json); } }); },()=>{});
       OL.db.collection('feed').orderBy('t','desc').limit(30).onSnapshot(s=>{ OL.feed=s.docs.map(d=>d.data()); olRender(); },()=>{});
   }catch(e){ OL.err='Leaderboard unavailable'; } }
   else if(OL.mode==='rest'){ olRestPull(); }
+  setTimeout(()=>{ try{ liveInit(); }catch(e){ console.error(e); } },0);
 }
 function olBadge(){
   const el=$('#olStat'); if(!el) return; const on=OL.mode!=='off';
   el.textContent=(olNick()?olNick()+' \u00b7 ':'')+(on?(OL.peers?(OL.peers+1)+' online':'Online'):'Offline mode'); el.className='olstat'+(on?' on':'');
 }
+const OL_TOPIC='g1c-online-v1-7f3k9q2x', OL_NTFY='https://ntfy.sh/';
+let olSince='12h', olSent=0;
+const olNum=x=>Math.max(0,Math.min(1e13,+x||0));
+function olIngest(d,ts){
+  if(!d||typeof d!=='object') return;
+  if(d.k==='p'&&typeof d.id==='string'&&d.id.length<=16&&d.s&&olOk(String(d.s.nick))){ const s=d.s; OL.pm.set(d.id,{id:d.id,nick:String(s.nick),bal:olNum(s.bal),best:olNum(s.best),lvl:olNum(s.lvl),bjWins:olNum(s.bjWins),bjBest:olNum(s.bjBest),spins:olNum(s.spins),hands:olNum(s.hands),t:ts}); }
+  else if(d.k==='x'&&typeof d.id==='string') OL.pm.delete(d.id);
+  else if(d.k==='f'&&olOk(String(d.nick))&&olNum(d.amt)>0) OL.pf.push({nick:String(d.nick),game:d.game==='bj'?'bj':'slots',amt:olNum(d.amt),t:ts});
+  else if(d.k==='cfg'&&d.nick===OL_ADMIN&&typeof d.json==='string') icReceive(+d.v,d.json);
+}
+async function olPubPull(first){
+  try{ const r=await fetch(OL_NTFY+OL_TOPIC+'/json?poll=1&since='+olSince,{cache:'no-store'}); if(!r.ok) throw new Error('http '+r.status); const txt=await r.text();
+    txt.split('\n').forEach(line=>{ if(!line) return; let m; try{ m=JSON.parse(line); }catch(e){ return; } if(m.event!=='message') return; olSince=m.id; let d; try{ d=JSON.parse(m.message); }catch(e){ return; } olIngest(d,(m.time||0)*1000); });
+    OL.rows=[...OL.pm.values()]; OL.pf.sort((a,b)=>b.t-a.t); OL.pf.length=Math.min(OL.pf.length,40); OL.feed=OL.pf.slice(); OL.peers=Math.max(0,OL.rows.filter(x=>Date.now()-x.t<150000).length-1); OL.err=''; olBadge(); olRender(); return true;
+  }catch(e){ OL.err='Could not reach the online relay'; if(!first) olRender(); return false; }
+}
+async function olPubSend(obj){
+  try{ const day=new Date().toISOString().slice(0,10); let c={d:day,n:0}; try{ c=JSON.parse(localStorage.getItem('g1c-sent')||'')||c; }catch(e){} if(c.d!==day) c={d:day,n:0}; if(c.n>=220) return false; c.n++; try{ localStorage.setItem('g1c-sent',JSON.stringify(c)); }catch(e){}
+    const r=await fetch(OL_NTFY+OL_TOPIC,{method:'POST',body:JSON.stringify(obj)}); return r.ok; }catch(e){ return false; }
+}
 const olRest=(p,o)=>fetch(ui.fb.replace(/\/+$/,'')+p,o);
 async function olRestPull(){
   if(OL.mode!=='rest') return;
   try{ const [a,b]=await Promise.all([olRest('/players.json').then(r=>r.json()),olRest('/feed.json?orderBy=%22$key%22&limitToLast=30').then(r=>r.json())]);
-    OL.rows=Object.entries(a||{}).map(([id,v])=>({id,...v})); OL.feed=Object.values(b||{}).sort((x,y)=>y.t-x.t); OL.err=''; }
+    OL.rows=Object.entries(a||{}).map(([id,v])=>({id,...v})); olRest('/cfg.json').then(r=>r.json()).then(c=>{ if(c&&c.json) icReceive(c.v,c.json); }).catch(()=>{}); OL.feed=Object.values(b||{}).sort((x,y)=>y.t-x.t); OL.err=''; }
   catch(e){ OL.err='Could not reach the backend URL'; } olRender();
 }
 function olSchedule(){
   if(OL.mode==='off'||!olOk(olNick())||olBlocked()) return;
-  clearTimeout(OL.timer); const wait=Math.max(1500,20000-(Date.now()-OL.t)); OL.timer=setTimeout(olPush,wait);
+  clearTimeout(OL.timer); const per=OL.mode==='pub'?45000:20000, wait=Math.max(1500,per-(Date.now()-OL.t)); OL.timer=setTimeout(olPush,wait);
 }
 async function olPush(){
   if(OL.mode==='off'||!olOk(olNick())||olBlocked()) return; OL.t=Date.now(); const me=olMe();
   try{
     if(OL.mode==='artifact') await OL.db.doc('players/'+OL.uid).set(me);
+    else if(OL.mode==='pub'){ const id=ui.pid||(ui.pid=Math.random().toString(36).slice(2,12)); OL.pm.set(id,{id,...me,t:Date.now()}); OL.rows=[...OL.pm.values()]; if(!await olPubSend({k:'p',id,s:me})) throw new Error('send'); }
     else await olRest('/players/'+(ui.pid||(ui.pid=Math.random().toString(36).slice(2,12)))+'.json',{method:'PUT',body:JSON.stringify(me)});
     OL.err='';
   }catch(e){ OL.err=(e&&e.code==='not_granted')?'Read-only: you need interact access to appear on the board':'Could not submit your score'; }
   olRender();
 }
-async function olRetire(){ try{ if(OL.mode==='artifact') await OL.db.doc('players/'+OL.uid).delete(); else if(OL.mode==='rest'&&ui.pid) await olRest('/players/'+ui.pid+'.json',{method:'DELETE'}); }catch(e){} }
+async function olRetire(){ try{ if(OL.mode==='artifact') await OL.db.doc('players/'+OL.uid).delete(); else if(OL.mode==='rest'&&ui.pid) await olRest('/players/'+ui.pid+'.json',{method:'DELETE'}); else if(OL.mode==='pub'&&ui.pid){ OL.pm.delete(ui.pid); await olPubSend({k:'x',id:ui.pid}); } }catch(e){} }
 let olLastFeed=0;
 async function olFeed(game,amt,bet){
   if(!olOk(olNick())) return; const row={nick:olNick(),game,amt:Math.round(amt),t:Date.now()}; tkAdd(row);
   if(OL.mode==='off'||olBlocked()) return; const big=bet?amt>=bet*20:amt>=1e6; if(!big&&row.t-olLastFeed<8000) return; olLastFeed=row.t;
-  try{ if(OL.mode==='artifact') await OL.db.collection('feed').add(row); else await olRest('/feed.json',{method:'POST',body:JSON.stringify(row)}); }catch(e){}
+  try{ if(OL.mode==='artifact') await OL.db.collection('feed').add(row); else if(OL.mode==='pub') await olPubSend({k:'f',nick:row.nick,game:row.game,amt:row.amt}); else await olRest('/feed.json',{method:'POST',body:JSON.stringify(row)}); }catch(e){}
 }
 /* live winners ticker: your own wins instantly, everyone else's from the shared feed */
 const TK=[];
@@ -2194,27 +2261,390 @@ function olDraw(){
   const er=$('#olErr'); if(er) er.textContent=OL.err||'';
 }
 function openOnline(){
-  const stat=OL.mode==='artifact'?'Connected through the Claude artifact'+(OL.peers?' · '+(OL.peers+1)+' players here now':''):OL.mode==='rest'?'Connected to your backend URL':'Offline. Online mode connects automatically inside the Claude artifact, or paste a Firebase URL below.';
+  const stat=OL.mode==='artifact'?'Connected through the Claude artifact'+(OL.peers?' · '+(OL.peers+1)+' players here now':''):OL.mode==='rest'?'Connected to your backend URL':OL.mode==='pub'?'Connected through the public relay'+(OL.peers?' · '+(OL.peers+1)+' players active':'')+' (scores last about 12 hours without play)':'Offline. Could not reach the online relay. It retries when your connection returns.';
   openModal({title:'Online leaderboards',html:`<p class="olnote">${stat}</p>
   <div class="field"><div><label for="olNick">Nickname</label><small>3-14 letters, numbers, space . _ -</small></div><input id="olNick" maxlength="16" value="${escHtml(olNick())}" autocomplete="off"></div>
   <div id="olWarn" class="olnote warn">${olBlocked()?'The debug panel was used on this save, so you are not ranked.':olAdmin()?'Admin mode: debug panel unlocked online.':''}</div>
   <div class="oltabs">${OL_TABS.map(t=>`<button data-t="${t[0]}" class="${t[0]===OL.tab?'act':''}">${t[1]}</button>`).join('')}</div>
   <div id="olList" class="ollist"></div><div id="olErr" class="olnote warn"></div>
   <h3 class="olh">Live big wins</h3><div id="olFeed" class="olfeed"></div>
-  <details class="oldet"><summary>Host it yourself (GitHub Pages)</summary><p class="olnote">Paste a Firebase Realtime Database URL with public read/write rules. Scores are reported by each browser and are not verified, so this is for friends.</p>
+  <details class="oldet"><summary>Permanent leaderboard (optional)</summary><p class="olnote">Paste a Firebase Realtime Database URL with public read/write rules to keep scores forever instead of the 12-hour public relay. Scores are reported by each browser and are not verified, so this is for friends.</p>
   <div class="field"><input id="olFb" placeholder="https://your-app-default-rtdb.firebaseio.com" value="${escHtml(ui.fb||'')}" autocomplete="off"></div></details>`,
   actions:[{id:'olsave',label:'Save nickname',cls:'btn',fn:async()=>{ const n=$('#olNick').value.trim(); if(!olOk(n)){ Snd.err(); toast('Nickname: 3-14 letters, numbers, space . _ -'); return; } if(olTaken(n)){ Snd.err(); toast('That name is taken'); return; }
-      const fb=$('#olFb').value.trim(); if(fb!==(ui.fb||'')){ if(fb&&!/^https:\/\/[\w.-]+\.(firebaseio\.com|firebasedatabase\.app)\/?$/.test(fb)){ toast('That does not look like a Firebase URL'); return; } ui.fb=fb; if(!OL.db){ OL.mode=fb?'rest':'off'; if(fb) olRestPull(); } }
+      const fb=$('#olFb').value.trim(); if(fb!==(ui.fb||'')){ if(fb&&!/^https:\/\/[\w.-]+\.(firebaseio\.com|firebasedatabase\.app)\/?$/.test(fb)){ toast('That does not look like a Firebase URL'); return; } ui.fb=fb; if(!OL.db){ OL.mode=fb?'rest':(navigator.onLine?'pub':'off'); if(fb) olRestPull(); else if(OL.mode==='pub') olPubPull(); } }
       ui.nick=n; save(); Snd.chest(); toast('Welcome, '+n); olBadge(); OL.t=0; olPush(); }}],
   wire:c=>{ $$('.oltabs button',c).forEach(b=>b.onclick=()=>{ OL.tab=b.dataset.t; $$('.oltabs button',c).forEach(x=>x.classList.toggle('act',x===b)); Snd.click(); olDraw(); });
     olDraw(); if(OL.mode==='rest') olRestPull(); }});
 }
 const escHtml=s=>String(s).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 $('#olBtn').onclick=()=>{ wake(); Snd.click(); openOnline(); };
-olInit(); tkRender(); window.addEventListener('online',()=>{ if(!OL.db&&OL.mode==='off'&&ui.fb){ OL.mode='rest'; olBadge(); olRestPull(); } });
+olInit(); tkRender(); window.addEventListener('online',async()=>{ if(!OL.db&&OL.mode==='off'){ if(ui.fb){ OL.mode='rest'; olBadge(); olRestPull(); } else { OL.mode='pub'; if(await olPubPull(true)){ olBadge(); } else OL.mode='off'; } } });
+
+/* ============================== ICON EDITOR (debug / admin, shared online) ============================== */
+const IC_KEY='g1c-cfg';
+let CFG={v:0,icons:[]}; const IC_ORIG={}, IC_DEF=new Set(SYMS);
+const icHex=s=>/^#[0-9a-fA-F]{6}$/.test(s);
+function icSan(s){
+  if(!s||typeof s!=='object') return null; const id=String(s.id||'').toUpperCase(); if(!/^[A-Z0-9]{2,12}$/.test(id)||id==='WILD'||id==='SCATTER') return null;
+  const g=Array.from(String(s.glyph||'')).slice(0,4).join(''); if(!g) return null; const cl=(x,d)=>icHex(x)?x:d, nm=(x,lo,hi,d)=>{ x=+x; return isFinite(x)?Math.max(lo,Math.min(hi,x)):d; };
+  const o={id,name:String(s.name||id).slice(0,18),glyph:g,fg:cl(s.fg,'#ffffff'),bg1:cl(s.bg1,'#d8312f'),bg2:cl(s.bg2,'#5b0f12'),shape:['circle','round','gem'].includes(s.shape)?s.shape:'circle'};
+  if(s.w!=null&&s.w!=='') o.w=nm(s.w,0,40,8); if(s.p3!=null&&s.p3!=='') o.p3=nm(s.p3,1,1000,5); if(s.p4!=null&&s.p4!=='') o.p4=nm(s.p4,1,3000,15); if(s.p5!=null&&s.p5!=='') o.p5=nm(s.p5,1,10000,50);
+  return o;
+}
+function icBuild(sym,s){
+  const NS='http://www.w3.org/2000/svg', mk=(t,a,p)=>{ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); if(p) p.appendChild(e); return e; };
+  while(sym.firstChild) sym.removeChild(sym.firstChild); const gid='gi-'+s.id;
+  const df=mk('defs',{},sym), lg=mk('linearGradient',{id:gid,x1:0,y1:0,x2:0,y2:1},df); mk('stop',{offset:0,'stop-color':s.bg1},lg); mk('stop',{offset:1,'stop-color':s.bg2},lg);
+  if(s.shape==='circle') mk('circle',{cx:50,cy:50,r:44,fill:'url(#'+gid+')',stroke:'#f3d68a','stroke-width':4},sym);
+  else if(s.shape==='round') mk('rect',{x:8,y:8,width:84,height:84,rx:22,fill:'url(#'+gid+')',stroke:'#f3d68a','stroke-width':4},sym);
+  else mk('polygon',{points:'50,5 90,30 90,70 50,95 10,70 10,30',fill:'url(#'+gid+')',stroke:'#f3d68a','stroke-width':4,'stroke-linejoin':'round'},sym);
+  mk('ellipse',{cx:42,cy:26,rx:24,ry:9,fill:'#fff','fill-opacity':.28},sym);
+  const n=Array.from(s.glyph).length, t=mk('text',{x:50,y:52,'text-anchor':'middle','dominant-baseline':'central',fill:s.fg,'font-size':n>=4?24:n===3?30:n===2?40:54,'font-weight':900,'font-family':'system-ui,"Apple Color Emoji","Segoe UI Emoji",sans-serif'},sym); t.textContent=s.glyph;
+}
+function icApply(){
+  const spriteOf=document.getElementById('s-SEVEN'), root=spriteOf&&spriteOf.parentNode; if(!root) return;
+  const want=new Map(CFG.icons.map(s=>[s.id,s]));
+  for(const id of Object.keys(IC_ORIG)) if(!want.has(id)&&IC_DEF.has(id)){ const el=document.getElementById('s-'+id); if(el){ el.innerHTML=IC_ORIG[id]; } delete IC_ORIG[id]; }
+  for(const s of [...SYMS]) if(!IC_DEF.has(s)&&!want.has(s)){ SYMS.splice(SYMS.indexOf(s),1); delete WEIGHTS[s]; delete PAY[s]; const el=document.getElementById('s-'+s); if(el) el.remove(); }
+  want.forEach((s,id)=>{
+    let el=document.getElementById('s-'+id);
+    if(!el){ el=document.createElementNS('http://www.w3.org/2000/svg','symbol'); el.id='s-'+id; el.setAttribute('viewBox','0 0 100 100'); root.appendChild(el); }
+    else if(IC_DEF.has(id)&&!(id in IC_ORIG)) IC_ORIG[id]=el.innerHTML;
+    icBuild(el,s);
+    if(!IC_DEF.has(id)){ if(!SYMS.includes(id)) SYMS.splice(SYMS.indexOf('WILD'),0,id); NAMES[id]=s.name; }
+    if(s.w!=null){ WEIGHTS[id]=s.w; }
+    else if(!IC_DEF.has(id)&&WEIGHTS[id]==null) WEIGHTS[id]=8;
+    if(!IC_DEF.has(id)||s.p3!=null||s.p4!=null||s.p5!=null){ const p=PAY[id]||(PAY[id]={3:5,4:15,5:50}); if(s.p3!=null) p[3]=s.p3; if(s.p4!=null) p[4]=s.p4; if(s.p5!=null) p[5]=s.p5; }
+  });
+  try{ icList(); }catch(e){}
+}
+function icLoad(){ try{ const c=JSON.parse(localStorage.getItem(IC_KEY)||'null'); if(c&&Array.isArray(c.icons)){ CFG={v:+c.v||0,icons:c.icons.map(icSan).filter(Boolean)}; } }catch(e){} }
+function icSaveLocal(){ try{ localStorage.setItem(IC_KEY,JSON.stringify(CFG)); }catch(e){} }
+icReceive=function(v,json){
+  v=+v||0; if(v<=CFG.v||typeof json!=='string'||json.length>60000) return;
+  try{ const c=JSON.parse(json); if(!c||!Array.isArray(c.icons)) return; CFG={v,icons:c.icons.slice(0,24).map(icSan).filter(Boolean)}; icSaveLocal(); icApply(); try{ if(OL.mode!=='off') toast('Icon pack updated'); }catch(e){} }catch(e){}
+};
+async function icPublish(){
+  CFG.v=Date.now(); icSaveLocal(); icApply(); const json=JSON.stringify({icons:CFG.icons});
+  if(OL.mode==='off'){ toast('Saved on this device only (offline)'); return; }
+  if(!olAdmin()){ toast('Only the admin can publish icons'); return; }
+  try{
+    if(OL.mode==='artifact') await OL.db.doc('config/icons').set({v:CFG.v,json});
+    else if(OL.mode==='rest') await olRest('/cfg.json',{method:'PUT',body:JSON.stringify({v:CFG.v,json})});
+    else if(!await olPubSend({k:'cfg',v:CFG.v,json,nick:OL_ADMIN})) throw new Error('send');
+    toast('Icons published to all players');
+  }catch(e){ toast(OL.mode==='artifact'?'Publish refused: only the artifact owner/editors can write config':'Could not publish icons'); }
+}
+function icList(){
+  const box=$('#dIcons'); if(!box) return; box.textContent='';
+  [...SYMS.filter(s=>s!=='WILD'&&s!=='SCATTER'),'WILD','SCATTER'].forEach(id=>{ const b=document.createElement('button'); b.className='icb'+(CFG.icons.some(s=>s.id===id)?' act':'');
+    b.innerHTML=`<svg viewBox="0 0 100 100" width="34" height="34"><use href="#s-${id}"/></svg><small>${escHtml(id)}</small>`; if(id!=='WILD'&&id!=='SCATTER') b.onclick=()=>icEdit(id); box.appendChild(b); });
+  const a=document.createElement('button'); a.textContent='+ Add icon'; a.onclick=()=>icEdit(null); box.appendChild(a);
+  const rs=document.createElement('button'); rs.textContent='Reset all icons'; rs.onclick=async()=>{ CFG.icons=[]; await icPublish(); }; box.appendChild(rs);
+}
+function icEdit(id){
+  const cur=CFG.icons.find(s=>s.id===id), isDef=id&&IC_DEF.has(id), cp=PAY[id]||{3:5,4:15,5:50};
+  const s=cur||{id:id||'',name:id?(NAMES[id]||id):'',glyph:'★',fg:'#ffffff',bg1:'#d8312f',bg2:'#5b0f12',shape:'circle',w:WEIGHTS[id]??8,p3:cp[3],p4:cp[4],p5:cp[5]};
+  const v=(k,d)=>escHtml(s[k]!=null?s[k]:d);
+  openModal({title:id?'Edit '+escHtml(id):'Add icon',html:`<div class="icprev"><svg viewBox="0 0 100 100" width="84" height="84"><use id="icPv" href="#s-${id||'SEVEN'}"/></svg><svg id="icPvs" viewBox="0 0 100 100" width="0" height="0" style="position:absolute"><symbol id="s-ICPREVIEW" viewBox="0 0 100 100"></symbol></svg></div>
+  <div class="field"><label>ID (A-Z, 0-9)</label><input id="icId" maxlength="12" value="${v('id','')}" ${id?'disabled':''}></div>
+  <div class="field"><label>Name</label><input id="icName" maxlength="18" value="${v('name','')}"></div>
+  <div class="field"><label>Icon (emoji or 1-4 characters)</label><input id="icGlyph" maxlength="8" value="${v('glyph','')}"></div>
+  <div class="field"><label>Colors: text / top / bottom</label><span class="icc"><input id="icFg" type="color" value="${v('fg','#ffffff')}"><input id="icB1" type="color" value="${v('bg1','#d8312f')}"><input id="icB2" type="color" value="${v('bg2','#5b0f12')}"></span></div>
+  <div class="field"><label>Shape</label><select id="icShape">${['circle','round','gem'].map(x=>`<option ${s.shape===x?'selected':''}>${x}</option>`).join('')}</select></div>
+  <div class="field"><label>Appearance weight</label><input id="icW" type="number" min="0" max="40" step="0.5" value="${v('w',8)}"></div>
+  <div class="field"><label>Pays (x line bet / 10) for 3 / 4 / 5</label><span class="icc"><input id="icP3" type="number" min="1" value="${v('p3',5)}"><input id="icP4" type="number" min="1" value="${v('p4',15)}"><input id="icP5" type="number" min="1" value="${v('p5',50)}"></span></div>
+  <div id="icErr" class="olnote warn"></div>`,
+  actions:[{id:'icsave',label:'Save and publish',cls:'btn',fn:async()=>{ const o=icSan({id:id||$('#icId').value,name:$('#icName').value,glyph:$('#icGlyph').value,fg:$('#icFg').value,bg1:$('#icB1').value,bg2:$('#icB2').value,shape:$('#icShape').value,w:$('#icW').value,p3:$('#icP3').value,p4:$('#icP4').value,p5:$('#icP5').value});
+      if(!o){ Snd.err(); $('#icErr').textContent='Need an ID of 2-12 letters/numbers (not WILD/SCATTER) and an icon.'; return; }
+      if(!id&&(IC_DEF.has(o.id)||SYMS.includes(o.id))){ Snd.err(); $('#icErr').textContent='That ID already exists. Pick the existing icon to edit it.'; return; }
+      CFG.icons=CFG.icons.filter(x=>x.id!==o.id); CFG.icons.push(o); if(CFG.icons.length>24){ Snd.err(); $('#icErr').textContent='Limit is 24 custom icons.'; return; }
+      closeModal(); Snd.chest(); await icPublish(); }},
+   ...(cur?[{id:'icdel',label:isDef?'Reset to original':'Delete icon',cls:'btn',fn:async()=>{ CFG.icons=CFG.icons.filter(x=>x.id!==id); closeModal(); await icPublish(); }}]:[])],
+  wire:c=>{ const upd=()=>{ const o=icSan({id:'ICPREVIEW',glyph:$('#icGlyph').value||'?',fg:$('#icFg').value,bg1:$('#icB1').value,bg2:$('#icB2').value,shape:$('#icShape').value}); if(!o) return; const sym=document.getElementById('s-ICPREVIEW'); icBuild(sym,o); $('#icPv').setAttribute('href','#s-ICPREVIEW'); };
+    ['icGlyph','icFg','icB1','icB2','icShape'].forEach(k=>{ $('#'+k,c).oninput=upd; $('#'+k,c).onchange=upd; }); upd(); }});
+}
+icLoad(); icApply();
+setTimeout(()=>{ if(olAdmin()&&CFG.icons.length&&OL.mode==='pub'&&Date.now()-(+localStorage.getItem('g1c-cfgpost')||0)>6*3600e3){ try{ localStorage.setItem('g1c-cfgpost',String(Date.now())); }catch(e){} olPubSend({k:'cfg',v:CFG.v,json:JSON.stringify({icons:CFG.icons}),nick:OL_ADMIN}); } },8000);
+/* ============================== LIVE CHANNEL + ADMIN CONTROL ============================== */
+const ADM_PUB={"kty":"EC","crv":"P-256","x":"xiWpng0hLH44Vj3ti3Cu4LQMkSfd4qPQgGcNWvrIMfw","y":"8L_USrB7n7bAEyzM5eP30TLKbLZqsly3Heyrv2BFTEs"};
+const ADM={t0:Date.now(),q:[],pj:null,lock:false,cine:null,roster:new Map(),sel:null,discreet:true,seen:new Set(),peer:null,cmdSig:'',view:null,fxBusy:false};
+const LIVE={mode:null,stream:null,last:0,timer:0,hb:0};
+const admKey=()=>{ try{ return JSON.parse(localStorage.getItem('g1c-akey')||'null'); }catch(e){ return null; } };
+const fmtDur=ms=>{ ms=Math.max(0,ms|0); const s=Math.floor(ms/1000), h=Math.floor(s/3600), m=Math.floor(s%3600/60); return h?h+'h '+String(m).padStart(2,'0')+'m':m+':'+String(s%60).padStart(2,'0'); };
+const b64e=a=>btoa(String.fromCharCode(...new Uint8Array(a))), b64d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function admSign(obj){
+  const jwk=admKey(); if(!jwk) throw new Error('nokey'); const body=JSON.stringify(obj);
+  const key=await crypto.subtle.importKey('jwk',jwk,{name:'ECDSA',namedCurve:'P-256'},false,['sign']);
+  const sig=await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},key,new TextEncoder().encode(body)); return {body,sig:b64e(sig)};
+}
+async function admVerify(m){
+  try{ if(!ADM_PUB||!m||typeof m.body!=='string'||typeof m.sig!=='string') return null;
+    const key=await crypto.subtle.importKey('jwk',ADM_PUB,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
+    const ok=await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},key,b64d(m.sig),new TextEncoder().encode(m.body)); return ok?JSON.parse(m.body):null;
+  }catch(e){ return null; }
+}
+/* ---------- what a target reports about itself ---------- */
+function liveState(){
+  const g=(state.grid||[]).map(c=>c.join(',')).join('|');
+  return {nick:olNick(),g:game,n:Date.now()-ADM.t0,tt:(S.playMs||0),b:Math.round(state.bal),bt:state.bet,gr:g,w:state.lastWin?Math.round(state.lastWin.pay):0,rs:RS>>>0,cfg:{...cfg},mt:+(+state.meter).toFixed(3),au:state.auto?1:0,bz:state.busy?1:0,q:ADM.q.slice(0,8),pj:ADM.pj||null,lk:ADM.lock?1:0,cn:ADM.cine?1:0,sp:S.spins,ic:CFG.v||0,ts:Date.now()};
+}
+function livePush(force){
+  if(!LIVE.mode||!olOk(olNick())) return; const now=Date.now();
+  if(!force&&now-LIVE.last<1200){ if(!LIVE.timer) LIVE.timer=setTimeout(()=>{ LIVE.timer=0; livePush(); },1300); return; }
+  LIVE.last=now; const st=liveState();
+  if(LIVE.mode==='room'){ OL.room.presence(st).catch(()=>{}); }
+  else if(LIVE.mode==='fb'){ fbPutLive(st); }
+}
+function fbPutLive(st){ const pid=ui.pid||(ui.pid=Math.random().toString(36).slice(2,12)); olRest('/live/'+pid+'.json',{method:'PUT',body:JSON.stringify(st)}).catch(()=>{}); }
+function liveStop(){ if(LIVE.mode==='fb'&&ui.pid){ try{ fetch(ui.fb.replace(/\/+$/,'')+'/live/'+ui.pid+'.json',{method:'DELETE',keepalive:true}); }catch(e){} } }
+/* ---------- minimal Firebase RTDB streaming client ---------- */
+function fbStream(path,cb){
+  let es=null, tree=null, dead=false;
+  const setPath=(p,data,merge)=>{ if(p==='/'||p===''){ if(merge&&tree&&typeof data==='object'&&data) Object.assign(tree,data); else tree=data; return; }
+    if(!tree||typeof tree!=='object') tree={}; const parts=p.split('/').filter(Boolean); let o=tree; parts.forEach((k,i)=>{ if(i===parts.length-1){ if(data===null) delete o[k]; else if(merge&&typeof data==='object'&&typeof o[k]==='object'&&o[k]) Object.assign(o[k],data); else o[k]=data; } else { if(!o[k]||typeof o[k]!=='object') o[k]={}; o=o[k]; } }); };
+  const open=()=>{ if(dead) return; es=new EventSource(ui.fb.replace(/\/+$/,'')+path+'.json');
+    es.addEventListener('put',e=>{ try{ const d=JSON.parse(e.data); setPath(d.path,d.data,false); cb(tree); }catch(x){} });
+    es.addEventListener('patch',e=>{ try{ const d=JSON.parse(e.data); setPath(d.path,d.data,true); cb(tree); }catch(x){} });
+    es.onerror=()=>{ try{ es.close(); }catch(x){} if(!dead) setTimeout(open,4000); }; };
+  open(); return ()=>{ dead=true; try{ es.close(); }catch(x){} };
+}
+/* ---------- start ---------- */
+function liveInit(){
+  if(OL.mode==='artifact'&&OL.room){
+    LIVE.mode='room';
+    try{ OL.room.onPeers(ch=>{ const me=ch.peers.find(p=>p.isMe&&p.sameTab); if(me) ADM.peer=me.peer; admIngestRoom(ch.peers); }); }catch(e){}
+    try{ OL.room.on('g1c-cmd',m=>{ const d=m&&m.data; if(!d||typeof d!=='object'||!d.c) return; if(d.to&&d.to!==ADM.peer&&d.to!=='*') return; admHandle(d.c,d.id); }); }catch(e){}
+  } else if(OL.mode==='rest'&&ui.fb){
+    LIVE.mode='fb'; if(!ui.pid) ui.pid=Math.random().toString(36).slice(2,12);
+    fbStream('/cmd/'+ui.pid,async tree=>{ try{ if(!tree||typeof tree!=='object') return;
+      for(const id of Object.keys(tree)){ const m=tree[id]; if(!m||typeof m!=='object') continue; if(ADM.seen.has(id)) continue; ADM.seen.add(id);
+        olRest('/cmd/'+ui.pid+'/'+id+'.json',{method:'DELETE'}).catch(()=>{});
+        const d=await admVerify(m); if(!d||d.to!==ui.pid||Math.abs(Date.now()-d.ts)>90000){ console.error('cmd rejected',!!d); continue; } admHandle(d.c,id); } }catch(e){ console.error('cmd err',e&&e.message); } });
+    window.addEventListener('pagehide',liveStop);
+  }
+  if(LIVE.mode){ livePush(true); LIVE.hb=setInterval(()=>{ if(!document.hidden) livePush(true); },10000); }
+  admDebugUI();
+}
+function admIngestRoom(peers){
+  ADM.roster.clear();
+  peers.forEach(p=>{ const s=p.presence||{}; if(!s.nick||p.isMe) return; ADM.roster.set(p.peer,{id:p.peer,...s,t:p.updatedAt}); });
+  admRoster();
+}
+/* ---------- playtime ---------- */
+setInterval(()=>{ if(!document.hidden){ S.playMs=(S.playMs||0)+1000; } },1000);
+/* ---------- forced outcomes (shared by the real spin and the admin's prediction) ---------- */
+function admLossGrid(bet){ let g,ev; for(let i=0;i<500;i++){ g=randGrid(null,false); ev=evalFull(g,bet); if(ev.total===0&&ev.spins===0) break; } return g; }
+function admForceCode(code,bet){
+  if(typeof code!=='string') return null;
+  if(code==='J') return {mode:'jackpot'};
+  if(code==='L') return {grid:admLossGrid(bet)};
+  if(code.startsWith('M:')) return {mode:code.slice(2)};
+  if(code.startsWith('P:')) return {pj:code.slice(2)};
+  return null;
+}
+function admTakeForce(){
+  if(!ADM.q.length) return null; const code=ADM.q.shift(), f=admForceCode(code,state.bet); if(f&&f.pj) ADM.pj=f.pj; setTimeout(()=>livePush(true),50); return f&&!f.pj?f:(f&&f.pj?{}:null);
+}
+/* ---------- prediction of the target's next spins (the admin runs the target's own RNG) ---------- */
+function admPredict(s,n){
+  const keepRS=RS, keepCfg={...cfg}, out=[]; let meter=+s.mt||0;
+  try{ RS=s.rs>>>0; Object.assign(cfg,s.cfg||{}); const q=(s.q||[]).slice(); let pj=s.pj||null;
+    for(let i=0;i<n;i++){
+      const code=q.length?q.shift():null, f=code?admForceCode(code,s.bt):null; if(f&&f.pj) pj=f.pj;
+      const o=decideOutcome(s.bt,f&&!f.pj?f:null,{fs:false}), pay=o.ev.total; meter=Math.min(1,meter+cfg.meterStep);
+      const bonusFS=o.ev.spins>0, wheelDue=meter>=1&&s.au; let mys=null; if(!bonusFS&&!wheelDue){ mys=pj||mysteryJp(s.bt); pj=null; }
+      out.push({pay,bet:s.bt,kind:o.kind,fs:o.ev.spins,mys,forced:!!code}); if(bonusFS||wheelDue||mys) break;
+    }
+  } finally{ RS=keepRS; Object.keys(cfg).forEach(k=>delete cfg[k]); Object.assign(cfg,keepCfg); }
+  return out;
+}
+/* ---------- audio helpers (files live next to the page: lightning.mp3, xcool.mp3) ---------- */
+const ADM_BUF={};
+async function admLoad(name){
+  if(name in ADM_BUF) return ADM_BUF[name]; const nd=Snd.node&&Snd.node(); if(!nd){ return null; }
+  ADM_BUF[name]=null;
+  try{ const r=await fetch(name); if(!r.ok) throw new Error('http'); const ab=await r.arrayBuffer(); ADM_BUF[name]=await new Promise((res,rej)=>nd.ctx.decodeAudioData(ab,res,rej)); }catch(e){ ADM_BUF[name]=null; delete ADM_BUF[name]; ADM_BUF['!'+name]=1; }
+  return ADM_BUF[name]||null;
+}
+function admPlay(buf,offset,gain){
+  const nd=Snd.node(); const src=nd.ctx.createBufferSource(), g=nd.ctx.createGain(); src.buffer=buf; g.gain.value=gain==null?1:gain; src.connect(g); g.connect(nd.out);
+  const t=nd.ctx.currentTime+.03; src.start(t,offset||0); return {src,g,t,off:offset||0,ctx:nd.ctx};
+}
+function admThunderSynth(){
+  const nd=Snd.node(); if(!nd) return {dur:2.6,stop(){}}; const c=nd.ctx, t=c.currentTime+.03, len=3, b=c.createBuffer(1,c.sampleRate*len,c.sampleRate), d=b.getChannelData(0);
+  for(let i=0;i<d.length;i++){ const x=i/d.length; d[i]=(Math.random()*2-1)*Math.pow(1-x,2.2)*(1+.7*Math.sin(i/9000)); }
+  const s=c.createBufferSource(), lp=c.createBiquadFilter(), g=c.createGain(); lp.type='lowpass'; lp.frequency.setValueAtTime(5000,t); lp.frequency.exponentialRampToValueAtTime(160,t+len); g.gain.value=.9; s.buffer=b; s.connect(lp); lp.connect(g); g.connect(nd.out); s.start(t);
+  return {dur:len,stop(){ try{ s.stop(); }catch(e){} }};
+}
+/* ---------- overlays ---------- */
+function admOverlay(id,cls){ let e=document.getElementById(id); if(!e){ e=document.createElement('div'); e.id=id; if(cls) e.className=cls; document.body.appendChild(e); } return e; }
+function admMsgBox(title,text,after){
+  const o=admOverlay('admMsg'); o.textContent=''; const card=document.createElement('div'); card.className='admcard'; const h=document.createElement('b'); h.textContent=title||'Message'; const p=document.createElement('p'); p.textContent=text; const bt=document.createElement('button'); bt.className='btn'; bt.textContent='OK';
+  card.append(h,p,bt); o.appendChild(card); o.classList.add('on'); try{ Snd.chest(); }catch(e){} let done=false; const close=()=>{ if(done) return; done=true; o.classList.remove('on'); o.textContent=''; if(after) after(); }; bt.onclick=close; setTimeout(close,45000);
+}
+/* ---------- KGB eye ---------- */
+function admKGB(done){
+  if(ADM.fxBusy){ if(done) done(); return; } ADM.fxBusy=true; wake(); try{ Snd.fade(0,.6); }catch(e){}
+  const ov=admOverlay('admEye'), cv=document.createElement('canvas'); ov.textContent=''; const fl=document.createElement('div'); fl.className='eyeflash'; ov.append(cv,fl); ov.classList.add('on');
+  const DPR=Math.min(2,window.devicePixelRatio||1), W=innerWidth, H=innerHeight; cv.width=W*DPR; cv.height=H*DPR; cv.style.width=W+'px'; cv.style.height=H+'px'; const x=cv.getContext('2d'); x.scale(DPR,DPR);
+  const R=Math.round(Math.min(W,H)*.2+30), corners=[[0,0],[W,0],[0,H],[W,H]], cr=corners[vr(4)], cx0=cr[0], cy0=cr[1], tx=W/2, ty=H/2, dir=[ty>cy0?1:-1,0];
+  const ex=[2*tx-cx0,2*ty-cy0];
+  // model: unit-sphere points rotated by matrix M
+  let M=[[1,0,0],[0,1,0],[0,0,1]]; const mul=(a,b)=>a.map((_,i)=>[0,1,2].map(j=>a[i][0]*b[0][j]+a[i][1]*b[1][j]+a[i][2]*b[2][j]));
+  const rot=(ax,ay,ang)=>{ const l=Math.hypot(ax,ay)||1, u=ax/l, v=ay/l, c=Math.cos(ang), s=Math.sin(ang), t=1-c; return [[t*u*u+c,t*u*v,v*s],[t*u*v,t*v*v+c,-u*s],[-v*s,u*s,c]]; };
+  const ap=(p)=>[M[0][0]*p[0]+M[0][1]*p[1]+M[0][2]*p[2],M[1][0]*p[0]+M[1][1]*p[1]+M[1][2]*p[2],M[2][0]*p[0]+M[2][1]*p[1]+M[2][2]*p[2]];
+  const ring=(a,n)=>Array.from({length:n},(_,i)=>{ const t=i/n*Math.PI*2; return [Math.sin(a)*Math.cos(t),Math.sin(a)*Math.sin(t),Math.cos(a)]; });
+  const iris=ring(.5,36), pupilR=a=>ring(a,28), veins=Array.from({length:9},()=>{ const a0=Math.random()*Math.PI*2, el=.75+Math.random()*.5; return Array.from({length:7},(_,k)=>{ const e2=el+k*.1, a=a0+Math.sin(k*1.7+a0)*.25; return [Math.sin(e2)*Math.cos(a),Math.sin(e2)*Math.sin(a),Math.cos(e2)]; }); });
+  let pos=[cx0,cy0], look=[0,0], pup=.2, lastT=performance.now(), phase='in', pt=0, rolled=0, flashT=-1, thunder=null, snd=null, exitAt=0;
+  const mv=(dx,dy)=>{ const d=Math.hypot(dx,dy); if(!d) return; M=mul(rot(-dy,dx,d/R),M); };
+  const sclera=()=>{ const g=x.createRadialGradient(pos[0]-R*.25,pos[1]-R*.3,R*.1,pos[0],pos[1],R); g.addColorStop(0,'#fbf6f0'); g.addColorStop(.7,'#e9ded4'); g.addColorStop(1,'#a8887c'); x.fillStyle=g; x.beginPath(); x.arc(pos[0],pos[1],R,0,7); x.fill(); };
+  const poly=(pts,fill,stroke,lw)=>{ let st=false; x.beginPath(); pts.forEach(p=>{ const q=ap(p); if(q[2]<0) return; const X=pos[0]+q[0]*R, Y=pos[1]+q[1]*R; if(!st){ x.moveTo(X,Y); st=true; } else x.lineTo(X,Y); }); x.closePath(); if(fill){ x.fillStyle=fill; x.fill(); } if(stroke){ x.strokeStyle=stroke; x.lineWidth=lw||1; x.stroke(); } };
+  const draw=()=>{ x.clearRect(0,0,W,H); x.save(); x.beginPath(); x.arc(pos[0],pos[1],R,0,7); x.clip(); sclera();
+    veins.forEach(v=>{ x.beginPath(); let st=false; v.forEach(p=>{ const q=ap(p); if(q[2]<.05){ st=false; return; } const X=pos[0]+q[0]*R, Y=pos[1]+q[1]*R; if(!st){ x.moveTo(X,Y); st=true; } else x.lineTo(X,Y); }); x.strokeStyle='rgba(176,52,52,.5)'; x.lineWidth=1.3; x.stroke(); });
+    const c=ap([0,0,1]); if(c[2]>-.2){ const ix=pos[0]+c[0]*R, iy=pos[1]+c[1]*R, vis=Math.max(0,c[2]);
+      const g=x.createRadialGradient(ix,iy,R*.05,ix,iy,R*.5); g.addColorStop(0,'#5a3a1c'); g.addColorStop(.45,'#8a6a2c'); g.addColorStop(.8,'#4d6a3a'); g.addColorStop(1,'#1d2b22');
+      poly(iris,g,'#1a1512',2); x.save(); x.globalAlpha=.35; for(let k=0;k<22;k++){ const t=k/22*Math.PI*2, a=ap([Math.sin(.16)*Math.cos(t),Math.sin(.16)*Math.sin(t),Math.cos(.16)]), b=ap([Math.sin(.46)*Math.cos(t),Math.sin(.46)*Math.sin(t),Math.cos(.46)]); if(a[2]<0||b[2]<0) continue; x.strokeStyle=k%2?'#2a1a0a':'#c9a860'; x.lineWidth=1; x.beginPath(); x.moveTo(pos[0]+a[0]*R,pos[1]+a[1]*R); x.lineTo(pos[0]+b[0]*R,pos[1]+b[1]*R); x.stroke(); } x.restore();
+      poly(pupilR(.07+pup*.28),'#050404'); }
+    const sh=x.createRadialGradient(pos[0]-R*.2,pos[1]-R*.25,R*.5,pos[0],pos[1],R*1.02); sh.addColorStop(0,'rgba(0,0,0,0)'); sh.addColorStop(1,'rgba(20,6,6,.62)'); x.fillStyle=sh; x.fillRect(pos[0]-R,pos[1]-R,R*2,R*2); x.restore();
+    x.fillStyle='rgba(255,255,255,.75)'; x.beginPath(); x.ellipse(pos[0]-R*.32,pos[1]-R*.36,R*.16,R*.09,-.6,0,7); x.fill(); x.fillStyle='rgba(255,255,255,.35)'; x.beginPath(); x.arc(pos[0]+R*.28,pos[1]+R*.34,R*.05,0,7); x.fill(); };
+  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; const lerp=(a,b,t)=>a+(b-a)*t;
+  const peek=[cx0+(tx-cx0)*.12,cy0+(ty-cy0)*.12], dur={in:900,peek:900,roll:2300,face:700,thunder:0,out:2600}; let t0=performance.now(), from=[cx0,cy0], to=peek, ph='in', waited=false, ended=false, tail=0;
+  const startThunder=async()=>{ const b=await admLoad('lightning.mp3'); const reduced2=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches; flashT=reduced2?-1:performance.now(); if(b){ snd=admPlay(b,0,1); snd.src.onended=()=>{ ended=true; }; tail=b.duration*1000; } else { thunder=admThunderSynth(); tail=thunder.dur*1000; setTimeout(()=>{ ended=true; },tail); } };
+  const go=(next,toP,d)=>{ ph=next; from=pos.slice(); to=toP; t0=performance.now(); dur.cur=d; };
+  go('in',peek,dur.in);
+  let faceStart=null, thunderStarted=false;
+  (function frame(now){ const dt=Math.min(50,now-lastT); lastT=now; const u=Math.min(1,(now-t0)/(dur.cur||1)); const old=pos.slice();
+    if(ph==='in'){ pos=[lerp(from[0],to[0],ease(u)),lerp(from[1],to[1],ease(u))]; mv(pos[0]-old[0],pos[1]-old[1]); if(u>=1){ ph='peek'; t0=now; dur.cur=dur.peek; } }
+    else if(ph==='peek'){ const w=Math.sin((now-t0)/160)*.9; M=mul(rot(1,0,w*.004),M); M=mul(rot(0,1,Math.sin((now-t0)/230)*.003),M); if(u>=1){ from=pos.slice(); to=[tx,ty]; ph='roll'; t0=now; dur.cur=dur.roll; } }
+    else if(ph==='roll'){ pos=[lerp(from[0],to[0],ease(u)),lerp(from[1],to[1],ease(u))]; mv(pos[0]-old[0],pos[1]-old[1]); if(u>=1){ ph='face'; t0=now; dur.cur=dur.face; } }
+    else if(ph==='face'){ const k=ease(u), c=ap([0,0,1]); const ax=-c[1], ay=c[0], ang=Math.acos(Math.max(-1,Math.min(1,c[2]))); if(ang>.001){ const step=ang*Math.min(1,dt/180); M=mul(rot(-ay*-1,ax*-1,step),M); } pup=.55+.25*Math.sin(now/90)*.2; if(u>=1&&!thunderStarted){ thunderStarted=true; ph='thunder'; t0=now; startThunder(); } }
+    else if(ph==='thunder'){ const c=ap([0,0,1]); const ang=Math.acos(Math.max(-1,Math.min(1,c[2]))); if(ang>.001){ M=mul(rot(c[1],-c[0],ang*Math.min(1,dt/120)),M); } M=mul(rot(1,0,Math.sin(now/37)*.0015),M); if(flashT>0){ const f=(now-flashT); const a=f<90?1-f/90*.25:f<260?.75*(1-(f-90)/170):0; const b2=f>300&&f<420?.35*(1-(f-300)/120):0; fl.style.opacity=String(Math.max(a,b2)); pup=f<120?.05:Math.min(.9,.05+(f-120)/900); if(f>1100) fl.style.opacity='0'; }
+      if(ended&&now-t0>400){ ph='out'; from=pos.slice(); to=ex; t0=now; dur.cur=dur.out; } if(now-t0>14000){ ended=true; } }
+    else if(ph==='out'){ pup=Math.max(.2,pup-dt/1800); pos=[lerp(from[0],to[0],u*u*.6+u*.4),lerp(from[1],to[1],u*u*.6+u*.4)]; mv(pos[0]-old[0],pos[1]-old[1]); if(u>=1){ ov.classList.remove('on'); ov.textContent=''; ADM.fxBusy=false; admMsgBox('Notice','You are being watched by the KGB. Beware.',()=>{ try{ Snd.fade(1,2.2); }catch(e){} if(done) done(); }); return; } }
+    draw(); requestAnimationFrame(frame); })(performance.now());
+  admLoad('lightning.mp3');
+}
+/* ---------- custom-symbol jackpot cinematic ---------- */
+let CINE_MS=0;
+function admBigNumber(el,t0,t1,now){ const u=Math.max(0,Math.min(1,(now-t0)/(t1-t0))), digits=Math.floor(4+u*u*52), s=Array.from({length:digits},(_,i)=>i===0?String(1+vr(9)):String(vr(10))).join(''); el.textContent='$'+s.replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+async function admCineSpin(){
+  const C=ADM.cine; if(!C||C.running) return; C.running=true; stopAuto(); wake(); ADM.fxBusy=true;
+  state.busy=true; state.lastWin=null; setSpinUI(); clearPresentation(); setHot(0,false); Snd.tensionStop(); $('#reels').classList.remove('idle'); livePush(true);
+  const g=Array.from({length:5},()=>Array(3).fill(C.sym)); state.lastGrid=state.grid; state.grid=g; state.quick=false;
+  CINE_MS=3000; Snd.spinStart(); pullArm(); const T0=performance.now();
+  const bufP=admLoad('xcool.mp3'); setTimeout(()=>{ try{ Snd.fade(0,.7); }catch(e){} },2200);
+  const nd=Snd.node(); let play=null, synth=null, tStart=0, tPerf=0; const OFF=41, HIT=52.4;
+  setTimeout(async()=>{ const b=await bufP; tPerf=performance.now(); if(b&&nd){ play=admPlay(b,OFF,1); tStart=play.t; } else if(nd){ synth=admRiser(nd,HIT-OFF+1.2); } },3000);
+  const run=runReels(g,null); await run; CINE_MS=0; Snd.whirrStop(); setHot(0,false); Snd.tensionStop(); state.grid=g;
+  try{ shake(1.6); flash(); burst(60,innerWidth/2,innerHeight/2,13,'conf'); Snd.win('jackpot'); }catch(e){}
+  const big=admOverlay('admBig'); big.textContent=''; big.classList.add('on'); const bt0=performance.now();
+  const clock=()=>{ if(play) return OFF+(nd.ctx.currentTime-tStart)-(nd.ctx.outputLatency||nd.ctx.baseLatency||0); return OFF+(performance.now()-(tPerf||bt0))/1000; };
+  await new Promise(res=>{ (function loop(now){ admBigNumber(big,bt0,bt0+(HIT-OFF)*1000,now); if(clock()>=HIT-.012||now-bt0>30000) return res(); requestAnimationFrame(loop); })(performance.now()); });
+  // the drop
+  const skull=admOverlay('admSkull'); skull.textContent='💀'; skull.classList.add('on'); document.documentElement.classList.add('cine-bw'); big.classList.remove('on');
+  await sleep(10000);
+  try{ if(play){ play.g.gain.setTargetAtTime(0,nd.ctx.currentTime,.5); setTimeout(()=>{ try{ play.src.stop(); }catch(e){} },2500); } if(synth) synth.stop(); Snd.fade(1,2.5); }catch(e){}
+  skull.classList.remove('on'); document.documentElement.classList.remove('cine-bw'); big.textContent='';
+  state.grid=state.lastGrid||state.grid; showStatic(); $('#reels').classList.add('idle'); state.busy=false; setSpinUI(); renderHUD(); ADM.cine=null; ADM.fxBusy=false; livePush(true);
+}
+function admRiser(nd,dur){ const c=nd.ctx, t=c.currentTime+.03, o=c.createOscillator(), g=c.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(70,t); o.frequency.exponentialRampToValueAtTime(900,t+dur); g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(.18,t+dur); g.gain.exponentialRampToValueAtTime(.0001,t+dur+.4); o.connect(g); g.connect(nd.out); o.start(t); o.stop(t+dur+.5); return {stop(){ try{ o.stop(); }catch(e){} }}; }
+function admTempSymbol(spec){
+  const s=icSan(spec); if(!s) return null; const root=document.getElementById('s-SEVEN').parentNode; let el=document.getElementById('s-'+s.id);
+  if(!el){ el=document.createElementNS('http://www.w3.org/2000/svg','symbol'); el.id='s-'+s.id; el.setAttribute('viewBox','0 0 100 100'); root.appendChild(el); } icBuild(el,s); return s.id;
+}
+/* ---------- command handler (runs on the target) ---------- */
+function admHandle(c,id){
+  if(!c||typeof c!=='object') return; const k=c.k, num=(x,lo,hi)=>Math.max(lo,Math.min(hi,+x||0));
+  try{
+    if(k==='kgb') admKGB();
+    else if(k==='msg'){ admMsgBox(String(c.title||'Message').slice(0,40),String(c.text||'').slice(0,240)); }
+    else if(k==='q'){ const codes=(Array.isArray(c.codes)?c.codes:[]).filter(x=>typeof x==='string'&&/^(J|L|M:[a-z0-9_]{2,14}|P:(mini|minor|major|mega|grand))$/.test(x)).slice(0,20); if(c.replace) ADM.q.length=0; ADM.q.push(...codes); ADM.q.length=Math.min(ADM.q.length,30); }
+    else if(k==='clearq'){ ADM.q.length=0; ADM.pj=null; }
+    else if(k==='cine'){ const sym=c.sym&&typeof c.sym==='object'?admTempSymbol(c.sym):(typeof c.sym==='string'&&/^[A-Z0-9]{2,12}$/.test(c.sym)&&document.getElementById('s-'+c.sym)?c.sym:null); if(sym){ ADM.cine={sym,running:false}; admLoad('xcool.mp3'); } }
+    else if(k==='gift'){ const a=num(c.amt,-1e9,1e9); setBal(Math.max(0,state.bal+a)); toast((a>=0?'A gift from the house: +':'The house takes ')+fmt(Math.abs(a))); }
+    else if(k==='lock'){ ADM.lock=!!c.on; toast(ADM.lock?'The machine was locked':'The machine was unlocked'); }
+    else if(k==='fs'){ const n=num(c.n,1,50)|0; if(!state.busy) runBonus(()=>freeSpins(n,state.bet)); }
+    else if(k==='wheel'){ if(!state.busy) runBonus(()=>wheelBonus(state.bet,['mini','minor','major','mega','grand','cash','fs'].includes(c.kind)?c.kind:undefined)); }
+    else if(k==='preset'){ if(PRESETS.some(p=>p.id===c.id)) applyPreset(c.id,true); }
+    else if(k==='party'){ burst(60,innerWidth/2,innerHeight/2,13,'conf'); coinRain(2200); Snd.win('mega'); }
+    else if(k==='shake'){ shake(2); }
+    else if(k==='lobby'){ try{ openLobby(); }catch(e){} }
+  }catch(e){}
+  setTimeout(()=>livePush(true),120);
+}
+/* ---------- sending (admin side) ---------- */
+async function admSend(targetId,c){
+  const id='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  if(LIVE.mode==='room'){ try{ await OL.room.emit('g1c-cmd',{to:targetId,id,c}); return true; }catch(e){ toast(e&&e.code==='not_permitted'?'Only the artifact owner/editors can send commands':'Command failed'); return false; } }
+  if(LIVE.mode==='fb'){ if(!admKey()){ toast('Paste your admin key first'); return false; } try{ const m=await admSign({to:targetId,ts:Date.now(),c}); await olRest('/cmd/'+targetId+'.json',{method:'POST',body:JSON.stringify(m)}); return true; }catch(e){ toast('Command failed'); return false; } }
+  toast('Live control needs the Claude artifact or a Firebase URL'); return false;
+}
+let admRosterUnsub=null;
+function admRoster(){ if(typeof admListDraw==='function') admListDraw(); if(ADM.view&&ADM.sel) admViewDraw(); }
+function admFbRoster(on){
+  if(admRosterUnsub){ admRosterUnsub(); admRosterUnsub=null; } if(!on||LIVE.mode!=='fb') return;
+  admRosterUnsub=fbStream('/live',tree=>{ ADM.roster.clear(); Object.entries(tree||{}).forEach(([id,s])=>{ if(!s||!s.nick||id===ui.pid) return; ADM.roster.set(id,{id,...s,t:+s.ts||0}); }); admRoster(); });
+}
+/* ---------- admin UI ---------- */
+function admDebugUI(){
+  const box=$('#dAdm'); if(!box) return; box.textContent='';
+  const b=(t,fn)=>{ const e=document.createElement('button'); e.textContent=t; e.onclick=fn; box.appendChild(e); return e; };
+  b('Player control…',()=>admOpenList()); b('Admin key…',()=>admKeyDlg());
+  const s=document.createElement('div'); s.className='olnote'; s.textContent=LIVE.mode==='room'?'Live channel: Claude artifact':LIVE.mode==='fb'?'Live channel: Firebase'+(admKey()?' (key set)':' (admin key missing)'):'No live channel: needs the Claude artifact or a Firebase URL'; box.appendChild(s);
+}
+function admKeyDlg(){
+  openModal({title:'Admin key',html:`<p class="olnote">Paste the private admin key (JSON). It stays in this browser and signs your commands when you are not inside the Claude artifact.</p><div class="field"><textarea id="akTxt" rows="5" style="width:100%" placeholder='{"kty":"EC",...}'></textarea></div><div id="akErr" class="olnote warn">${admKey()?'A key is stored on this device.':''}</div>`,
+    actions:[{id:'aksave',label:'Save key',cls:'btn',fn:()=>{ try{ const j=JSON.parse($('#akTxt').value); if(j.kty!=='EC'||!j.d) throw 0; localStorage.setItem('g1c-akey',JSON.stringify(j)); toast('Admin key saved'); closeModal(); admDebugUI(); }catch(e){ Snd.err(); $('#akErr').textContent='That is not a valid private key.'; } }},{id:'akdel',label:'Remove key',cls:'btn',fn:()=>{ try{ localStorage.removeItem('g1c-akey'); }catch(e){} closeModal(); admDebugUI(); }}]});
+}
+function admListDraw(){
+  const box=$('#admList'); if(!box) return; box.textContent=''; const now=Date.now(), rows=[...ADM.roster.values()].filter(r=>now-(+r.t||0)<(LIVE.mode==='fb'?40000:90000)).sort((a,b)=>(b.n||0)-(a.n||0));
+  if(!rows.length){ const p=document.createElement('p'); p.className='olnote'; p.textContent='No other players are active right now.'; box.appendChild(p); return; }
+  rows.forEach(r=>{ const d=document.createElement('button'); d.className='admrow'; const nm=document.createElement('b'); nm.textContent=r.nick; const gm=document.createElement('i'); gm.textContent=r.g==='slots'?'Slots':r.g==='bj'?'Blackjack':'Lobby';
+    const t=document.createElement('span'); t.textContent='session '+fmtDur(r.n)+' · total '+fmtDur((r.tt||0)+(r.n||0)); const bl=document.createElement('em'); bl.textContent=fmt(r.b||0); d.append(nm,gm,t,bl); d.onclick=()=>admPick(r.id); box.appendChild(d); });
+}
+function admOpenList(){
+  if(!LIVE.mode){ toast('No live channel: use the Claude artifact or set a Firebase URL'); return; }
+  openModal({title:'Active players',html:`<p class="olnote">Players online right now. Tap one to open the control panel.</p><div id="admList" class="admlist"></div>`,wire:()=>{ admFbRoster(true); admListDraw(); }});
+}
+function admPick(id){
+  const r=ADM.roster.get(id); if(!r) return;
+  openModal({title:'Control '+escHtml(r.nick),html:`<p class="olnote">Do you want to be discreet? If yes, nothing happens on their screen until you act. If no, they will get a little visit first.</p>`,
+    actions:[{id:'admy',label:'Yes, be discreet',cls:'btn',fn:()=>{ closeModal(); admOpen(id,true); }},{id:'admn',label:'No, announce myself',cls:'btn',fn:()=>{ closeModal(); admOpen(id,false); }}]});
+}
+function admOpen(id,discreet){
+  ADM.sel=id; ADM.discreet=discreet; if(!discreet) admSend(id,{k:'kgb'});
+  openModal({title:'Watching',html:`<div id="admView" class="admview"></div>`,wire:()=>{ ADM.view=true; admFbRoster(true); admViewDraw(); }});
+}
+function admViewDraw(){
+  const root=$('#admView'); if(!root){ ADM.view=null; admFbRoster(false); return; } const r=ADM.roster.get(ADM.sel); root.textContent='';
+  const mk=(t,c,p,txt)=>{ const e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; (p||root).appendChild(e); return e; };
+  if(!r){ mk('p','olnote',null,'That player has left.'); return; }
+  const head=mk('div','admhead'); mk('b',null,head,r.nick+(ADM.discreet?'  (discreet)':'')); mk('span',null,head,(r.g==='slots'?'in Slots':r.g==='bj'?'in Blackjack':'in the lobby')+' · session '+fmtDur(r.n)+' · total '+fmtDur((r.tt||0)+(r.n||0)));
+  const m=mk('div','admmirror'); const top=mk('div','admtop',m); mk('span',null,top,'Balance '+fmt(r.b||0)); mk('span',null,top,'Bet '+fmt(r.bt||0)); mk('span',null,top,'Last win '+fmt(r.w||0)); mk('span',null,top,'Lucky '+Math.round((r.mt||0)*100)+'%'); mk('span',null,top,r.bz?'spinning':r.lk?'locked':r.cn?'cinematic queued':'idle');
+  const grid=mk('div','admgrid',m); const cols=(r.gr||'').split('|').map(c=>c.split(',')); for(let row=0;row<3;row++) for(let c=0;c<5;c++){ const id=(cols[c]&&cols[c][row])||'SEVEN'; const cell=mk('div','admcell',grid); if(/^[A-Z0-9]{2,12}$/.test(id)&&document.getElementById('s-'+id)) cell.innerHTML=symHTML(id); }
+  mk('div','admq',m,'Queued: '+((r.q||[]).length?(r.q||[]).join(' → '):'none')+(r.pj?'  · jackpot '+r.pj:'')+(r.cn?'  · custom jackpot waiting for next spin':''));
+  mk('h4',null,null,'Next 10 spins (exact, from their RNG)'); let preds=[]; try{ preds=admPredict(r,10); }catch(e){}
+  const tb=mk('div','admpred'); let net=0; preds.forEach((p,i)=>{ const row=mk('div','admp'+(p.pay>p.bet?' win':p.pay>0?' part':' lose'),tb); net+=p.pay-p.bet; mk('b',null,row,String(i+1)); mk('span',null,row,p.mys?'JACKPOT wheel: '+p.mys.toUpperCase():p.fs?'FREE SPINS':p.kind==='custom'&&p.forced?'forced loss':p.kind); mk('em',null,row,(p.pay-p.bet>=0?'+':'-')+fmt(Math.abs(p.pay-p.bet))); });
+  mk('div','admnet'+(net>=0?' up':' dn'),m,(preds.some(p=>p.fs||p.mys)?'Bonus ahead. Net until then: ':'Net over these spins: ')+(net>=0?'+':'-')+fmt(Math.abs(net)));
+  const act=mk('div','admacts'); const btn=(t,fn,cls)=>{ const e=mk('button',cls||null,act,t); e.onclick=()=>{ Snd.click(); fn(); }; return e; };
+  mk('h4',null,act,'Force'); btn('Line jackpot (15 sevens)',()=>admSend(r.id,{k:'q',codes:['J'],replace:true}));
+  ['mini','minor','major','mega','grand'].forEach(t=>btn(t.toUpperCase()+' jackpot',()=>admSend(r.id,{k:'q',codes:['P:'+t],replace:true})));
+  btn('Mega win',()=>admSend(r.id,{k:'q',codes:['M:mega'],replace:true})); btn('Free spins trigger',()=>admSend(r.id,{k:'q',codes:['M:freespins'],replace:true}));
+  [3,5,10].forEach(n=>btn('Losing streak ('+n+')',()=>admSend(r.id,{k:'q',codes:Array(n).fill('L'),replace:true}))); btn('Clear queue',()=>admSend(r.id,{k:'clearq'}));
+  mk('h4',null,act,'Custom symbol jackpot (cinematic)'); const sel=mk('select',null,act); const opts=[...CFG.icons.map(s=>s.id),...SYMS.filter(s=>!['WILD','SCATTER'].includes(s)&&!CFG.icons.some(c=>c.id===s))]; opts.forEach(id=>{ const o=document.createElement('option'); o.value=id; o.textContent=id+(CFG.icons.some(c=>c.id===id)?' (custom)':''); sel.appendChild(o); });
+  btn('Arm for their next spin',()=>{ const id=sel.value, spec=CFG.icons.find(s=>s.id===id); admSend(r.id,{k:'cine',sym:spec||id}); toast('Armed. It fires when they press spin.'); });
+  mk('h4',null,act,'Message box'); const ti=mk('input',null,act); ti.placeholder='Title'; ti.maxLength=40; const tx=mk('input',null,act); tx.placeholder='Message'; tx.maxLength=240; btn('Show on their screen',()=>{ if(!tx.value.trim()){ toast('Write a message first'); return; } admSend(r.id,{k:'msg',title:ti.value||'Message',text:tx.value}); });
+  mk('h4',null,act,'Tools'); const gi=mk('input',null,act); gi.type='number'; gi.placeholder='Coins (+/-)'; btn('Gift / take coins',()=>{ const a=+gi.value; if(!a){ toast('Enter an amount'); return; } admSend(r.id,{k:'gift',amt:a}); });
+  btn('Free spins (10)',()=>admSend(r.id,{k:'fs',n:10})); btn('Open wheel',()=>admSend(r.id,{k:'wheel'})); btn(r.lk?'Unlock machine':'Lock machine',()=>admSend(r.id,{k:'lock',on:!r.lk})); btn('Party',()=>admSend(r.id,{k:'party'})); btn('Shake',()=>admSend(r.id,{k:'shake'})); btn('Send to lobby',()=>admSend(r.id,{k:'lobby'}));
+  const ps=mk('select',null,act); PRESETS.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=p.name; ps.appendChild(o); }); btn('Set luck preset',()=>admSend(r.id,{k:'preset',id:ps.value}));
+  btn('Announce (KGB visit)',()=>admSend(r.id,{k:'kgb'}));
+}
+/* sync the heartbeat when the game state changes */
+setTimeout(()=>{ try{ admDebugUI(); }catch(e){} },1500);
 
 /* ============================== INIT ============================== */
-setInterval(()=>{ if(state.paused||state.busy||$('#modal').classList.contains('open')||document.hidden) return; const r=reels[rnd(5)], el=r.strip.children[1+rnd(3)]; if(el&&!el.classList.contains('pop')&&!el.classList.contains('scat')){ el.classList.remove('wink'); void el.getBoundingClientRect(); el.classList.add('wink'); setTimeout(()=>el.classList.remove('wink'),1000); } },2600);
+setInterval(()=>{ if(state.paused||state.busy||$('#modal').classList.contains('open')||document.hidden) return; const r=reels[vr(5)], el=r.strip.children[1+vr(3)]; if(el&&!el.classList.contains('pop')&&!el.classList.contains('scat')){ el.classList.remove('wink'); void el.getBoundingClientRect(); el.classList.add('wink'); setTimeout(()=>el.classList.remove('wink'),1000); } },2600);
 applyGfx(); applyPreset(cfgPreset,true); initMissions(); lobbyStats(); renderDaily(); layout(); showStatic(); $('#reels').classList.add('idle'); renderHUD(); renderMeters(); renderJP(); renderDebug(); renderDebugForce(); setSpinUI();
 
 })();
