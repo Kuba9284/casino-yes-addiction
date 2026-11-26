@@ -2124,7 +2124,7 @@ $('#bjRebet').onclick=()=>{ wake(); if(bj.busy||bj.phase!=='bet') return; bj.bet
 $('#bjX2').onclick=()=>{ wake(); if(bj.busy||bj.phase!=='bet') return; bj.bet=Math.min(state.bal,bj.bet*2); Snd.chip(); bjRender(); };
 $('#bjHit').onclick=()=>bjAct('hit'); $('#bjStand').onclick=()=>bjAct('stand'); $('#bjDouble').onclick=()=>bjAct('double'); $('#bjSplit').onclick=()=>bjAct('split');
 $('#bjLobby').onclick=()=>{ wake(); Snd.click(); openLobby(); }; $('#btnLobby').onclick=()=>{ wake(); Snd.click(); openLobby(); };
-$('#bjLogo').onclick=()=>{ wake(); openLobby(); };
+{ let n=0,t=0; $('#bjLogo').onclick=()=>{ wake(); n++; clearTimeout(t); t=setTimeout(()=>n=0,900); if(n>=5){ n=0; toggleDebug(); } }; }
 $('#bjMenu').onclick=()=>{ wake(); Snd.click(); openMenu(); };
 $('#bjSound').onclick=()=>$('#btnSound').click(); $('#bjMusic').onclick=()=>$('#btnMusic').click();
 $('#gSlots').onclick=()=>enterGame('slots'); $('#gBj').onclick=()=>enterGame('bj');
@@ -2356,10 +2356,10 @@ function icEdit(id){
   <div class="field"><label>Icon (emoji or 1-4 characters)</label><input id="icGlyph" maxlength="8" value="${v('glyph','')}"></div>
   <div class="field"><label>Colors: text / top / bottom</label><span class="icc"><input id="icFg" type="color" value="${v('fg','#ffffff')}"><input id="icB1" type="color" value="${v('bg1','#d8312f')}"><input id="icB2" type="color" value="${v('bg2','#5b0f12')}"></span></div>
   <div class="field"><label>Shape</label><select id="icShape">${['circle','round','gem','none'].map(x=>`<option ${s.shape===x?'selected':''}>${x}</option>`).join('')}</select></div>
-  <div class="field"><label>Appearance weight</label><input id="icW" type="number" min="0" max="40" step="0.5" value="${v('w',8)}"></div>
+  <div class="field"><label>Appears in normal gameplay</label><span class="icc"><input id="icOn" type="checkbox" ${(s.w!=null?s.w>0:(id?(WEIGHTS[id]||0)>0:false))?'checked':''}><input id="icW" type="number" min="1" max="40" step="0.5" value="${escHtml(String((s.w>0?s.w:(id&&WEIGHTS[id]>0?WEIGHTS[id]:8))))}"></span><small>Off = event-only symbol (jackpot cinematic). On = lands on the reels like any symbol; the number is how often (7 is a typical mid symbol).</small></div>
   <div class="field"><label>Pays (x line bet / 10) for 3 / 4 / 5</label><span class="icc"><input id="icP3" type="number" min="1" value="${v('p3',5)}"><input id="icP4" type="number" min="1" value="${v('p4',15)}"><input id="icP5" type="number" min="1" value="${v('p5',50)}"></span></div>
   <div id="icErr" class="olnote warn"></div>`,
-  actions:[{id:'icsave',label:'Save and publish',cls:'btn',fn:async()=>{ const o=icSan({id:id||$('#icId').value,name:$('#icName').value,img:IC_IMG,glyph:$('#icGlyph').value,fg:$('#icFg').value,bg1:$('#icB1').value,bg2:$('#icB2').value,shape:$('#icShape').value,w:$('#icW').value,p3:$('#icP3').value,p4:$('#icP4').value,p5:$('#icP5').value});
+  actions:[{id:'icsave',label:'Save and publish',cls:'btn',fn:async()=>{ const o=icSan({id:id||$('#icId').value,name:$('#icName').value,img:IC_IMG,glyph:$('#icGlyph').value,fg:$('#icFg').value,bg1:$('#icB1').value,bg2:$('#icB2').value,shape:$('#icShape').value,w:$('#icOn').checked?Math.max(1,+$('#icW').value||8):0,p3:$('#icP3').value,p4:$('#icP4').value,p5:$('#icP5').value});
       if(!o){ Snd.err(); $('#icErr').textContent='Need an ID of 2-12 letters/numbers (not WILD/SCATTER) and an icon.'; return; }
       if(!id&&(IC_DEF.has(o.id)||SYMS.includes(o.id))){ Snd.err(); $('#icErr').textContent='That ID already exists. Pick the existing icon to edit it.'; return; }
       CFG.icons=CFG.icons.filter(x=>x.id!==o.id); CFG.icons.push(o); if(CFG.icons.length>24){ Snd.err(); $('#icErr').textContent='Limit is 24 custom icons.'; return; }
