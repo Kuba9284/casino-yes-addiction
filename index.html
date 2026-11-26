@@ -2603,7 +2603,7 @@ async function admCineSpin(){
   big.classList.remove('on');
   try{ if(play){ play.g.gain.setTargetAtTime(0,nd.ctx.currentTime,.5); setTimeout(()=>{ try{ play.src.stop(); }catch(e){} },2500); } if(synth) synth.stop(); Snd.fade(1,2.5); }catch(e){}
   skull.classList.remove('on'); document.documentElement.classList.remove('cine-bw'); big.textContent='';
-  state.grid=state.lastGrid||state.grid; showStatic(); $('#reels').classList.add('idle'); state.busy=false; setSpinUI(); renderHUD(); ADM.cine=null; ADM.fxBusy=false; livePush(true);
+  state.grid=g; showStatic(); $('#reels').classList.add('idle'); // the win stays on the reels until their next spin state.busy=false; setSpinUI(); renderHUD(); ADM.cine=null; ADM.fxBusy=false; livePush(true);
 }
 function admRiser(nd,dur){ const c=nd.ctx, t=c.currentTime+.03, o=c.createOscillator(), g=c.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(70,t); o.frequency.exponentialRampToValueAtTime(900,t+dur); g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(.18,t+dur); g.gain.exponentialRampToValueAtTime(.0001,t+dur+.4); o.connect(g); g.connect(nd.out); o.start(t); o.stop(t+dur+.5); return {stop(){ try{ o.stop(); }catch(e){} }}; }
 function admTempSymbol(spec){
