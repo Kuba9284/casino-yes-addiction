@@ -2540,7 +2540,7 @@ async function admCineSpin(){
   const g=Array.from({length:5},()=>Array(3).fill(C.sym)); state.lastGrid=state.grid; state.grid=g; state.quick=false;
   CINE_MS=3000; Snd.spinStart(); pullArm(); const T0=performance.now();
   const bufP=admLoad('xcool.mp3'); setTimeout(()=>{ try{ Snd.fade(0,.7); }catch(e){} },2200);
-  const nd=Snd.node(); let play=null, synth=null, tStart=0, tPerf=0; const OFF=41, HIT=52.4;
+  const nd=Snd.node(); let play=null, synth=null, tStart=0, tPerf=0; const OFF=41, HIT=52.68; // the drop in xcool.mp3 measures at about 52.68s
   setTimeout(async()=>{ const b=await bufP; tPerf=performance.now(); if(b&&nd){ play=admPlay(b,OFF,1); tStart=play.t; } else if(nd){ synth=admRiser(nd,HIT-OFF+1.2); } },3000);
   const run=runReels(g,null); await run; CINE_MS=0; Snd.whirrStop(); setHot(0,false); Snd.tensionStop(); state.grid=g;
   try{ shake(1.6); flash(); burst(60,innerWidth/2,innerHeight/2,13,'conf'); Snd.win('jackpot'); }catch(e){}
