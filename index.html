@@ -1370,7 +1370,7 @@ const J={mini:61248,minor:210000,major:824115,mega:7400000,grand:128490318}, SEE
 
 /* ---------- persistence ---------- */
 const SAVE='99g1c-v1';
-function save(){ if(window.__g1cDeleted) return; try{ olSchedule(); }catch(e){} try{ livePush(); }catch(e){} try{ localStorage.setItem(SAVE,JSON.stringify({bal:state.bal,xp:state.xp,level:state.level,meter:state.meter,ach:[...ACH_DONE],S,ui,mDay:state.mDay,mBase:state.mBase,mDone:state.mDone,preset:cfgPreset,econ:3,ld:state.lastDaily,ds:state.dayStreak})); }catch(e){} }
+function save(){ if(window.__g1cDeleted) return; try{ olSchedule(); }catch(e){} try{ acctSchedule(); }catch(e){} try{ livePush(); }catch(e){} try{ localStorage.setItem(SAVE,JSON.stringify({bal:state.bal,xp:state.xp,level:state.level,meter:state.meter,ach:[...ACH_DONE],S,ui,mDay:state.mDay,mBase:state.mBase,mDone:state.mDone,preset:cfgPreset,econ:3,ld:state.lastDaily,ds:state.dayStreak})); }catch(e){} }
 function load(){
   try{ const d=JSON.parse(localStorage.getItem(SAVE)||'null'); if(!d) return;
     if(typeof d.bal==='number') state.bal=state.balShown=d.bal; state.xp=d.xp||0; state.level=d.level||1; state.meter=d.meter||0;
@@ -1424,7 +1424,7 @@ function planReels(g,tease){
       if(ext>0){ stop=Math.max(stop,prev+ext); dB=ext; p=5; hot={strong:i>=3||ant[i].scat,ext,scat:ant[i].scat}; }
     }
     prevHot=!!hot; stop=Math.max(stop,start+TP+TA+dB+80);
-    const T=stop-start, dAc=T-TP-TA-dB, vT=((ADM.cine&&ADM.cine.running)?.011:turbo?.040:.030)*H, pull=.2*H, sum=TA/2+dAc+dB/p;
+    const T=stop-start, dAc=T-TP-TA-dB, vT=((ADM.cine&&ADM.cine.running)?.019:turbo?.040:.030)*H, pull=.2*H, sum=TA/2+dAc+dB/p;
     const N=Math.max(5,Math.round((vT*sum-pull)/H));
     let tz=null; if(tease&&tease.reel===i){ tz={idx:tease.alt+1,d:-(tease.alt-tease.row)*H,hold:turbo?TZ_HOLD*.55:TZ_HOLD,glide:turbo?TZ_GLIDE*.7:TZ_GLIDE}; }
     const v=(N*H+(tz?tz.d:0)+pull)/sum;
@@ -1815,8 +1815,9 @@ function openSettings(){
   <div class="field"><div><label>Come-back alarm</label><small>When you switch tabs or move the cursor away</small></div><div class="seg" id="sAl">${[['off','Off'],['pause','Pause only'],['siren','Pause + siren']].map(a=>`<button data-v="${a[0]}" class="${ui.alarm===a[0]?'on':''}">${a[1]}</button>`).join('')}</div></div>
   <div class="field"><label>Alarm volume</label><input type="range" id="sAv" min="5" max="100" value="${Math.round(ui.alarmVol*100)}"></div>
   <div class="field"><div><label>Account</label><small>Remove your username, scores and saved progress</small></div><button class="btn" id="sDel" type="button">Delete account</button></div>
+  <div class="field"><div><label>Email login</label><small>Optional. Use the same account on two devices</small></div><button class="btn" id="sAcct" type="button">${ui.acct?'Manage':'Log in'}</button></div>
   <div class="field"><div><label>Reality check</label><small>Reminder with your real session numbers</small></div><select id="sRc">${[[0,'Off'],[10,'Every 10 min'],[20,'Every 20 min'],[30,'Every 30 min'],[60,'Every hour']].map(a=>`<option value="${a[0]}" ${ui.rc===a[0]?'selected':''}>${a[1]}</option>`).join('')}</select></div>`,
-  wire:c=>{ $('#sDel',c).onclick=()=>acctConfirm(); $('#sGfx',c).onchange=e=>{ ui.gfx=e.target.value; applyGfx(); save(); }; $('#sSfx',c).oninput=e=>{ ui.sfx=e.target.value/100; Snd.setVol(ui.sfx); }; $('#sMus',c).oninput=e=>{ ui.mus=e.target.value/100; Snd.setMusicVol(ui.mus); }; $('#sShk',c).oninput=e=>{ ui.shake=e.target.value/100; };
+  wire:c=>{ $('#sDel',c).onclick=()=>acctConfirm(); $('#sAcct',c).onclick=()=>acctLogin(); $('#sGfx',c).onchange=e=>{ ui.gfx=e.target.value; applyGfx(); save(); }; $('#sSfx',c).oninput=e=>{ ui.sfx=e.target.value/100; Snd.setVol(ui.sfx); }; $('#sMus',c).oninput=e=>{ ui.mus=e.target.value/100; Snd.setMusicVol(ui.mus); }; $('#sShk',c).oninput=e=>{ ui.shake=e.target.value/100; };
     $('#sTur',c).onchange=e=>{ state.turbo=e.target.checked; $('#chTurbo').classList.toggle('on',state.turbo); }; $('#sAv',c).oninput=e=>{ ui.alarmVol=e.target.value/100; Snd.setAlarmVol(ui.alarmVol); };
     $$('#sAl button',c).forEach(b=>b.onclick=()=>{ ui.alarm=b.dataset.v; $$('#sAl button',c).forEach(x=>x.classList.toggle('on',x===b)); }); $('#sRc',c).onchange=e=>{ ui.rc=+e.target.value; state.lastRc=Date.now(); save(); }; }}); }
 function openKeys(){ openModal({title:'Keyboard shortcuts',html:`<table class="tbl">${[['Space / Enter','Spin or stop the reels'],['Arrow up / down','Raise or lower bet'],['T','Toggle turbo'],['M','Toggle music'],['` or F2','Debug panel']].map(r=>`<tr><td><span class="hint">${r[0]}</span></td><td>${r[1]}</td></tr>`).join('')}</table>`}); }
@@ -2251,7 +2252,7 @@ const OL_ADMIN='appleiscool9284';
 const olOk=n=>n===OL_ADMIN||/^[A-Za-z0-9 ._\-]{3,14}$/.test(n);
 const olAdmin=()=>olNick()===OL_ADMIN;
 const olLocked=()=>!olAdmin()&&(OL.mode!=='off'||(!OL.ready&&navigator.onLine));
-const olTaken=n=>{ const me=OL.mode==='artifact'?OL.uid:ui.pid; return OL.rows.some(r=>r&&typeof r.nick==='string'&&r.nick.toLowerCase()===n.toLowerCase()&&r.id!==me&&r.id!==ui.pid); };
+const olTaken=n=>{ const me=OL.mode==='artifact'?OL.uid:ui.pid; return OL.rows.some(r=>r&&typeof r.nick==='string'&&r.nick.toLowerCase()===n.toLowerCase()&&r.id!==me&&r.id!==ui.pid&&!(ui.acct&&r.a===ui.acct.h)); };
 function olAsk(cb){
   openModal({title:'Choose a username',html:`<p class="olnote">Every player needs a username. It appears on the leaderboards and on the live winners ticker. While you are online the admin can also see your name, balance, play time and live slot machine state.</p>
   <div class="field"><div><label for="olNick2">Username</label><small>3-14 letters, numbers, space . _ -</small></div><input id="olNick2" maxlength="16" value="${escHtml(olNick())}" autocomplete="off" autocapitalize="off"></div><div id="olNickErr" class="olnote warn"></div>`,
@@ -2262,7 +2263,7 @@ function olAsk(cb){
   wire:c=>{ const i=$('#olNick2',c); setTimeout(()=>{ try{ i.focus(); }catch(e){} },80); i.onkeydown=e=>{ if(e.key==='Enter') $('#act_olok',c).click(); }; }});
 }
 window.__olGate=cb=>{ if(olOk(olNick())) return true; olAsk(cb); return false; };
-function olMe(){ return {nick:olNick(),bal:Math.round(state.bal),best:Math.round(S.best),lvl:state.level,bjWins:S.bjWins,bjBest:S.bjBest,spins:S.spins,hands:S.bjHands,t:Date.now()}; }
+function olMe(){ return {a:(ui.acct&&ui.acct.h)||undefined,nick:olNick(),bal:Math.round(state.bal),best:Math.round(S.best),lvl:state.level,bjWins:S.bjWins,bjBest:S.bjBest,spins:S.spins,hands:S.bjHands,t:Date.now()}; }
 const olBlocked=()=>!!S.dbgUsed&&!olAdmin();
 async function olInit(){
   try{ if(window.claude&&claude.use){
@@ -2335,6 +2336,7 @@ function acctConfirm(){
 async function acctDelete(){
   window.__g1cDeleted=true; try{ closeModal(); toast('Deleting your account…'); }catch(e){}
   try{ await olRetire(); }catch(e){}
+  try{ if(ui.acct&&ui.fb) await olRest('/acct/'+ui.acct.h+'.json',{method:'DELETE'}); }catch(e){}
   try{ if(OL.mode==='rest'&&ui.fb&&ui.pid){ await Promise.all([olRest('/live/'+ui.pid+'.json',{method:'DELETE'}),olRest('/cmd/'+ui.pid+'.json',{method:'DELETE'})]); } }catch(e){}
   try{ const keep=localStorage.getItem('g1c-akey'); localStorage.clear(); sessionStorage.clear(); if(keep) localStorage.setItem('g1c-akey',keep); }catch(e){}
   setTimeout(()=>location.reload(),400);
@@ -2362,7 +2364,7 @@ function tkRender(){
 function olRender(){ tkRender(); if($('#olList')) olDraw(); }
 function olDraw(){
   const list=$('#olList'); if(!list) return; const tab=OL_TABS.find(t=>t[0]===OL.tab)||OL_TABS[0];
-  const rows=OL.rows.filter(r=>r&&typeof r.nick==='string'&&olOk(r.nick)).sort((a,b)=>(+tab[2](b)||0)-(+tab[2](a)||0)).slice(0,25);
+  const rows=OL.rows.filter(r=>r&&typeof r.nick==='string'&&olOk(r.nick)).sort((a,b)=>(+tab[2](b)||0)-(+tab[2](a)||0)).filter((()=>{ const seen=new Set(); return r=>{ if(!r.a) return true; if(seen.has(r.a)) return false; seen.add(r.a); return true; }; })()).slice(0,25);
   list.textContent=''; const myId=OL.mode==='artifact'?OL.uid:ui.pid;
   if(!rows.length){ const p=document.createElement('p'); p.className='olnote'; p.textContent=OL.err||(OL.mode==='off'?'Offline: online mode is not connected here.':'No players yet. Pick a nickname and play to be the first.'); list.appendChild(p); }
   rows.forEach((r,i)=>{ const d=document.createElement('div'); d.className='olrow'+(r.id===myId?' me':''); const a=document.createElement('b'); a.textContent=String(i+1); const n=document.createElement('span'); n.textContent=r.nick+(r.nick===OL_ADMIN?' \u2605':'');
@@ -2481,6 +2483,36 @@ function icEdit(id){
 }
 icLoad(); icApply();
 setTimeout(()=>{ if(olAdmin()&&CFG.icons.length&&OL.mode==='pub'&&Date.now()-(+localStorage.getItem('g1c-cfgpost')||0)>6*3600e3){ try{ localStorage.setItem('g1c-cfgpost',String(Date.now())); }catch(e){} olPubSend({k:'cfg',v:CFG.v,json:JSON.stringify({icons:CFG.icons}),nick:OL_ADMIN}); } },8000);
+
+/* ---------- optional email account: same progress on several devices ---------- */
+const AC_E=new TextEncoder(), acHex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+const acHash=async e=>acHex(await crypto.subtle.digest('SHA-256',AC_E.encode('g1c|'+e))).slice(0,32);
+async function acPw(e,pw){ const k=await crypto.subtle.importKey('raw',AC_E.encode(pw),'PBKDF2',false,['deriveBits']); return acHex(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:AC_E.encode('g1c-salt|'+e),iterations:100000},k,256)); }
+function acBlob(){ try{ const d=JSON.parse(localStorage.getItem(SAVE)||'null'); if(!d) return null; d.ui=Object.assign({},d.ui); delete d.ui.pid; delete d.ui.acct; delete d.ui.fb; return d; }catch(e){ return null; } }
+let acTm=0, acDirty=false;
+function acctSchedule(){ if(!ui.acct||window.__g1cDeleted) return; acDirty=true; clearTimeout(acTm); acTm=setTimeout(()=>acPush(false),6000); }
+async function acPush(keep){ if(!ui.acct||!ui.fb||!acDirty||window.__g1cDeleted||(document.hidden&&!keep)) return; acDirty=false; const blob=acBlob(); if(!blob) return; const t=Date.now();
+  try{ const r=await olRest('/acct/'+ui.acct.h+'.json',{method:'PATCH',keepalive:!!keep,body:JSON.stringify({t,d:ui.pid||'',save:blob})}); if(r.ok) ui.acct.t=t; else acDirty=true; }catch(e){ acDirty=true; } }
+function acApply(sv,t){ window.__g1cDeleted=true; const u=Object.assign({},sv.ui||{}); u.pid=ui.pid||(ui.pid=Math.random().toString(36).slice(2,12)); u.fb=ui.fb; u.acct=Object.assign({},ui.acct,{t}); sv.ui=u; try{ localStorage.setItem(SAVE,JSON.stringify(sv)); }catch(e){} setTimeout(()=>location.reload(),150); }
+async function acPull(){ if(!ui.acct||!ui.fb||window.__g1cDeleted||document.hidden) return; try{ const r=await olRest('/acct/'+ui.acct.h+'.json?shallow=false').then(r=>r.json()); if(!r||r.ph!==ui.acct.ph){ if(r) { ui.acct=null; save(); toast('Account password changed. Logged out.'); } return; } if((+r.t||0)>(+ui.acct.t||0)&&r.d!==ui.pid&&r.save){ if(state.busy){ setTimeout(acPull,4000); return; } toast('Loading your progress from your other device…'); acApply(r.save,r.t); } }catch(e){} }
+document.addEventListener('visibilitychange',()=>{ if(document.hidden){ if(acDirty) acPush(true); } else setTimeout(acPull,400); });
+setTimeout(acPull,2500);
+function acctLogin(){
+  const on=ui.acct;
+  openModal({title:on?'Email account':'Log in with email',html:on?`<p class="olnote">Logged in as <b>${escHtml(ui.acct.e||'')}</b>. Your progress is saved to this account and follows you to every device you log in on. Switching back to a device loads the latest progress.</p>`:`<p class="olnote">Optional. Log in on a second device to continue with the same balance, level and stats. New email? An account is created from this device's progress. Existing email? This device loads the account's progress instead. Play-money game: do not reuse a real password.</p>
+  <div class="field"><div><label for="acE">Email</label></div><input id="acE" type="email" autocomplete="email" autocapitalize="off" spellcheck="false"></div>
+  <div class="field"><div><label for="acP">Password</label><small>6+ characters</small></div><input id="acP" type="password" autocomplete="current-password"></div><div id="acErr" class="olnote warn"></div>`,
+  actions:on?[{id:'aclo',label:'Log out of this device',cls:'btn',fn:()=>{ ui.acct=null; save(); closeModal(); toast('Logged out. Progress stays on this device.'); }}]:[{id:'acgo',label:'Log in / create',cls:'btn',fn:async()=>{
+    const e=($('#acE').value||'').trim().toLowerCase(), p=$('#acP').value||'', er=$('#acErr'); if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){ Snd.err(); er.textContent='Enter a valid email address.'; return; } if(p.length<6){ Snd.err(); er.textContent='Password needs 6 or more characters.'; return; } if(!ui.fb){ Snd.err(); er.textContent='Online server is not set up.'; return; }
+    er.textContent='Working…'; try{ const h=await acHash(e), ph=await acPw(e,p), r=await olRest('/acct/'+h+'.json').then(r=>r.json()); ui.pid=ui.pid||Math.random().toString(36).slice(2,12);
+      if(!r){ const t=Date.now(); save(); const blob=acBlob(); const w=await olRest('/acct/'+h+'.json',{method:'PUT',body:JSON.stringify({ph,t,d:ui.pid,save:blob})}); if(!w.ok) throw new Error('w'); ui.acct={h,ph,t,e}; save(); Snd.chest(); closeModal(); toast('Account created'); }
+      else if(r.ph!==ph){ Snd.err(); er.textContent='Wrong password for that email.'; }
+      else if(r.save){ ui.acct={h,ph,t:r.t,e}; closeModal(); toast('Logged in. Loading your progress…'); acApply(r.save,r.t); }
+      else { ui.acct={h,ph,t:r.t||0,e}; save(); closeModal(); }
+    }catch(x){ Snd.err(); er.textContent='Could not reach the server. Try again.'; } }}],
+  wire:c=>{ const i=$('#acE',c); if(i){ setTimeout(()=>{ try{ i.focus(); }catch(e){} },80); $('#acP',c).onkeydown=e=>{ if(e.key==='Enter') $('#act_acgo',c).click(); }; } }});
+}
+window.acctLogin=acctLogin;
 /* ============================== LIVE CHANNEL + ADMIN CONTROL ============================== */
 const ADM_PUB={"kty":"EC","crv":"P-256","x":"xiWpng0hLH44Vj3ti3Cu4LQMkSfd4qPQgGcNWvrIMfw","y":"8L_USrB7n7bAEyzM5eP30TLKbLZqsly3Heyrv2BFTEs"};
 const ADM={t0:Date.now(),q:[],pj:null,lock:false,cine:null,roster:new Map(),sel:null,discreet:true,seen:new Set(),peer:null,cmdSig:'',view:null,fxBusy:false};
@@ -2610,7 +2642,8 @@ function admKGB(done){
   ov.append(cv,hud,fl); ov.classList.add('on'); ov.classList.remove('in'); void ov.offsetWidth; ov.classList.add('in');
   const DPR=Math.min(2,window.devicePixelRatio||1), W=innerWidth, H=innerHeight; cv.width=W*DPR; cv.height=H*DPR; cv.style.width=W+'px'; cv.style.height=H+'px'; const x=cv.getContext('2d'); x.scale(DPR,DPR);
   const EW=Math.min(W*.96,620), cx0=W/2, cy0=H*.46, side=vr(2)?1:-1;
-  let pos=[cx0+side*(W*.75),cy0-H*.35], sc=.5, open=.55, lx=0, ly=0, tlx=0, tly=0, pup=.55, glow=0, ph='in', t0=performance.now(), tStart=t0, blink=-1, nextBlink=t0+900, thunderStarted=false, ended=false, tail=0, snd=null, thunder=null, flashT=-1, fin=false;
+  let pos=[0,0], sc=.5, open=.55, lx=0, ly=0, tlx=0, tly=0, pup=.55, glow=0, ph='in', t0=performance.now(), tStart=t0, blink=-1, nextBlink=t0+900, thunderStarted=false, ended=false, tail=0, snd=null, thunder=null, flashT=-1, fin=false;
+  const PK=EW*.5, PKX=side>0?W+PK*.1:-PK*.1, PKY=H*.14, PKF=[[0,1],[.2,0],[.5,0],[.62,.8],[.78,.8],[.9,0],[1,0]]; pos=[PKX+side*PK*.6,PKY]; ph='peek';
   const seeds=Array.from({length:11},()=>({a:Math.random()*6.28,l:.5+Math.random()*.5,w:Math.random()*2}));
   let px=W/2, py=H/2; const onMove=e=>{ const t=e.touches?e.touches[0]:e; if(t){ px=t.clientX; py=t.clientY; } }; addEventListener('pointermove',onMove,true); addEventListener('touchmove',onMove,{capture:true,passive:true}); addEventListener('pointerdown',onMove,true);
   const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2, back=t=>{ const c=2.2; return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2); }, lerp=(a,b,t)=>a+(b-a)*t, cl=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -2637,7 +2670,8 @@ function admKGB(done){
   let thT=0;
   (function frame(now){ if(fin) return; const dt=Math.min(50,now-(frame.l||now)); frame.l=now; const t=now-t0;
     clk.textContent=new Date().toLocaleTimeString([], {hour12:false})+'  '+(((now-tStart)/1000)|0).toString().padStart(2,'0')+'s';
-    if(ph==='in'){ const u=cl(t/380,0,1); pos=[lerp(cx0+side*(W*.75),cx0+side*(W*.18),ease(u)),lerp(cy0-H*.35,cy0-H*.12,ease(u))]; sc=lerp(.5,.62,u); open=lerp(.55,.8,u); if(u>=1){ ph='dart'; t0=now; } }
+    if(ph==='peek'){ const u=cl(t/1800,0,1); let o=1; for(let k=1;k<PKF.length;k++){ if(u<=PKF[k][0]){ const a0=PKF[k-1], f=(u-a0[0])/(PKF[k][0]-a0[0]); o=lerp(a0[1],PKF[k][1],ease(f)); break; } } sc=.5; open=.55; glow=.2; lx=-side*.9; ly=.15+Math.sin(u*30)*.05; pup=.5; pos=[PKX+side*PK*.6*o+Math.sin(now/40)*1.5,PKY]; if(u>=1){ ph='in'; t0=now; } }
+    else if(ph==='in'){ const u=cl(t/380,0,1); pos=[lerp(PKX,cx0+side*(W*.18),ease(u)),lerp(PKY,cy0-H*.12,ease(u))]; sc=lerp(.5,.62,u); open=lerp(.55,.8,u); if(u>=1){ ph='dart'; t0=now; } }
     else if(ph==='dart'){ const u=cl(t/620,0,1); lx=Math.sign(Math.sin(u*11))*.85*(1-u*.4); ly=Math.sin(u*7)*.3; tlx=lx; pos=[cx0+side*(W*.18)*(1-ease(u))+Math.sin(u*14)*6,lerp(cy0-H*.12,cy0,ease(u))]; sc=lerp(.62,.78,ease(u)); open=lerp(.8,.95,u); if(u>=1){ ph='slam'; t0=now; } }
     else if(ph==='slam'){ const u=cl(t/260,0,1); sc=lerp(.78,1,back(u)); pos=[cx0,cy0]; open=1; pup=lerp(.55,.12,u); lx=ly=0; glow=u; if(u>=1&&!thunderStarted){ thunderStarted=true; ph='stare'; t0=now; thT=now; startThunder(); try{ shake&&shake(1); flash&&flash(); }catch(e){} } }
     else if(ph==='stare'){ const tx=cl((px-W/2)/(W/2),-1,1), ty=cl((py-H/2)/(H/2),-1,1); tlx=tx; tly=ty; lx+=(tlx*.9-lx)*cl(dt/90,0,1); ly+=(tly*.8-ly)*cl(dt/90,0,1); pos=[cx0+Math.sin(now/53)*1.6+lx*10,cy0+Math.cos(now/61)*1.4+ly*8]; sc=1+Math.sin(now/180)*.012; glow=.5+.5*Math.sin(now/140); pup=.1+.04*Math.sin(now/75);
@@ -2888,6 +2922,7 @@ function admBuildActs(id,panes){
     const g2=grp(P,'Quick messages'); [['Hello','I see you.'],['House notice','The house is feeling generous.'],['Warning','Your luck is being reviewed.'],['Congratulations','You have been selected for something special.']].forEach(([t,x])=>btn(g2,t,()=>send({k:'msg',title:t,text:x}))); }
 }
 setTimeout(()=>{ try{ admDebugUI(); }catch(e){} },1500);
+window.admKGB=admKGB;
 
 /* ============================== INIT ============================== */
 setInterval(()=>{ if(state.paused||state.busy||$('#modal').classList.contains('open')||document.hidden) return; const r=reels[vr(5)], el=r.strip.children[1+vr(3)]; if(el&&!el.classList.contains('pop')&&!el.classList.contains('scat')){ el.classList.remove('wink'); void el.getBoundingClientRect(); el.classList.add('wink'); setTimeout(()=>el.classList.remove('wink'),1000); } },2600);
