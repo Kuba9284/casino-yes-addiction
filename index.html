@@ -2494,7 +2494,7 @@ function acctSchedule(){ if(!ui.acct||window.__g1cDeleted) return; acDirty=true;
 async function acPush(keep){ if(!ui.acct||!ui.fb||!acDirty||window.__g1cDeleted||(document.hidden&&!keep)) return; acDirty=false; const blob=acBlob(); if(!blob) return; const t=Date.now();
   try{ const r=await olRest('/acct/'+ui.acct.h+'.json',{method:'PATCH',keepalive:!!keep,body:JSON.stringify({t,d:ui.pid||'',save:blob})}); if(r.ok) ui.acct.t=t; else acDirty=true; }catch(e){ acDirty=true; } }
 function acApply(sv,t){ window.__g1cDeleted=true; const u=Object.assign({},sv.ui||{}); u.pid=ui.pid||(ui.pid=Math.random().toString(36).slice(2,12)); u.fb=ui.fb; u.acct=Object.assign({},ui.acct,{t}); sv.ui=u; try{ localStorage.setItem(SAVE,JSON.stringify(sv)); }catch(e){} setTimeout(()=>location.reload(),150); }
-async function acPull(){ if(!ui.acct||!ui.fb||window.__g1cDeleted||document.hidden) return; try{ const r=await olRest('/acct/'+ui.acct.h+'.json?shallow=false').then(r=>r.json()); if(!r||r.ph!==ui.acct.ph){ if(r) { ui.acct=null; save(); toast('Account password changed. Logged out.'); } return; } if((+r.t||0)>(+ui.acct.t||0)&&r.d!==ui.pid&&r.save){ if(state.busy){ setTimeout(acPull,4000); return; } toast('Loading your progress from your other device…'); acApply(r.save,r.t); } }catch(e){} }
+async function acPull(){ if(!ui.acct||!ui.fb||window.__g1cDeleted||document.hidden) return; try{ const r=await olRest('/acct/'+ui.acct.h+'.json').then(r=>r.ok?r.json():{error:1}); if(r&&r.error) return; if(!r||r.ph!==ui.acct.ph){ if(r) { ui.acct=null; save(); toast('Account password changed. Logged out.'); } return; } if((+r.t||0)>(+ui.acct.t||0)&&r.d!==ui.pid&&r.save){ if(state.busy){ setTimeout(acPull,4000); return; } toast('Loading your progress from your other device…'); acApply(r.save,r.t); } }catch(e){} }
 document.addEventListener('visibilitychange',()=>{ if(document.hidden){ if(acDirty) acPush(true); } else setTimeout(acPull,400); });
 setTimeout(acPull,2500);
 function acctLogin(){
@@ -2504,12 +2504,12 @@ function acctLogin(){
   <div class="field"><div><label for="acP">Password</label><small>6+ characters</small></div><input id="acP" type="password" autocomplete="current-password"></div><div id="acErr" class="olnote warn"></div>`,
   actions:on?[{id:'aclo',label:'Log out of this device',cls:'btn',fn:()=>{ ui.acct=null; save(); closeModal(); toast('Logged out. Progress stays on this device.'); }}]:[{id:'acgo',label:'Log in / create',cls:'btn',fn:async()=>{
     const e=($('#acE').value||'').trim().toLowerCase(), p=$('#acP').value||'', er=$('#acErr'); if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){ Snd.err(); er.textContent='Enter a valid email address.'; return; } if(p.length<6){ Snd.err(); er.textContent='Password needs 6 or more characters.'; return; } if(!ui.fb){ Snd.err(); er.textContent='Online server is not set up.'; return; }
-    er.textContent='Working…'; try{ const h=await acHash(e), ph=await acPw(e,p), r=await olRest('/acct/'+h+'.json').then(r=>r.json()); ui.pid=ui.pid||Math.random().toString(36).slice(2,12);
+    er.textContent='Working…'; try{ const h=await acHash(e), ph=await acPw(e,p), r=await olRest('/acct/'+h+'.json').then(async x=>{ const j=await x.json().catch(()=>null); if(!x.ok||(j&&j.error)){ const e=new Error('rules'); e.rules=1; throw e; } return j; }); ui.pid=ui.pid||Math.random().toString(36).slice(2,12);
       if(!r){ const t=Date.now(); save(); const blob=acBlob(); const w=await olRest('/acct/'+h+'.json',{method:'PUT',body:JSON.stringify({ph,t,d:ui.pid,save:blob})}); if(!w.ok) throw new Error('w'); ui.acct={h,ph,t,e}; save(); Snd.chest(); closeModal(); toast('Account created'); }
       else if(r.ph!==ph){ Snd.err(); er.textContent='Wrong password for that email.'; }
       else if(r.save){ ui.acct={h,ph,t:r.t,e}; closeModal(); toast('Logged in. Loading your progress…'); acApply(r.save,r.t); }
       else { ui.acct={h,ph,t:r.t||0,e}; save(); closeModal(); }
-    }catch(x){ Snd.err(); er.textContent='Could not reach the server. Try again.'; } }}],
+    }catch(x){ Snd.err(); er.textContent=x&&x.rules?'The server refused it: Firebase rules must allow read and write on /acct.':'Could not reach the server. Try again.'; } }}],
   wire:c=>{ const i=$('#acE',c); if(i){ setTimeout(()=>{ try{ i.focus(); }catch(e){} },80); $('#acP',c).onkeydown=e=>{ if(e.key==='Enter') $('#act_acgo',c).click(); }; } }});
 }
 window.acctLogin=acctLogin;
