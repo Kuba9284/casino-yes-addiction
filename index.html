@@ -539,6 +539,9 @@ html.ui-open #stage *,html.ui-open header *,html.ui-open #ticker *,html.ui-open 
 #sDel{padding:8px 12px; font-size:12px; background:linear-gradient(#ff9a8a,#c4311f); color:#fff}
 .admbj{margin:6px 0; padding:8px; border:1px solid #2b4a3b; border-radius:8px; background:#0b1612} .admbjrow{font:600 13px/1.5 ui-monospace,monospace; color:#eafff3}
 #sDel{padding:8px 12px; font-size:12px; background:linear-gradient(#ff9a8a,#c4311f); color:#fff}
+#dAdm{display:block!important}
+#dAdm .admlist{display:flex; flex-direction:column; gap:6px; margin:4px 0 6px} #dAdm .admlist .admrow{width:100%}
+#dAdm .admbtns{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px} #dAdm .admbtns button{width:auto}
 
 /* ---------- lobby (game chooser) ---------- */
 #welcome{overflow:auto; align-content:start; padding-block:max(24px,5vh)}
@@ -633,13 +636,8 @@ body.lite .hbox.act{box-shadow:none}
 #admMsg{position:fixed; inset:0; z-index:140; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.6); padding:20px}
 #admMsg.on{display:flex} .admcard{max-width:420px; width:100%; background:linear-gradient(#1b1a22,#0d0c12); border:2px solid #b98a2a; border-radius:16px; padding:20px; text-align:center; color:#f6ecd2; box-shadow:0 20px 60px rgba(0,0,0,.7)}
 .admcard b{display:block; font:800 13px/1 var(--ui); letter-spacing:.24em; text-transform:uppercase; color:#e0ad40; margin-bottom:12px} .admcard p{font:600 18px/1.35 var(--ui); margin:0 0 16px}
-#admEye{position:fixed; inset:0; z-index:135; display:none; pointer-events:auto; background:rgba(0,0,0,.35)} #admEye.on{display:block} #admEye canvas{position:absolute; inset:0}
 .eyeflash{position:absolute; inset:0; background:#eaf2ff; opacity:0; pointer-events:none}
-#admBig{position:fixed; left:0; top:50%; transform:translateY(-50%); z-index:131; display:none; font:900 22vw/1 var(--ui); color:#ffe27a; text-shadow:0 0 30px #ff9d00,0 6px 0 #7a3b00; white-space:nowrap; pointer-events:none; font-variant-numeric:tabular-nums}
-#admBig.on{display:block}
-#admSkull{position:fixed; inset:0; z-index:138; display:none; align-items:center; justify-content:center; font-size:62vmin; line-height:1; pointer-events:none; background:rgba(0,0,0,.45); animation:cineShake .09s infinite}
 #admSkull.on{display:flex}
-html.cine-bw #stage, html.cine-bw #bj, html.cine-bw #welcome{filter:grayscale(1) brightness(.5) contrast(1.2); animation:cineShake .09s infinite}
 @keyframes cineShake{0%{transform:translate(0,0)}25%{transform:translate(-7px,4px) rotate(-.3deg)}50%{transform:translate(6px,-5px) rotate(.3deg)}75%{transform:translate(-4px,-6px)}100%{transform:translate(5px,5px) rotate(-.2deg)}}
 .admlist{display:flex; flex-direction:column; gap:8px} .admrow{display:grid; grid-template-columns:1fr auto; gap:2px 10px; text-align:left; padding:10px 12px; border-radius:12px} .admrow b{font-size:16px} .admrow i{font-style:normal; opacity:.7; justify-self:end} .admrow span{font-size:12px; opacity:.8} .admrow em{font-style:normal; justify-self:end; font-weight:700}
 .admhead b{display:block; font-size:20px} .admhead span{font-size:12px; opacity:.8}
@@ -650,6 +648,30 @@ html.cine-bw #stage, html.cine-bw #bj, html.cine-bw #welcome{filter:grayscale(1)
 .admpred{display:flex; flex-direction:column; gap:2px} .admp{display:grid; grid-template-columns:24px 1fr auto; gap:8px; padding:4px 8px; border-radius:8px; font-size:13px; background:rgba(255,255,255,.05)} .admp.win{background:rgba(40,160,80,.28)} .admp.part{background:rgba(200,170,40,.18)} .admp.lose{background:rgba(190,50,50,.18)} .admp em{font-style:normal; font-weight:700}
 .admnet{margin-top:6px; font-weight:800; text-align:right} .admnet.up{color:#6fe39a} .admnet.dn{color:#ff8a8a}
 .admacts{display:flex; flex-wrap:wrap; gap:6px} .admacts h4{flex-basis:100%} .admacts input,.admacts select{flex:1 1 140px; min-width:0; padding:8px; border-radius:8px; border:1px solid #b98a2a; background:#120b1c; color:#fff}
+
+/* KGB eye */
+#admEye{position:fixed; inset:0; z-index:135; display:none; pointer-events:auto; background:radial-gradient(ellipse at 50% 46%, rgba(120,0,0,.25), rgba(30,0,0,.82) 70%, rgba(0,0,0,.94))} #admEye.on{display:block} #admEye canvas{position:absolute; inset:0}
+#admEye.in{animation:eyeIn .35s ease-out}
+@keyframes eyeIn{from{opacity:0}to{opacity:1}}
+.eyehud{position:absolute; inset:0; pointer-events:none; font:700 12px/1 ui-monospace,Menlo,monospace; letter-spacing:.2em; color:#ff4a3a; text-shadow:0 0 8px #ff1a0a; border:2px solid rgba(255,40,25,.55); margin:10px; border-radius:6px}
+.eyehud span{position:absolute; padding:8px 10px} .eyehud .tl{left:0; top:0} .eyehud .tr{right:0; top:0; animation:recB .8s steps(2) infinite} .eyehud .bl{left:0; bottom:0} .eyehud .br{right:0; bottom:0}
+@keyframes recB{50%{opacity:.25}}
+.eyescan{position:absolute; left:0; right:0; height:3px; background:linear-gradient(90deg,transparent,rgba(255,60,40,.8),transparent); box-shadow:0 0 16px #ff2a1a; animation:eyeScan 1.7s linear infinite}
+@keyframes eyeScan{from{top:0}to{top:100%}}
+.eyeflash{position:absolute; inset:0; background:#ffd9d0; opacity:0; pointer-events:none}
+/* custom jackpot win animation */
+#admBig{position:fixed; inset:0; z-index:131; display:none; pointer-events:none; overflow:hidden} #admBig.on{display:block}
+#admBig .abRays{position:absolute; left:50%; top:50%; width:240vmax; height:240vmax; margin:-120vmax 0 0 -120vmax; background:repeating-conic-gradient(rgba(255,214,90,0) 0 9deg, rgba(255,214,90,.2) 9deg 18deg); -webkit-mask:radial-gradient(circle,#000 0,transparent 42%); mask:radial-gradient(circle,#000 0,transparent 42%); animation:abSpin 7s linear infinite}
+@keyframes abSpin{to{transform:rotate(360deg)}}
+#admBig .abT{position:absolute; left:50%; top:28%; transform:translate(-50%,-50%); font:900 18vw/1 var(--ui); letter-spacing:.04em; color:#fff1a8; text-shadow:0 0 28px #ff9d00,0 5px 0 #8a4200; white-space:nowrap; animation:abPulse .45s ease-in-out infinite alternate}
+@keyframes abPulse{from{transform:translate(-50%,-50%) scale(.96)}to{transform:translate(-50%,-50%) scale(1.06)}}
+#admBig .abN{position:absolute; left:50%; top:54%; transform:translate(-50%,-50%); font:900 26vw/1 var(--ui); color:#ffd84a; text-shadow:0 0 36px #ff9d00,0 8px 0 #7a3b00; white-space:nowrap; font-variant-numeric:tabular-nums}
+/* black & white + dimming without CSS filters (filters made SVG icons vanish on iPhone) */
+#admBW{position:fixed; inset:0; z-index:136; display:none; pointer-events:none; background:#808080; mix-blend-mode:saturation} #admBW.on{display:block}
+#admDim{position:fixed; inset:0; z-index:137; display:none; pointer-events:none; background:rgba(0,0,0,.2)} #admDim.on{display:block}
+#admSkull{position:fixed; inset:0; z-index:138; display:none; align-items:center; justify-content:center; font-size:62vmin; line-height:1; pointer-events:none} #admSkull.on{display:flex}
+html.cine-bw #stage,html.cine-bw #bj,html.cine-bw #welcome{animation:cineShake .09s infinite}
+.admh{margin:14px 0 4px; font:700 11px/1 ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#d9b45a}
 
 </style>
 
@@ -1941,7 +1963,7 @@ $('#dDisg').onchange=e=>cfg.disguise=e.target.checked; $('#dAnt').onchange=e=>ui
   GROUPS.forEach(([name,titles])=>{ const p=document.createElement('div'); p.className='dpane'; p.dataset.tab=name; panes[name]=p; d.appendChild(p);
     titles.forEach(t=>{ const sec=secs.find(x=>x.h.textContent.replace(/\s+/g,' ').trim()===t); if(!sec) return; p.append(sec.h,...sec.els); });
     const b=document.createElement('button'); b.textContent=name; b.dataset.tab=name; b.onclick=()=>showTab(name); nav.appendChild(b); });
-  function showTab(n){ dbg.tab=n; Object.entries(panes).forEach(([k,p])=>p.classList.toggle('on',k===n)); $$('.dtabs button').forEach(b=>b.classList.toggle('act',b.dataset.tab===n)); d.scrollTop=0; try{ if(n==='Admin'&&typeof admDebugUI==='function') admDebugUI(); }catch(e){} }
+  function showTab(n){ dbg.tab=n; Object.entries(panes).forEach(([k,p])=>p.classList.toggle('on',k===n)); $$('.dtabs button').forEach(b=>b.classList.toggle('act',b.dataset.tab===n)); d.scrollTop=0; try{ if(n==='Admin'&&typeof admDebugUI==='function') admDebugUI(); else if(typeof admFbRoster==='function'&&!document.getElementById('admView')) admFbRoster(false); }catch(e){} }
   window.__dbgTab=showTab; showTab(dbg.tab||'Spin');
 })();
 
@@ -2555,11 +2577,13 @@ function admPredict(s,n){
 }
 /* ---------- audio helpers (files live next to the page: lightning.mp3, xcool.mp3) ---------- */
 const ADM_BUF={};
-async function admLoad(name){
-  if(name in ADM_BUF) return ADM_BUF[name]; const nd=Snd.node&&Snd.node(); if(!nd){ return null; }
-  ADM_BUF[name]=null;
-  try{ const r=await fetch(name); if(!r.ok) throw new Error('http'); const ab=await r.arrayBuffer(); ADM_BUF[name]=await new Promise((res,rej)=>nd.ctx.decodeAudioData(ab,res,rej)); }catch(e){ ADM_BUF[name]=null; delete ADM_BUF[name]; ADM_BUF['!'+name]=1; }
-  return ADM_BUF[name]||null;
+const ADM_P={};
+function admLoad(name){
+  if(ADM_BUF[name]) return Promise.resolve(ADM_BUF[name]); if(ADM_P[name]) return ADM_P[name];
+  const nd=Snd.node&&Snd.node(); if(!nd) return Promise.resolve(null); // no audio context yet: asked again on the next gesture / at spin time
+  return ADM_P[name]=(async()=>{
+    for(let i=0;i<4;i++){ try{ const r=await fetch(name); if(!r.ok) throw new Error('http'); const ab=await r.arrayBuffer(); const buf=await new Promise((res,rej)=>{ const pr=nd.ctx.decodeAudioData(ab,res,rej); if(pr&&pr.catch) pr.catch(rej); }); ADM_BUF[name]=buf; return buf; }catch(e){ await sleep(500*(i+1)); } }
+    delete ADM_P[name]; return null; })();
 }
 function admPlay(buf,offset,gain){
   const nd=Snd.node(); const src=nd.ctx.createBufferSource(), g=nd.ctx.createGain(); src.buffer=buf; g.gain.value=gain==null?1:gain; src.connect(g); g.connect(nd.out);
@@ -2579,55 +2603,61 @@ function admMsgBox(title,text,after){
 }
 /* ---------- KGB eye ---------- */
 function admKGB(done){
-  if(ADM.fxBusy){ if(done) done(); return; } ADM.fxBusy=true; wake(); try{ Snd.fade(0,.6); }catch(e){}
-  const ov=admOverlay('admEye'), cv=document.createElement('canvas'); ov.textContent=''; const fl=document.createElement('div'); fl.className='eyeflash'; ov.append(cv,fl); ov.classList.add('on');
+  if(ADM.fxBusy){ if(done) done(); return; } ADM.fxBusy=true; wake(); try{ Snd.fade(0,.4); }catch(e){}
+  const ov=admOverlay('admEye'); ov.textContent=''; const cv=document.createElement('canvas'), hud=document.createElement('div'), fl=document.createElement('div'); hud.className='eyehud'; fl.className='eyeflash';
+  const mkh=(c,t)=>{ const e=document.createElement('span'); e.className=c; e.textContent=t; hud.appendChild(e); return e; };
+  mkh('tl','KGB // SURVEILLANCE'); mkh('tr','● REC'); mkh('bl','SUBJECT: '+(olNick()||'UNKNOWN').toUpperCase()); const clk=mkh('br',''); const scan=document.createElement('div'); scan.className='eyescan'; hud.appendChild(scan);
+  ov.append(cv,hud,fl); ov.classList.add('on'); ov.classList.remove('in'); void ov.offsetWidth; ov.classList.add('in');
   const DPR=Math.min(2,window.devicePixelRatio||1), W=innerWidth, H=innerHeight; cv.width=W*DPR; cv.height=H*DPR; cv.style.width=W+'px'; cv.style.height=H+'px'; const x=cv.getContext('2d'); x.scale(DPR,DPR);
-  const R=Math.round(Math.min(W,H)*.2+30), corners=[[0,0],[W,0],[0,H],[W,H]], cr=corners[vr(4)], cx0=cr[0], cy0=cr[1], tx=W/2, ty=H/2, dir=[ty>cy0?1:-1,0];
-  const ex=[2*tx-cx0,2*ty-cy0];
-  // model: unit-sphere points rotated by matrix M
-  let M=[[1,0,0],[0,1,0],[0,0,1]]; const mul=(a,b)=>a.map((_,i)=>[0,1,2].map(j=>a[i][0]*b[0][j]+a[i][1]*b[1][j]+a[i][2]*b[2][j]));
-  const rot=(ax,ay,ang)=>{ const l=Math.hypot(ax,ay)||1, u=ax/l, v=ay/l, c=Math.cos(ang), s=Math.sin(ang), t=1-c; return [[t*u*u+c,t*u*v,v*s],[t*u*v,t*v*v+c,-u*s],[-v*s,u*s,c]]; };
-  const ap=(p)=>[M[0][0]*p[0]+M[0][1]*p[1]+M[0][2]*p[2],M[1][0]*p[0]+M[1][1]*p[1]+M[1][2]*p[2],M[2][0]*p[0]+M[2][1]*p[1]+M[2][2]*p[2]];
-  const ring=(a,n)=>Array.from({length:n},(_,i)=>{ const t=i/n*Math.PI*2; return [Math.sin(a)*Math.cos(t),Math.sin(a)*Math.sin(t),Math.cos(a)]; });
-  const iris=ring(.5,36), pupilR=a=>ring(a,28), veins=Array.from({length:9},()=>{ const a0=Math.random()*Math.PI*2, el=.75+Math.random()*.5; return Array.from({length:7},(_,k)=>{ const e2=el+k*.1, a=a0+Math.sin(k*1.7+a0)*.25; return [Math.sin(e2)*Math.cos(a),Math.sin(e2)*Math.sin(a),Math.cos(e2)]; }); });
-  let pos=[cx0,cy0], look=[0,0], pup=.2, lastT=performance.now(), phase='in', pt=0, rolled=0, flashT=-1, thunder=null, snd=null, exitAt=0;
-  const mv=(dx,dy)=>{ const d=Math.hypot(dx,dy); if(!d) return; M=mul(rot(-dy,dx,d/R),M); };
-  const sclera=()=>{ const g=x.createRadialGradient(pos[0]-R*.25,pos[1]-R*.3,R*.1,pos[0],pos[1],R); g.addColorStop(0,'#fbf6f0'); g.addColorStop(.7,'#e9ded4'); g.addColorStop(1,'#a8887c'); x.fillStyle=g; x.beginPath(); x.arc(pos[0],pos[1],R,0,7); x.fill(); };
-  const poly=(pts,fill,stroke,lw)=>{ let st=false; x.beginPath(); pts.forEach(p=>{ const q=ap(p); if(q[2]<0) return; const X=pos[0]+q[0]*R, Y=pos[1]+q[1]*R; if(!st){ x.moveTo(X,Y); st=true; } else x.lineTo(X,Y); }); x.closePath(); if(fill){ x.fillStyle=fill; x.fill(); } if(stroke){ x.strokeStyle=stroke; x.lineWidth=lw||1; x.stroke(); } };
-  const draw=()=>{ x.clearRect(0,0,W,H); x.save(); x.beginPath(); x.arc(pos[0],pos[1],R,0,7); x.clip(); sclera();
-    veins.forEach(v=>{ x.beginPath(); let st=false; v.forEach(p=>{ const q=ap(p); if(q[2]<.05){ st=false; return; } const X=pos[0]+q[0]*R, Y=pos[1]+q[1]*R; if(!st){ x.moveTo(X,Y); st=true; } else x.lineTo(X,Y); }); x.strokeStyle='rgba(176,52,52,.5)'; x.lineWidth=1.3; x.stroke(); });
-    const c=ap([0,0,1]); if(c[2]>-.2){ const ix=pos[0]+c[0]*R, iy=pos[1]+c[1]*R, vis=Math.max(0,c[2]);
-      const g=x.createRadialGradient(ix,iy,R*.05,ix,iy,R*.5); g.addColorStop(0,'#5a3a1c'); g.addColorStop(.45,'#8a6a2c'); g.addColorStop(.8,'#4d6a3a'); g.addColorStop(1,'#1d2b22');
-      poly(iris,g,'#1a1512',2); x.save(); x.globalAlpha=.35; for(let k=0;k<22;k++){ const t=k/22*Math.PI*2, a=ap([Math.sin(.16)*Math.cos(t),Math.sin(.16)*Math.sin(t),Math.cos(.16)]), b=ap([Math.sin(.46)*Math.cos(t),Math.sin(.46)*Math.sin(t),Math.cos(.46)]); if(a[2]<0||b[2]<0) continue; x.strokeStyle=k%2?'#2a1a0a':'#c9a860'; x.lineWidth=1; x.beginPath(); x.moveTo(pos[0]+a[0]*R,pos[1]+a[1]*R); x.lineTo(pos[0]+b[0]*R,pos[1]+b[1]*R); x.stroke(); } x.restore();
-      poly(pupilR(.07+pup*.28),'#050404'); }
-    const sh=x.createRadialGradient(pos[0]-R*.2,pos[1]-R*.25,R*.5,pos[0],pos[1],R*1.02); sh.addColorStop(0,'rgba(0,0,0,0)'); sh.addColorStop(1,'rgba(20,6,6,.62)'); x.fillStyle=sh; x.fillRect(pos[0]-R,pos[1]-R,R*2,R*2); x.restore();
-    x.fillStyle='rgba(255,255,255,.75)'; x.beginPath(); x.ellipse(pos[0]-R*.32,pos[1]-R*.36,R*.16,R*.09,-.6,0,7); x.fill(); x.fillStyle='rgba(255,255,255,.35)'; x.beginPath(); x.arc(pos[0]+R*.28,pos[1]+R*.34,R*.05,0,7); x.fill(); };
-  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; const lerp=(a,b,t)=>a+(b-a)*t;
-  const peek=[cx0+(tx-cx0)*.12,cy0+(ty-cy0)*.12], dur={in:900,peek:900,roll:2300,face:700,thunder:0,out:2600}; let t0=performance.now(), from=[cx0,cy0], to=peek, ph='in', waited=false, ended=false, tail=0;
-  const startThunder=async()=>{ const b=await admLoad('lightning.mp3'); const reduced2=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches; flashT=reduced2?-1:performance.now(); if(b){ snd=admPlay(b,0,1); snd.src.onended=()=>{ ended=true; }; tail=b.duration*1000; } else { thunder=admThunderSynth(); tail=thunder.dur*1000; setTimeout(()=>{ ended=true; },tail); } };
-  const go=(next,toP,d)=>{ ph=next; from=pos.slice(); to=toP; t0=performance.now(); dur.cur=d; };
-  go('in',peek,dur.in);
-  let faceStart=null, thunderStarted=false;
-  (function frame(now){ const dt=Math.min(50,now-lastT); lastT=now; const u=Math.min(1,(now-t0)/(dur.cur||1)); const old=pos.slice();
-    if(ph==='in'){ pos=[lerp(from[0],to[0],ease(u)),lerp(from[1],to[1],ease(u))]; mv(pos[0]-old[0],pos[1]-old[1]); if(u>=1){ ph='peek'; t0=now; dur.cur=dur.peek; } }
-    else if(ph==='peek'){ const w=Math.sin((now-t0)/160)*.9; M=mul(rot(1,0,w*.004),M); M=mul(rot(0,1,Math.sin((now-t0)/230)*.003),M); if(u>=1){ from=pos.slice(); to=[tx,ty]; ph='roll'; t0=now; dur.cur=dur.roll; } }
-    else if(ph==='roll'){ pos=[lerp(from[0],to[0],ease(u)),lerp(from[1],to[1],ease(u))]; mv(pos[0]-old[0],pos[1]-old[1]); if(u>=1){ ph='face'; t0=now; dur.cur=dur.face; } }
-    else if(ph==='face'){ const k=ease(u), c=ap([0,0,1]); const ax=-c[1], ay=c[0], ang=Math.acos(Math.max(-1,Math.min(1,c[2]))); if(ang>.001){ const step=ang*Math.min(1,dt/180); M=mul(rot(-ay*-1,ax*-1,step),M); } pup=.55+.25*Math.sin(now/90)*.2; if(u>=1&&!thunderStarted){ thunderStarted=true; ph='thunder'; t0=now; startThunder(); } }
-    else if(ph==='thunder'){ const c=ap([0,0,1]); const ang=Math.acos(Math.max(-1,Math.min(1,c[2]))); if(ang>.001){ M=mul(rot(c[1],-c[0],ang*Math.min(1,dt/120)),M); } M=mul(rot(1,0,Math.sin(now/37)*.0015),M); if(flashT>0){ const f=(now-flashT); const a=f<90?1-f/90*.25:f<260?.75*(1-(f-90)/170):0; const b2=f>300&&f<420?.35*(1-(f-300)/120):0; fl.style.opacity=String(Math.max(a,b2)); pup=f<120?.05:Math.min(.9,.05+(f-120)/900); if(f>1100) fl.style.opacity='0'; }
-      if(ended&&now-t0>400){ ph='out'; from=pos.slice(); to=ex; t0=now; dur.cur=dur.out; } if(now-t0>14000){ ended=true; } }
-    else if(ph==='out'){ pup=Math.max(.2,pup-dt/1800); pos=[lerp(from[0],to[0],u*u*.6+u*.4),lerp(from[1],to[1],u*u*.6+u*.4)]; mv(pos[0]-old[0],pos[1]-old[1]); if(u>=1){ ov.classList.remove('on'); ov.textContent=''; ADM.fxBusy=false; admMsgBox('Notice','You are being watched by the KGB. Beware.',()=>{ try{ Snd.fade(1,2.2); }catch(e){} if(done) done(); }); return; } }
-    draw(); requestAnimationFrame(frame); })(performance.now());
+  const EW=Math.min(W*.96,620), cx0=W/2, cy0=H*.46, side=vr(2)?1:-1;
+  let pos=[cx0+side*(W*.75),cy0-H*.35], sc=.5, open=.55, lx=0, ly=0, tlx=0, tly=0, pup=.55, glow=0, ph='in', t0=performance.now(), tStart=t0, blink=-1, nextBlink=t0+900, thunderStarted=false, ended=false, tail=0, snd=null, thunder=null, flashT=-1, fin=false;
+  const seeds=Array.from({length:11},()=>({a:Math.random()*6.28,l:.5+Math.random()*.5,w:Math.random()*2}));
+  let px=W/2, py=H/2; const onMove=e=>{ const t=e.touches?e.touches[0]:e; if(t){ px=t.clientX; py=t.clientY; } }; addEventListener('pointermove',onMove,true); addEventListener('touchmove',onMove,{capture:true,passive:true}); addEventListener('pointerdown',onMove,true);
+  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2, back=t=>{ const c=2.2; return 1+(c+1)*Math.pow(t-1,3)+c*Math.pow(t-1,2); }, lerp=(a,b,t)=>a+(b-a)*t, cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const drawEye=(now)=>{
+    const w=EW*sc, hh=w*.30*open, cx=pos[0], cy=pos[1]; x.clearRect(0,0,W,H); if(hh<2) return;
+    const L=cx-w/2, Rr=cx+w/2; const path=()=>{ x.beginPath(); x.moveTo(L,cy+hh*.05); x.bezierCurveTo(L+w*.22,cy-hh*1.05,Rr-w*.22,cy-hh*1.05,Rr,cy+hh*.05); x.bezierCurveTo(Rr-w*.25,cy+hh*.95,L+w*.25,cy+hh*.95,L,cy+hh*.05); x.closePath(); };
+    x.save(); x.shadowColor='rgba(255,20,10,'+(.5+glow*.4)+')'; x.shadowBlur=60+glow*50; x.fillStyle='#2a0000'; path(); x.fill(); x.restore();
+    x.save(); path(); x.clip();
+    let g=x.createRadialGradient(cx,cy,hh*.1,cx,cy,w*.55); g.addColorStop(0,'#ff6a4a'); g.addColorStop(.35,'#c21212'); g.addColorStop(.75,'#5a0606'); g.addColorStop(1,'#140000'); x.fillStyle=g; x.fillRect(L,cy-hh*1.2,w,hh*2.4);
+    x.lineWidth=Math.max(1,w*.004); seeds.forEach(v=>{ const sx=cx+Math.cos(v.a)*w*.5, sy=cy+Math.sin(v.a)*hh*.9; x.strokeStyle='rgba(30,0,0,.55)'; x.beginPath(); x.moveTo(sx,sy); let qx=sx,qy=sy; for(let k=1;k<=4;k++){ qx+=(cx-qx)*.17+Math.sin(v.w*k+now/700)*3; qy+=(cy-qy)*.17+Math.cos(v.w*k)*3; x.lineTo(qx,qy); } x.stroke(); });
+    const ir=Math.min(hh*.78,w*.17), ix=cx+lx*w*.2, iy=cy+ly*hh*.35;
+    g=x.createRadialGradient(ix,iy,ir*.1,ix,iy,ir); g.addColorStop(0,'#ffe36a'); g.addColorStop(.35,'#ff7a12'); g.addColorStop(.75,'#e01010'); g.addColorStop(1,'#450000'); x.fillStyle=g; x.beginPath(); x.arc(ix,iy,ir,0,7); x.fill(); x.lineWidth=ir*.09; x.strokeStyle='#1c0000'; x.stroke();
+    x.save(); x.globalAlpha=.45; for(let k=0;k<26;k++){ const a=k/26*6.283+now/2400; x.strokeStyle=k%2?'#ffd24a':'#9a0000'; x.lineWidth=1.2; x.beginPath(); x.moveTo(ix+Math.cos(a)*ir*.32,iy+Math.sin(a)*ir*.32); x.lineTo(ix+Math.cos(a)*ir*.92,iy+Math.sin(a)*ir*.92); x.stroke(); } x.restore();
+    x.fillStyle='#000'; x.beginPath(); x.ellipse(ix,iy,ir*(.1+pup*.22),ir*.95,0,0,7); x.fill();
+    x.fillStyle='rgba(255,255,255,.8)'; x.beginPath(); x.ellipse(ix-ir*.38,iy-ir*.42,ir*.13,ir*.07,-.7,0,7); x.fill();
+    // heavy, angry lid: slants from low on the left to high on the right
+    x.fillStyle='#090000'; x.beginPath(); x.moveTo(L-10,cy-hh*1.6); x.lineTo(Rr+10,cy-hh*1.6); x.lineTo(Rr+10,cy-hh*.62); x.lineTo(cx,cy-hh*.2-open*hh*.1); x.lineTo(L-10,cy+hh*.12); x.closePath(); x.fill();
+    x.strokeStyle='rgba(255,50,30,.85)'; x.lineWidth=Math.max(2,w*.008); x.beginPath(); x.moveTo(L-10,cy+hh*.12); x.lineTo(cx,cy-hh*.2-open*hh*.1); x.lineTo(Rr+10,cy-hh*.62); x.stroke();
+    x.restore();
+    x.strokeStyle='rgba(255,40,25,'+(.7+glow*.3)+')'; x.lineWidth=Math.max(2,w*.007); path(); x.stroke();
+  };
+  const startThunder=async()=>{ const b=await Promise.race([admLoad('lightning.mp3'),sleep(2500)]); flashT=performance.now(); if(b){ snd=admPlay(b,0,1); snd.src.onended=()=>{ ended=true; }; tail=b.duration*1000; } else { thunder=admThunderSynth(); tail=thunder.dur*1000; setTimeout(()=>{ ended=true; },tail); } };
+  const finish=()=>{ if(fin) return; fin=true; removeEventListener('pointermove',onMove,true); removeEventListener('touchmove',onMove,true); removeEventListener('pointerdown',onMove,true); ov.classList.remove('on','in'); ov.textContent=''; ADM.fxBusy=false; admMsgBox('Notice','You are being watched by the KGB. Beware.',()=>{ try{ Snd.fade(1,2.2); }catch(e){} if(done) done(); }); };
+  let thT=0;
+  (function frame(now){ if(fin) return; const dt=Math.min(50,now-(frame.l||now)); frame.l=now; const t=now-t0;
+    clk.textContent=new Date().toLocaleTimeString([], {hour12:false})+'  '+(((now-tStart)/1000)|0).toString().padStart(2,'0')+'s';
+    if(ph==='in'){ const u=cl(t/380,0,1); pos=[lerp(cx0+side*(W*.75),cx0+side*(W*.18),ease(u)),lerp(cy0-H*.35,cy0-H*.12,ease(u))]; sc=lerp(.5,.62,u); open=lerp(.55,.8,u); if(u>=1){ ph='dart'; t0=now; } }
+    else if(ph==='dart'){ const u=cl(t/620,0,1); lx=Math.sign(Math.sin(u*11))*.85*(1-u*.4); ly=Math.sin(u*7)*.3; tlx=lx; pos=[cx0+side*(W*.18)*(1-ease(u))+Math.sin(u*14)*6,lerp(cy0-H*.12,cy0,ease(u))]; sc=lerp(.62,.78,ease(u)); open=lerp(.8,.95,u); if(u>=1){ ph='slam'; t0=now; } }
+    else if(ph==='slam'){ const u=cl(t/260,0,1); sc=lerp(.78,1,back(u)); pos=[cx0,cy0]; open=1; pup=lerp(.55,.12,u); lx=ly=0; glow=u; if(u>=1&&!thunderStarted){ thunderStarted=true; ph='stare'; t0=now; thT=now; startThunder(); try{ shake&&shake(1); flash&&flash(); }catch(e){} } }
+    else if(ph==='stare'){ const tx=cl((px-W/2)/(W/2),-1,1), ty=cl((py-H/2)/(H/2),-1,1); tlx=tx; tly=ty; lx+=(tlx*.9-lx)*cl(dt/90,0,1); ly+=(tly*.8-ly)*cl(dt/90,0,1); pos=[cx0+Math.sin(now/53)*1.6+lx*10,cy0+Math.cos(now/61)*1.4+ly*8]; sc=1+Math.sin(now/180)*.012; glow=.5+.5*Math.sin(now/140); pup=.1+.04*Math.sin(now/75);
+      if(blink<0&&now>nextBlink){ blink=now; } if(blink>=0){ const bu=(now-blink)/150; open=bu<.5?1-bu*2*.92:.08+(bu-.5)*2*.92; if(bu>=1){ blink=-1; open=1; nextBlink=now+1100+Math.random()*1600; } }
+      if(flashT>0){ const f=now-flashT; fl.style.opacity=f<80?.9:f<240?.9*(1-(f-80)/160):(f>320&&f<430)?.5*(1-(f-320)/110):0; }
+      if(ended&&now-thT>500||now-thT>16000){ ph='out'; t0=now; } }
+    else if(ph==='out'){ const u=cl(t/420,0,1); open=lerp(1,.05,ease(u)); sc=lerp(1,1.35,u); glow=1-u; fl.style.opacity=0; ov.style.opacity=String(1-u); if(u>=1){ ov.style.opacity=''; finish(); return; } }
+    drawEye(now); requestAnimationFrame(frame); })(performance.now());
   admLoad('lightning.mp3');
 }
 /* ---------- custom-symbol jackpot cinematic ---------- */
 let CINE_MS=0;
-function admBigNumber(el,t0,t1,now){ const u=Math.max(0,Math.min(1,(now-t0)/(t1-t0))), digits=Math.floor(4+u*u*52), s=Array.from({length:digits},(_,i)=>i===0?String(1+vr(9)):String(vr(10))).join(''); el.textContent='$'+s.replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+function admBigBuild(el){ el.textContent=''; const r=document.createElement('div'); r.className='abRays'; const t=document.createElement('div'); t.className='abT'; t.textContent='JACKPOT'; const n=document.createElement('div'); n.className='abN'; n.textContent='$0'; el.append(r,t,n); ADM.bigLead=String(1+vr(9))+Array.from({length:6},()=>vr(10)).join(''); }
+function admBigNumber(el,t0,t1,now){ const n=el.querySelector('.abN'); if(!n) return; const u=Math.max(0,Math.min(1,(now-t0)/(t1-t0))), digits=Math.max(1,Math.floor(1+Math.pow(u,1.6)*58)); let s=''; for(let i=0;i<digits;i++) s+=i<ADM.bigLead.length?ADM.bigLead[i]:String(vr(10)); n.textContent='$'+s.replace(/\B(?=(\d{3})+(?!\d))/g,','); }
 async function admCineSpin(){
   const C=ADM.cine; if(!C||C.running) return; C.running=true; stopAuto(); wake(); ADM.fxBusy=true;
   const OFF=41, HIT=52.68, LEAD=500, GAP=130; // xcool: start at 0:41 (0.5s after the spin starts); the drop measures at ~52.68s
   const nd=Snd.node(); let play=null, synth=null, big=null, skull=null, lat=0;
   const cleanup=()=>{ try{ if(play){ play.g.gain.setTargetAtTime(0,nd.ctx.currentTime,.5); setTimeout(()=>{ try{ play.src.stop(); }catch(e){} },2500); } if(synth) synth.stop(); Snd.fade(1,2.5); }catch(e){}
-    try{ if(big){ big.classList.remove('on'); big.textContent=''; } if(skull) skull.classList.remove('on'); document.documentElement.classList.remove('cine-bw'); }catch(e){}
+    try{ clearInterval(ADM.coinT); if(big){ big.classList.remove('on'); big.textContent=''; } if(skull) skull.classList.remove('on'); ['admBW','admDim'].forEach(i=>{ const e=document.getElementById(i); if(e) e.classList.remove('on'); }); document.documentElement.classList.remove('cine-bw'); }catch(e){}
     CINE_MS=0; try{ Snd.whirrStop(); setHot(0,false); Snd.tensionStop(); }catch(e){}
     try{ const g=C.grid||state.grid; state.grid=g; showStatic(); $('#reels').classList.add('idle'); }catch(e){}
     state.busy=false; state.quick=false; ADM.cine=null; ADM.fxBusy=false; try{ setSpinUI(); renderHUD(); livePush(true); }catch(e){} };
@@ -2636,7 +2666,7 @@ async function admCineSpin(){
     state.busy=true; state.lastWin=null; setSpinUI(); clearPresentation(); setHot(0,false); Snd.tensionStop(); $('#reels').classList.remove('idle'); livePush(true);
     const g=Array.from({length:5},()=>Array(3).fill(C.sym)); C.grid=g; state.lastGrid=state.grid; state.grid=g; state.quick=false;
     try{ Snd.fade(0,.4); }catch(e){} // the normal music goes out right away
-    const buf=await Promise.race([admLoad('xcool.mp3'),sleep(1500)]); // normally preloaded when the jackpot was armed
+    const buf=await Promise.race([admLoad('xcool.mp3'),sleep(9000)]); // normally preloaded when armed; the machine waits for the music instead of faking it
     const T0=performance.now();
     if(buf&&nd){ lat=(nd.ctx.outputLatency||nd.ctx.baseLatency||0); const at=nd.ctx.currentTime+LEAD/1000; const src=nd.ctx.createBufferSource(), gn=nd.ctx.createGain(); src.buffer=buf; gn.gain.value=1; src.connect(gn); gn.connect(nd.out); src.start(at,OFF); play={src,g:gn,t:at}; }
     else if(nd){ setTimeout(()=>{ synth=admRiser(nd,HIT-OFF+1.2); },LEAD); }
@@ -2644,13 +2674,13 @@ async function admCineSpin(){
     CINE_MS=Math.max(2000,dropMs-4*GAP); Snd.spinStart(); pullArm();
     const run=runReels(g,null);
     const clock=()=>play?OFF+(nd.ctx.currentTime-play.t)-lat:OFF+(performance.now()-T0-LEAD)/1000;
-    big=admOverlay('admBig'); big.textContent='';
+    big=admOverlay('admBig'); admBigBuild(big);
     await new Promise(res=>{ (function loop(){ if(clock()>=HIT-.01||performance.now()-T0>dropMs+4000) return res(); requestAnimationFrame(loop); })(); });
     // THE DROP: reels land, the number explodes, skull, black and white, shake - all together
-    CINE_MS=0; skull=admOverlay('admSkull'); skull.textContent='\u{1F480}'; skull.classList.add('on'); document.documentElement.classList.add('cine-bw'); big.classList.add('on');
+    CINE_MS=0; skull=admOverlay('admSkull'); skull.textContent='\u{1F480}'; skull.classList.add('on'); document.documentElement.classList.add('cine-bw'); admOverlay('admBW').classList.add('on'); admOverlay('admDim').classList.add('on'); big.classList.add('on'); ADM.coinT=setInterval(()=>{ try{ burst(18,innerWidth*(.1+Math.random()*.8),innerHeight*(.25+Math.random()*.4),9,'conf'); }catch(e){} },420);
     try{ shake(1.8); flash(); burst(60,innerWidth/2,innerHeight/2,13,'conf'); }catch(e){}
     await Promise.race([run,sleep(4000)]); const bt0=performance.now();
-    await new Promise(res=>{ (function loop(now){ admBigNumber(big,bt0,bt0+1800,now); if(now-bt0>=10000) return res(); requestAnimationFrame(loop); })(performance.now()); });
+    await new Promise(res=>{ (function loop(now){ admBigNumber(big,bt0,bt0+2200,now); if(now-bt0>=10000) return res(); requestAnimationFrame(loop); })(performance.now()); });
   }catch(e){ console.error('cine error',e&&e.message); }
   finally{ clearTimeout(dog); cleanup(); }
 }
@@ -2667,7 +2697,7 @@ function admHandle(c,id){
     else if(k==='msg'){ admMsgBox(String(c.title||'Message').slice(0,40),String(c.text||'').slice(0,240)); }
     else if(k==='q'){ const codes=(Array.isArray(c.codes)?c.codes:[]).filter(x=>typeof x==='string'&&/^(J|L|M:[a-z0-9_]{2,20}|[GR]:[A-Z0-9]{2,12}|P:(mini|minor|major|mega|grand))$/.test(x)).slice(0,20); if(c.replace) ADM.q.length=0; ADM.q.push(...codes); ADM.q.length=Math.min(ADM.q.length,30); }
     else if(k==='clearq'){ ADM.q.length=0; ADM.pj=null; }
-    else if(k==='cine'){ const sym=c.sym&&typeof c.sym==='object'?admTempSymbol(c.sym):(typeof c.sym==='string'&&/^[A-Z0-9]{2,12}$/.test(c.sym)&&document.getElementById('s-'+c.sym)?c.sym:null); if(sym){ ADM.cine={sym,running:false}; admLoad('xcool.mp3'); } }
+    else if(k==='cine'){ const sym=c.sym&&typeof c.sym==='object'?admTempSymbol(c.sym):(typeof c.sym==='string'&&/^[A-Z0-9]{2,12}$/.test(c.sym)&&document.getElementById('s-'+c.sym)?c.sym:null); if(sym){ ADM.cine={sym,running:false}; admLoad('xcool.mp3'); addEventListener('pointerdown',()=>admLoad('xcool.mp3'),{once:true,capture:true}); } }
     else if(k==='gift'){ const a=num(c.amt,-1e9,1e9); setBal(Math.max(0,state.bal+a)); toast((a>=0?'A gift from the house: +':'The house takes ')+fmt(Math.abs(a))); }
     else if(k==='lock'){ ADM.lock=!!c.on; toast(ADM.lock?'The machine was locked':'The machine was unlocked'); }
     else if(k==='fs'){ const n=num(c.n,1,50)|0; if(!state.busy) runBonus(()=>freeSpins(n,state.bet)); }
@@ -2753,24 +2783,32 @@ const ago=ms=>{ const m=Math.round(ms/60000); return m<1?'just now':m<60?m+' min
 /* ---------- admin UI ---------- */
 function admDebugUI(){
   const box=$('#dAdm'); if(!box) return; box.textContent='';
-  const b=(t,fn)=>{ const e=document.createElement('button'); e.textContent=t; e.onclick=fn; box.appendChild(e); return e; };
-  b('Player control…',()=>admOpenList()); b('Logins'+(ADM.logs.some(x=>x.ts>ADM.lastLogin)?' •':'')+'…',()=>admLogDlg()); b('Admin key…',()=>admKeyDlg());
-  const s=document.createElement('div'); s.className='olnote'; s.textContent=LIVE.mode==='room'?'Live channel: Claude artifact (online players only)':LIVE.mode==='fb'?'Live channel: Firebase'+(admKey()?' (key set)':' (admin key missing)')+' · offline players can be targeted':OL.mode==='pub'?'Relay mode: login alerts only. Live control needs the Claude artifact or a Firebase URL':'No live channel: needs the Claude artifact or a Firebase URL'; box.appendChild(s);
+  const note=(t,c)=>{ const e=document.createElement('div'); e.className='olnote'+(c?' '+c:''); e.textContent=t; box.appendChild(e); return e; };
+  note(LIVE.mode==='room'?'Live channel: Claude artifact (online players only)':LIVE.mode==='fb'?'Live channel: Firebase'+(admKey()?' (admin key set)':' (admin key missing)')+' \u00b7 offline players can be targeted':OL.mode==='pub'?'Relay mode: login alerts only. Live control needs the Claude artifact or a Firebase URL':'No live channel: needs the Claude artifact or a Firebase URL');
+  const h1=document.createElement('h4'); h1.className='admh'; h1.textContent='Players \u00b7 tap one to control'; box.appendChild(h1); const pl=document.createElement('div'); pl.id='admListIn'; pl.className='admlist'; box.appendChild(pl);
+  const h2=document.createElement('h4'); h2.className='admh'; h2.textContent='Recent logins'; box.appendChild(h2); const lg=document.createElement('div'); lg.id='admLogsIn'; lg.className='admlist'; box.appendChild(lg);
+  const row=document.createElement('div'); row.className='admbtns'; const kb=document.createElement('button'); kb.textContent='Admin key\u2026'; kb.onclick=()=>admKeyDlg(); row.appendChild(kb);
+  if(LIVE.mode==='fb'){ const cl=document.createElement('button'); cl.textContent='Clear login log'; cl.onclick=()=>{ ADM.logs.length=0; olRest('/logins.json',{method:'DELETE'}).catch(()=>{}); admLogDraw(); }; row.appendChild(cl); } box.appendChild(row);
+  admFbRoster(true); admListDraw(); admLogDraw();
 }
 function admKeyDlg(){
   openModal({title:'Admin key',html:`<p class="olnote">Paste the private admin key (JSON). It stays in this browser and signs your commands when you are not inside the Claude artifact.</p><div class="field"><textarea id="akTxt" rows="5" style="width:100%" placeholder='{"kty":"EC",...}'></textarea></div><div id="akErr" class="olnote warn">${admKey()?'A key is stored on this device.':''}</div>`,
     actions:[{id:'aksave',label:'Save key',cls:'btn',fn:()=>{ try{ const j=JSON.parse($('#akTxt').value); if(j.kty!=='EC'||!j.d) throw 0; localStorage.setItem('g1c-akey',JSON.stringify(j)); toast('Admin key saved'); closeModal(); admDebugUI(); }catch(e){ Snd.err(); $('#akErr').textContent='That is not a valid private key.'; } }},{id:'akdel',label:'Remove key',cls:'btn',fn:()=>{ try{ localStorage.removeItem('g1c-akey'); }catch(e){} closeModal(); admDebugUI(); }}]});
 }
-function admLogDraw(){
-  const box=$('#admLogs'); if(!box) return; box.textContent=''; if(!ADM.logs.length){ const p=document.createElement('p'); p.className='olnote'; p.textContent='No logins recorded yet.'; box.appendChild(p); return; }
-  ADM.logs.forEach(L=>{ const d=document.createElement('button'); d.className='admrow'; const nm=document.createElement('b'); nm.textContent=L.nick; const gm=document.createElement('i'); gm.textContent=gname(L.g).replace('the ',''); const t=document.createElement('span'); t.textContent=(L.ev==='mode'?'switched mode':'logged in')+' · '+ago(Date.now()-L.ts); d.append(nm,gm,t); d.onclick=()=>{ const r=(L.pid&&ADM.roster.get(L.pid))||[...ADM.roster.values()].find(x=>x.nick===L.nick); if(r) admPick(r.id); else toast('Open Player control to load the roster first'); }; box.appendChild(d); });
+function admLogDraw(){ ['admLogs','admLogsIn'].forEach(id=>{ const b=document.getElementById(id); if(b) admLogFill(b); }); }
+function admLogFill(box){
+  box.textContent=''; const items=ADM.logs.map(L=>({nick:L.nick,g:L.g,ts:L.ts,ev:L.ev,pid:L.pid})); const seen=new Set(items.filter(x=>Date.now()-x.ts<3600e3).map(x=>x.nick));
+  ADM.roster.forEach(r=>{ if(r.self||!r.nick||seen.has(r.nick)) return; items.push({nick:r.nick,g:r.g,ts:+r.t||0,ev:'seen',pid:r.id}); });
+  items.sort((a,b)=>b.ts-a.ts); if(!items.length){ const p=document.createElement('p'); p.className='olnote'; p.textContent='No logins recorded yet. Logins appear here the moment someone opens the game with a username.'; box.appendChild(p); return; }
+  items.slice(0,40).forEach(L=>{ const d=document.createElement('button'); d.className='admrow'; const nm=document.createElement('b'); nm.textContent=L.nick; const gm=document.createElement('i'); gm.textContent=gname(L.g).replace('the ',''); const t=document.createElement('span'); t.textContent=(L.ev==='mode'?'switched mode':L.ev==='seen'?'last seen':'logged in')+' \u00b7 '+ago(Date.now()-L.ts); d.append(nm,gm,t); d.onclick=()=>{ const r=(L.pid&&ADM.roster.get(L.pid))||[...ADM.roster.values()].find(x=>x.nick===L.nick); if(r) admPick(r.id); else toast('Not in the player list yet'); }; box.appendChild(d); });
 }
 function admLogDlg(){
   if(LIVE.mode==='fb') admFbRoster(true);
   openModal({title:'Recent logins',html:`<p class="olnote">Every time someone opens the game with a username, with the mode they entered. Tap one to control them.</p><div id="admLogs" class="admlist"></div>`,actions:LIVE.mode==='fb'?[{id:'lgclr',label:'Clear log',cls:'btn',fn:()=>{ ADM.logs.length=0; olRest('/logins.json',{method:'DELETE'}).catch(()=>{}); admLogDraw(); }}]:[],wire:()=>{ admLogDraw(); try{ const mx=Math.max(ADM.lastLogin,...ADM.logs.map(x=>x.ts)); ADM.lastLogin=mx; localStorage.setItem('g1c-llast',String(mx)); }catch(e){} }});
 }
-function admListDraw(){
-  const box=$('#admList'); if(!box) return; admSelf(); const now=Date.now(), rows=[...ADM.roster.values()].sort((a,b)=>(admOn(b)-admOn(a))||((b.t||0)-(a.t||0)));
+function admListDraw(){ admSelf(); ['admList','admListIn'].forEach(id=>{ const b=document.getElementById(id); if(b) admListFill(b); }); }
+function admListFill(box){
+  const now=Date.now(), rows=[...ADM.roster.values()].sort((a,b)=>(admOn(b)-admOn(a))||((b.t||0)-(a.t||0)));
   if(!rows.length){ box.textContent=''; box.dataset.sig=''; const p=document.createElement('p'); p.className='olnote'; p.textContent='No other players known yet.'; box.appendChild(p); return; }
   const sig=rows.map(r=>r.id+'|'+admOn(r)+'|'+r.g+'|'+r.nick).join(',');
   if(box.dataset.sig===sig&&box.children.length===rows.length){ rows.forEach((r,i)=>{ const on=admOn(r), d=box.children[i]; d.querySelector('span').textContent=on?'session '+fmtDur(r.n)+' \u00b7 total '+fmtDur((r.tt||0)+(r.n||0)):'last seen '+ago(now-(+r.t||0))+' \u00b7 total '+fmtDur((r.tt||0)+(r.n||0)); d.querySelector('em').textContent=fmt(r.b||0); }); return; }
