@@ -1112,10 +1112,10 @@ function anticipation(g){
   return out;
 }
 const WEDGES=[
- {t:'cash',v:3,l:'x3',w:14},{t:'cash',v:6,l:'x6',w:12},{t:'fs',v:6,l:'6 FREE',w:8},{t:'cash',v:4,l:'x4',w:13},
- {t:'jp',k:'mini',l:'MINI',w:5},{t:'jp',k:'minor',l:'MINOR',w:1.6},{t:'cash',v:10,l:'x10',w:9},{t:'fs',v:8,l:'8 FREE',w:5},{t:'cash',v:5,l:'x5',w:14},
- {t:'cash',v:20,l:'x20',w:4},{t:'cash',v:8,l:'x8',w:10},{t:'fs',v:10,l:'10 FREE',w:2.5},{t:'cash',v:12,l:'x12',w:6},
-  {t:'jp',k:'major',l:'MAJOR',w:.4},{t:'jp',k:'mega',l:'MEGA',w:.05},{t:'cash',v:6,l:'x6',w:12},{t:'cash',v:30,l:'x30',w:1.5},{t:'jp',k:'grand',l:'GRAND',w:.006}];
+ {t:'cash',v:150,l:'x150',w:14},{t:'cash',v:300,l:'x300',w:12},{t:'fs',v:6,l:'6 FREE',w:8},{t:'cash',v:200,l:'x200',w:13},
+ {t:'jp',k:'mini',l:'MINI',w:5},{t:'jp',k:'minor',l:'MINOR',w:8},{t:'cash',v:500,l:'x500',w:9},{t:'fs',v:8,l:'8 FREE',w:5},{t:'cash',v:250,l:'x250',w:14},
+ {t:'cash',v:1000,l:'x1000',w:4},{t:'cash',v:400,l:'x400',w:10},{t:'fs',v:10,l:'10 FREE',w:2.5},{t:'cash',v:600,l:'x600',w:6},
+  {t:'jp',k:'major',l:'MAJOR',w:5},{t:'jp',k:'mega',l:'MEGA',w:2},{t:'cash',v:300,l:'x300',w:12},{t:'cash',v:1500,l:'x1500',w:1.5},{t:'jp',k:'grand',l:'GRAND',w:.4}];
 const JP_ODDS={mini:74,minor:20,major:5,mega:.9,grand:.1};
 function mysteryJp(bet){ if(R()>=(bet/5000)/2000) return null; let x=R()*100.0; for(const k in JP_ODDS){ x-=JP_ODDS[k]; if(x<0) return k; } return 'mini'; }
 function pickWedge(kind){
@@ -1130,6 +1130,7 @@ const vr=n=>Math.floor(Math.random()*n);
 
 /* ====================== LUCK PRESETS ====================== */
 const PRESETS=[
+ {id:'fun',name:'Fun',note:'~150% return',c:{assist:.0095,bonus:.002,boost:.00035,wildMult:1.2,scatMult:1.2,meterStep:.032}},
  {id:'realistic',name:'Realistic',note:'~90% return',c:{}},
  {id:'generous',name:'Generous',note:'~115% return',c:{assist:.006,bonus:.001,boost:.0002,wildMult:1.1,scatMult:1.1,meterStep:.025}},
  {id:'hot',name:'Hot streak',note:'~160% return',c:{assist:.014,bonus:.003,boost:.0005,wildMult:1.3,scatMult:1.3,meterStep:.04,nearMiss:.15}},
@@ -1139,7 +1140,7 @@ const PRESETS=[
  {id:'house',name:'House edge',note:'~55% return',c:{wildMult:0,scatMult:.1,nearMiss:.45,meterStep:.004}},
  {id:'teaser',name:'Near-miss hell',note:'~78% return',c:{nearMiss:.75,wildMult:.6,scatMult:.7}},
 ];
-let cfgPreset='realistic';
+let cfgPreset='fun';
 function applyPreset(id,quiet){
   const p=PRESETS.find(x=>x.id===id)||PRESETS[0]; Object.assign(cfg,CFG0,p.c); cfgPreset=p.id;
   const set=(i,o,v,f)=>{ const e=$(i); if(e){ e.value=v; const q=$(o); if(q) q.textContent=f?f(v):v; } };
@@ -1370,13 +1371,13 @@ const J={mini:61248,minor:210000,major:824115,mega:7400000,grand:128490318}, SEE
 
 /* ---------- persistence ---------- */
 const SAVE='99g1c-v1';
-function save(){ if(window.__g1cDeleted) return; try{ olSchedule(); }catch(e){} try{ acctSchedule(); }catch(e){} try{ livePush(); }catch(e){} try{ localStorage.setItem(SAVE,JSON.stringify({bal:state.bal,xp:state.xp,level:state.level,meter:state.meter,ach:[...ACH_DONE],S,ui,mDay:state.mDay,mBase:state.mBase,mDone:state.mDone,preset:cfgPreset,econ:3,ld:state.lastDaily,ds:state.dayStreak})); }catch(e){} }
+function save(){ if(window.__g1cDeleted) return; try{ olSchedule(); }catch(e){} try{ acctSchedule(); }catch(e){} try{ livePush(); }catch(e){} try{ localStorage.setItem(SAVE,JSON.stringify({bal:state.bal,xp:state.xp,level:state.level,meter:state.meter,ach:[...ACH_DONE],S,ui,mDay:state.mDay,mBase:state.mBase,mDone:state.mDone,preset:cfgPreset,pv:2,econ:3,ld:state.lastDaily,ds:state.dayStreak})); }catch(e){} }
 function load(){
   try{ const d=JSON.parse(localStorage.getItem(SAVE)||'null'); if(!d) return;
     if(typeof d.bal==='number') state.bal=state.balShown=d.bal; state.xp=d.xp||0; state.level=d.level||1; state.meter=d.meter||0;
     (d.ach||[]).forEach(a=>ACH_DONE.add(a)); Object.assign(S,d.S||{}); Object.assign(ui,d.ui||{}); state.mDay=d.mDay||''; state.mBase=d.mBase||{}; state.mDone=d.mDone||{};
     { const mult=!d.econ?100:d.econ===2?10:1; if(mult>1){ if(typeof d.bal==='number') state.bal=state.balShown=Math.round(d.bal*mult); ui.lossLimit=(ui.lossLimit||0)*mult; if(ui.bet) ui.bet*=mult; if(d.S){ for(const k of ['best','paid','wagered','bonus','maxBet','bjBest']) if(typeof S[k]==='number') S[k]*=mult; } if(d.mBase&&state.mBase) for(const k in state.mBase) if(k==='m3') state.mBase[k]*=mult; } }
-    if(d.preset) cfgPreset=d.preset; state.lastDaily=d.ld||''; state.dayStreak=d.ds||0;
+    if(d.preset) cfgPreset=d.pv>=2?d.preset:'fun'; state.lastDaily=d.ld||''; state.dayStreak=d.ds||0;
   }catch(e){}
 }
 load(); state.sessionStart=state.bal;
