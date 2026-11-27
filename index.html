@@ -751,6 +751,37 @@ html.cine-bw #stage,html.cine-bw #bj,html.cine-bw #welcome{animation:cineShake .
 @media (max-height:700px){ #rlCv{width:min(220px,50vw)} }
 #crCv{position:sticky; top:0; z-index:3; box-shadow:0 6px 14px rgba(0,0,0,.5)}
 
+/* fit on a phone, no scrolling */
+.gmm{overflow:hidden; align-content:start; gap:6px}
+.crCards{grid-template-columns:repeat(3,1fr); gap:6px}
+.crCard{padding:6px 4px; gap:2px; border-width:1.5px; border-radius:11px}
+.crCard svg{width:38px; height:32px}
+.crCard b{font-size:11px; line-height:1.05; min-height:23px; display:grid; place-items:center}
+.crCard small{font-size:9px; line-height:1.1}
+.crCard .no{top:3px; right:3px; width:18px; height:18px; font-size:11px; line-height:18px}
+.crCard .pn{top:3px; left:3px; height:17px; min-width:17px; line-height:17px; font-size:11px}
+.crOdds{font-size:12px}
+.crTabs{flex-wrap:nowrap; gap:4px} .crTabs button{padding:7px 0; flex:1; text-align:center; font-size:12px; letter-spacing:.02em}
+#crHint{font-size:13px; min-height:17px}
+#crCv{height:clamp(120px,23dvh,230px)}
+#crCom{min-height:18px; font-size:14px}
+.crSlip{max-height:calc(3*30px); overflow:hidden} .crSlip div{padding:4px 9px; font-size:12px}
+#crSlipBox .lbl{display:none}
+.gmf{padding:8px 10px; gap:6px} .gmchip{width:38px; height:38px; font-size:11px; border-width:2px}
+.gmc{gap:6px; flex-wrap:nowrap} .gmact .chip{padding:10px 6px}
+.gmi .val{font-size:17px}
+#rlCv{width:min(300px,72vw,27dvh)}
+.rlT{--rh:clamp(26px,min(8.6vw,5.2dvh),46px)}
+#rlHist i{width:20px; height:20px; font-size:11px}
+.rlTop{gap:3px} .gmmsg{min-height:18px; font-size:14px}
+@media (max-height:700px){ .gm{gap:4px} .gmh .ibtn{width:38px; height:38px} #rlHist{min-height:20px} }
+
+.crSt{font:700 12px/1 var(--ui); letter-spacing:.06em; color:var(--muted); margin:0 0 4px} .crSt span{color:var(--brass-hi)}
+.crSlip{display:flex; flex-wrap:wrap; gap:4px; max-height:46px} .crSlip div{padding:3px 7px; font-size:11px; border-radius:999px; gap:5px; flex:0 0 auto}
+.crSlip button{font-size:14px; padding:0 2px}
+#crCv{height:clamp(100px,19dvh,230px)} .crCard svg{width:32px; height:27px}
+@media (max-height:700px){ .crCard b{min-height:22px; font-size:10.5px} .crCard{padding:4px 3px} }
+
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -2344,10 +2375,9 @@ function gmMount(){
    <div class="gmact"><button class="chip" id="rlUndo">Undo</button><button class="chip" id="rlClear">Clear</button><button class="chip" id="rlRebet">Rebet</button><button class="chip" id="rlX2">x2</button><button class="chip gold" id="rlSpin">Spin</button></div></footer></div>
   <div class="gm" id="cr" hidden>${gmHead('cr','Cat Racing')}
    <main class="gmm" data-scroll><canvas id="crCv"></canvas><div id="crCom">Whisker Downs. Pick your cats.</div>
-    <div class="crTabs" id="crTabs"></div><div id="crHint"></div><div class="crCards" id="crCards"></div><div id="crSlipBox"><div class="lbl" style="font:600 10px var(--ui);letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin:4px 0">Your slip</div><div class="crSlip" id="crSlip"></div></div></main>
-   <footer class="gmf"><div class="gmi"><div><div class="lbl">Balance</div><div class="val gbal"></div></div><div><div class="lbl">Total stake</div><div class="val" id="crBet">$0</div></div><div><div class="lbl">Race</div><div class="val" id="crNo">#1</div></div></div>
-   <div class="gmc" id="crChips"></div>
-   <div class="gmact"><button class="chip" id="crSame">Same bets</button><button class="chip" id="crClear">Clear</button><button class="chip gold" id="crGo">Start race</button></div></footer>
+    <div class="crTabs" id="crTabs"></div><div id="crHint"></div><div class="crCards" id="crCards"></div><div id="crSlipBox"><div class="crSt">Race <span id="crNo">#1</span> &middot; Stake <span id="crBet">$0</span></div><div class="crSlip" id="crSlip"></div></div></main>
+   <footer class="gmf"><div class="gmc" id="crChips"></div>
+   <div class="gmact"><button class="chip" id="crSame">Same bets</button><button class="chip" id="crClear">Clear</button><button class="chip gold" id="crGo">Start</button></div></footer>
    <div id="crRes"><div class="box"><h3 id="crResT"></h3><ol id="crResL"></ol><div class="tot" id="crResN"></div><button class="chip gold" id="crNext">Next race</button></div></div></div>`;
   while(w.firstChild) document.body.appendChild(w.firstChild);
   const g=$('.games'); if(g&&!$('#gRl')){
@@ -2513,9 +2543,7 @@ function crPaint(){
   const need=crNeed(), nm={win:'to win',place:'to finish top 2',show:'to finish top 3',quin:'for 1st and 2nd, any order',exa:'for 1st then 2nd',tri:'for 1st, 2nd, 3rd in order'}[cr.type];
   $('#crHint').textContent=cr.picks.length?`Picked ${cr.picks.map(i=>i+1).join(' then ')}. ${need-cr.picks.length} more`:`Tap ${need===1?'a cat':need+' cats'} ${need===1?'':'in order '}${nm}`;
   const C=$('#crCards'); C.innerHTML=''; r.cats.forEach((c,i)=>{ const b=document.createElement('button'); b.className='crCard'+(cr.picks.includes(i)?' pk':''); const pos=cr.picks.indexOf(i);
-    b.innerHTML=`<span class="no">${i+1}</span>${pos>=0?`<span class="pn">${pos+1}</span>`:''}${crFace(c.c,c.d)}<b>${c.n}</b><small>${c.mood} · ${c.t}</small>
-    <div class="crBar">SPD<i><u style="width:${c.spd}%"></u></i></div><div class="crBar">STA<i><u style="width:${c.sta}%"></u></i></div><div class="crBar">ZOOM<i><u style="width:${c.zm}%"></u></i></div>
-    <small>Form ${c.form.length?c.form.join(' '):'new'}</small><div class="crOdds"><span>W ${crFmt(r.odds('win',i))}</span><span>P ${crFmt(r.odds('place',i))}</span><span>S ${crFmt(r.odds('show',i))}</span></div>`;
+    const ot=['win','place','show'].includes(cr.type)?cr.type:'win'; b.innerHTML=`<span class="no">${i+1}</span>${pos>=0?`<span class="pn">${pos+1}</span>`:''}${crFace(c.c,c.d,32)}<b>${c.n}</b><small>${c.mood} · SPD ${c.spd}</small><div class="crOdds"><span>${{win:'W',place:'P',show:'S'}[ot]} ${crFmt(r.odds(ot,i))}</span></div>`;
     b.onclick=()=>crPick(i); C.appendChild(b); });
   $('#crSlip').innerHTML=''; cr.bets.forEach((b,k)=>{ const d=document.createElement('div'); d.innerHTML=`<span>${crLabel(b)} · ${crFmt(b.odds)} · ${fmt(b.amt)}</span>`; const x=document.createElement('button'); x.textContent='×'; x.onclick=()=>{ if(cr.busy) return; cr.bets.splice(k,1); Snd.card(); crPaint(); }; d.appendChild(x); $('#crSlip').appendChild(d); });
   if(!cr.bets.length) $('#crSlip').innerHTML='<div><span style="color:var(--muted)">No bets yet</span></div>';
