@@ -663,13 +663,13 @@ body.lite .hbox.act{box-shadow:none}
 #admBig{position:fixed; inset:0; z-index:131; display:none; pointer-events:none; overflow:hidden} #admBig.on{display:block}
 #admBig .abRays{position:absolute; left:50%; top:50%; width:240vmax; height:240vmax; margin:-120vmax 0 0 -120vmax; background:repeating-conic-gradient(rgba(255,214,90,0) 0 9deg, rgba(255,214,90,.2) 9deg 18deg); -webkit-mask:radial-gradient(circle,#000 0,transparent 42%); mask:radial-gradient(circle,#000 0,transparent 42%); animation:abSpin 7s linear infinite}
 @keyframes abSpin{to{transform:rotate(360deg)}}
-#admBig .abT{position:absolute; left:50%; top:28%; transform:translate(-50%,-50%); font:900 18vw/1 var(--ui); letter-spacing:.04em; color:#fff1a8; text-shadow:0 0 28px #ff9d00,0 5px 0 #8a4200; white-space:nowrap; animation:abPulse .45s ease-in-out infinite alternate}
+#admBig .abT,#admBig .abN{display:none!important} #admBig .abT0{position:absolute; left:50%; top:28%; transform:translate(-50%,-50%); font:900 18vw/1 var(--ui); letter-spacing:.04em; color:#fff1a8; text-shadow:0 0 28px #ff9d00,0 5px 0 #8a4200; white-space:nowrap; animation:abPulse .45s ease-in-out infinite alternate}
 @keyframes abPulse{from{transform:translate(-50%,-50%) scale(.96)}to{transform:translate(-50%,-50%) scale(1.06)}}
 #admBig .abN{position:absolute; left:50%; top:54%; transform:translate(-50%,-50%); font:900 26vw/1 var(--ui); color:#ffd84a; text-shadow:0 0 36px #ff9d00,0 8px 0 #7a3b00; white-space:nowrap; font-variant-numeric:tabular-nums}
 /* black & white + dimming without CSS filters (filters made SVG icons vanish on iPhone) */
 #admBW{position:fixed; inset:0; z-index:136; display:none; pointer-events:none; background:#808080; mix-blend-mode:saturation} #admBW.on{display:block}
 #admDim{position:fixed; inset:0; z-index:137; display:none; pointer-events:none; background:rgba(0,0,0,.2)} #admDim.on{display:block}
-#admSkull{position:fixed; inset:0; z-index:138; display:none; align-items:center; justify-content:center; font-size:62vmin; line-height:1; pointer-events:none} #admSkull.on{display:flex}
+#admSkull{position:fixed; inset:0; z-index:138; display:none; align-items:flex-start; padding-top:7vh; justify-content:center; font-size:34vmin; line-height:1; pointer-events:none} #admSkull.on{display:flex}
 html.cine-bw #stage,html.cine-bw #bj,html.cine-bw #welcome{animation:cineShake .09s infinite}
 .admh{margin:14px 0 4px; font:700 11px/1 ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#d9b45a}
 
@@ -2657,7 +2657,7 @@ async function admCineSpin(){
   const OFF=41, HIT=52.68, LEAD=500, GAP=130; // xcool: start at 0:41 (0.5s after the spin starts); the drop measures at ~52.68s
   const nd=Snd.node(); let play=null, synth=null, big=null, skull=null, lat=0;
   const cleanup=()=>{ try{ if(play){ play.g.gain.setTargetAtTime(0,nd.ctx.currentTime,.5); setTimeout(()=>{ try{ play.src.stop(); }catch(e){} },2500); } if(synth) synth.stop(); Snd.fade(1,2.5); }catch(e){}
-    try{ clearInterval(ADM.coinT); if(big){ big.classList.remove('on'); big.textContent=''; } if(skull) skull.classList.remove('on'); ['admBW','admDim'].forEach(i=>{ const e=document.getElementById(i); if(e) e.classList.remove('on'); }); document.documentElement.classList.remove('cine-bw'); }catch(e){}
+    try{ clearInterval(ADM.coinT); if(big){ big.classList.remove('on'); big.textContent=''; } if(skull) skull.classList.remove('on'); try{ document.getElementById('banner').className=''; }catch(e){} ['admBW','admDim'].forEach(i=>{ const e=document.getElementById(i); if(e) e.classList.remove('on'); }); document.documentElement.classList.remove('cine-bw'); }catch(e){}
     CINE_MS=0; try{ Snd.whirrStop(); setHot(0,false); Snd.tensionStop(); }catch(e){}
     try{ const g=C.grid||state.grid; state.grid=g; showStatic(); $('#reels').classList.add('idle'); }catch(e){}
     state.busy=false; state.quick=false; ADM.cine=null; ADM.fxBusy=false; try{ setSpinUI(); renderHUD(); livePush(true); }catch(e){} };
@@ -2677,10 +2677,10 @@ async function admCineSpin(){
     big=admOverlay('admBig'); admBigBuild(big);
     await new Promise(res=>{ (function loop(){ if(clock()>=HIT-.01||performance.now()-T0>dropMs+4000) return res(); requestAnimationFrame(loop); })(); });
     // THE DROP: reels land, the number explodes, skull, black and white, shake - all together
-    CINE_MS=0; skull=admOverlay('admSkull'); skull.textContent='\u{1F480}'; skull.classList.add('on'); document.documentElement.classList.add('cine-bw'); admOverlay('admBW').classList.add('on'); admOverlay('admDim').classList.add('on'); big.classList.add('on'); ADM.coinT=setInterval(()=>{ try{ burst(18,innerWidth*(.1+Math.random()*.8),innerHeight*(.25+Math.random()*.4),9,'conf'); }catch(e){} },420);
+    CINE_MS=0; skull=admOverlay('admSkull'); skull.textContent='\u{1F480}'; skull.classList.add('on'); document.documentElement.classList.add('cine-bw'); admOverlay('admBW').classList.add('on'); admOverlay('admDim').classList.add('on'); big.classList.add('on'); try{ const bn=document.getElementById('banner'); bn.querySelector('.tier').textContent='JACKPOT'; bn.querySelector('.amt').textContent=fmt(0); bn.querySelector('.bsub').textContent='x1000 multiplier'; bn.className='show t-jackpot'; }catch(e){} ADM.coinT=setInterval(()=>{ try{ burst(18,innerWidth*(.1+Math.random()*.8),innerHeight*(.25+Math.random()*.4),9,'conf'); }catch(e){} },420);
     try{ shake(1.8); flash(); burst(60,innerWidth/2,innerHeight/2,13,'conf'); }catch(e){}
     await Promise.race([run,sleep(4000)]); const bt0=performance.now();
-    await new Promise(res=>{ (function loop(now){ admBigNumber(big,bt0,bt0+2200,now); if(now-bt0>=10000) return res(); requestAnimationFrame(loop); })(performance.now()); });
+    await new Promise(res=>{ (function loop(now){ { const u=Math.min(1,(now-bt0)/3200), e=1-Math.pow(1-u,3), amt=Math.floor(state.bet*1000*e); try{ document.querySelector('#banner .amt').textContent=fmt(amt); }catch(e2){} } if(now-bt0>=10000) return res(); requestAnimationFrame(loop); })(performance.now()); });
   }catch(e){ console.error('cine error',e&&e.message); }
   finally{ clearTimeout(dog); cleanup(); }
 }
