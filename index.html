@@ -781,6 +781,19 @@ html.cine-bw #stage,html.cine-bw #bj,html.cine-bw #welcome{animation:cineShake .
 .crSlip button{font-size:14px; padding:0 2px}
 #crCv{height:clamp(100px,19dvh,230px)} .crCard svg{width:32px; height:27px}
 @media (max-height:700px){ .crCard b{min-height:22px; font-size:10.5px} .crCard{padding:4px 3px} }
+/* lobby: four square tiles, all reachable without scrolling */
+#welcome{padding:max(10px,env(safe-area-inset-top,0px)) 12px max(10px,env(safe-area-inset-bottom,0px)); gap:4px; align-content:center}
+#welcome h1{font-size:clamp(40px,10vw,84px); line-height:1} #welcome h2{margin:0; font-size:clamp(13px,3.4vw,20px)}
+.games{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; width:min(440px,100%); margin:8px auto 6px}
+.gtile{width:auto; aspect-ratio:1; padding:8px 8px 10px; border-radius:18px; gap:3px; align-content:center; min-width:0}
+.gtile b{font-size:clamp(18px,5vw,24px)}
+.gtile span{font-size:11px; line-height:1.25; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden}
+.gtile em{font-size:9px; letter-spacing:.14em}
+.gart{height:clamp(44px,12vw,64px); transform-origin:center} .gart svg{max-height:100%; width:auto}
+.gart .mc{font-size:clamp(26px,8vw,40px)}
+@media (max-height:700px){ #welcome h2:first-child{display:none} #welcome small{display:none} .gtile span{display:none} .games{gap:8px} .gtile{aspect-ratio:1.15} }
+.gart{overflow:hidden; align-items:center}
+.gart .mc{width:clamp(32px,9vw,42px); height:clamp(46px,13vw,60px); font-size:clamp(16px,5vw,22px)}
 
 </style>
 
