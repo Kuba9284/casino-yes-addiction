@@ -794,6 +794,12 @@ html.cine-bw #stage,html.cine-bw #bj,html.cine-bw #welcome{animation:cineShake .
 @media (max-height:700px){ #welcome h2:first-child{display:none} #welcome small{display:none} .gtile span{display:none} .games{gap:8px} .gtile{aspect-ratio:1.15} }
 .gart{overflow:hidden; align-items:center}
 .gart .mc{width:clamp(32px,9vw,42px); height:clamp(46px,13vw,60px); font-size:clamp(16px,5vw,22px)}
+.gmfx{position:absolute; inset:0; z-index:8; pointer-events:none; overflow:hidden; max-width:none; width:auto}
+#crRes{z-index:9}
+.gm>.gmfx{max-width:none}
+
+.bjact{flex-wrap:wrap} .bjact .chip{flex:1 1 30%; min-width:0; padding-inline:6px} #bjSur{font-size:.92em}
+.admtabs button[hidden]{display:none!important}
 
 </style>
 
@@ -1001,7 +1007,7 @@ html.cine-bw #stage,html.cine-bw #bj,html.cine-bw #welcome{animation:cineShake .
     <div id="bjAsk" hidden></div>
     <div class="bjchips" id="bjChips"></div>
     <div class="bjact" id="bjBetRow"><button class="chip" id="bjClear">Clear</button><button class="chip" id="bjRebet">Rebet</button><button class="chip" id="bjX2">x2</button><button class="chip gold" id="bjDeal">Deal</button></div>
-    <div class="bjact" id="bjPlayRow" hidden><button class="chip gold" id="bjHit">Hit</button><button class="chip" id="bjStand">Stand</button><button class="chip" id="bjDouble">Double</button><button class="chip" id="bjSplit">Split</button></div>
+    <div class="bjact" id="bjPlayRow" hidden><button class="chip gold" id="bjHit">Hit</button><button class="chip" id="bjStand">Stand</button><button class="chip" id="bjDouble">Double</button><button class="chip" id="bjSplit">Split</button><button class="chip" id="bjSur">Surrender</button></div>
   </footer>
 </div>
 <div id="scr"></div><div class="lbx t"></div><div class="lbx b"></div>
@@ -1694,14 +1700,14 @@ function fxFrame(now){
   if(parts.length||bolts.length||now<rain||now<fount) requestAnimationFrame(fxFrame); else { fxOn=false; fc.clearRect(0,0,innerWidth,innerHeight); }
 }
 let shakeId=0;
-function shake(level){ const k=level*ui.shake*(reduced?.25:1); if(k<=0) return; const el=$(game==='bj'?'#bj':'#stage'), id=++shakeId, amp=9*k, dur=420+620*level, t0=performance.now(), rod=$('#arm .ar-rod'), ball=$('#arm .ar-ball');
+function shake(level){ const k=level*ui.shake*(reduced?.25:1); if(k<=0) return; const el=$(game==='bj'?'#bj':game==='rl'?'#rl':game==='cr'?'#cr':'#stage'), id=++shakeId, amp=9*k, dur=420+620*level, t0=performance.now(), rod=$('#arm .ar-rod'), ball=$('#arm .ar-ball');
   (function s(now){ if(id!==shakeId) return; const u=(now-t0)/dur; if(u>=1){ el.style.transform=''; if(rod){ rod.style.rotate=''; ball.style.translate=''; } return; } const a=Math.pow(1-u,1.3)*amp;
     if(rod&&game==='slots'){ rod.style.rotate=((Math.random()*2-1)*a*.45)+'deg'; ball.style.translate=((Math.random()*2-1)*a*.7)+'px '+((Math.random()*2-1)*a*.5)+'px'; }
     el.style.transform=`translate(${(Math.random()*2-1)*a}px,${(Math.random()*2-1)*a}px) rotate(${(Math.random()*2-1)*a*.05}deg)`; requestAnimationFrame(s); })(t0); }
 function flash(){ const f=$('#flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
 function ring(){ const e=$('#ring'); e.classList.remove('go'); void e.offsetWidth; e.classList.add('go'); }
 function scrFlash(col,a){ const e=$('#scr'); e.style.background=col; e.style.setProperty('--a',a); e.classList.remove('go'); void e.offsetWidth; e.classList.add('go'); }
-function frameCenter(){ const r=(game==='bj'?$('#bjtable'):$('#frame')).getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2,w:r.width}; }
+function frameCenter(){ const r=(game==='bj'?$('#bjtable'):game==='rl'?$('#rlCv'):game==='cr'?$('#crCv'):$('#frame')).getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2,w:r.width}; }
 
 /* ambient background */
 let ambN=0; const amb=$('#amb'), ac=amb.getContext('2d'); let dust=Array.from({length:70},()=>({x:Math.random(),y:Math.random(),r:.6+Math.random()*2.2,s:.02+Math.random()*.06,ph:Math.random()*6.28,b:Math.random()<.18}));
@@ -2222,6 +2228,7 @@ function bjAsk(text,opts){
     $$('button',a).forEach(b=>b.onclick=()=>{ a.hidden=true; Snd.click(); res(opts[+b.dataset.i][1]); }); });
 }
 const bjCanDouble=h=>h&&!h.done&&h.cards.length===2&&!h.aces&&state.bal>=h.bet;
+const bjCanSur=h=>h&&!h.done&&h.cards.length===2&&!h.split&&bj.hands.length===1;
 const bjCanSplit=h=>h&&!h.done&&h.cards.length===2&&!h.aces&&bjcv(h.cards[0])===bjcv(h.cards[1])&&bj.hands.length<4&&state.bal>=h.bet;
 function bjSnap(){ const f=c=>c.r+c.s; return {ph:bj.phase,bet:bj.bet,f:bj.force||'',st:bj.sticky?1:0,lk:bj.luck,k:bj.streak,d:bj.dealer.map(f).join(' '),h:bj.hands.map(x=>x.cards.map(f).join(' ')+' ($'+x.bet+(x.dbl?' x2':'')+')').slice(0,4)}; }
 function bjRender(){
@@ -2230,7 +2237,7 @@ function bjRender(){
   $('#bjChips').classList.toggle('off',!betting); $$('#bjChips button').forEach(b=>b.disabled=!betting);
   $('#bjBetRow').hidden=bj.phase!=='bet'; $('#bjPlayRow').hidden=bj.phase==='bet';
   $('#bjDeal').disabled=!betting||bj.bet<=0; $('#bjClear').disabled=!betting||bj.bet<=0; $('#bjRebet').disabled=!betting||!bj.last; $('#bjX2').disabled=!betting||bj.bet<=0;
-  $('#bjHit').disabled=!play; $('#bjStand').disabled=!play; $('#bjDouble').disabled=!play||!bjCanDouble(h); $('#bjSplit').disabled=!play||!bjCanSplit(h);
+  $('#bjHit').disabled=!play; $('#bjStand').disabled=!play; $('#bjDouble').disabled=!play||!bjCanDouble(h); $('#bjSplit').disabled=!play||!bjCanSplit(h); $('#bjSur').disabled=!play||!bjCanSur(h);
   const pct=Math.min(50,bj.streak*10); $('#bjStreak').classList.toggle('on',bj.streak>0); $('#bjStreak b').textContent=bj.streak>0?bj.streak+' · +'+pct+'%':'0';
   bjUpdateTotals(); renderBjDebug(); try{ livePush(); }catch(e){}
 }
@@ -2262,6 +2269,8 @@ async function bjAct(k){
   } else if(k==='double'){
     if(!bjCanDouble(h)) return; bj.busy=true; state.bal-=h.bet; S.wagered+=h.bet; h.bet*=2; h.dbl=true; tweenBal(state.bal,200); Snd.chip(); bjRender(); bjSay('double',.6);
     await bjDealTo(h); h.done=true; if(bjev(h.cards).t>21) Snd.bust(); bj.busy=false; await bjNext();
+  } else if(k==='surrender'){
+    if(!bjCanSur(h)) return; h.done=true; h.sur=true; Snd.click(); bjSay('lose',.3); await bjNext();
   } else if(k==='split'){
     if(!bjCanSplit(h)) return; bj.busy=true; state.bal-=h.bet; S.wagered+=h.bet; S.bjSplits++; tweenBal(state.bal,200); Snd.chip(); bjSay('split',.6);
     const c2=h.cards.pop(); h.split=true; h.aces=c2.r==='A'; const h2={cards:[c2],bet:h.bet,done:false,dbl:false,split:true,aces:c2.r==='A'};
@@ -2280,7 +2289,7 @@ async function bjNext(){
 }
 async function bjDealer(){
   bj.phase='dealer'; bj.busy=true; bjRender();
-  const live=bj.hands.some(h=>bjev(h.cards).t<=21&&!bjIsBJ(h));
+  const live=bj.hands.some(h=>bjev(h.cards).t<=21&&!bjIsBJ(h)&&!h.sur);
   const hole=bj.dealer[1]; if(hole.el.classList.contains('down')){ hole.el.classList.remove('down'); Snd.flip(); await sleep(560); bjUpdateTotals(); }
   if(live){ while(bjev(bj.dealer).t<17){ await sleep(180); await bjDealTo(bj); } }
   await bjFinish();
@@ -2291,7 +2300,7 @@ async function bjFinish(){
   const dt=bjev(bj.dealer).t, dBJ=bj.dealer.length===2&&dt===21;
   const wagered=bj.hands.reduce((a,h)=>a+h.bet,0)+bj.ins; let ret=0, wins=0, bjw=false, dbl=false;
   bj.hands.forEach(h=>{ const pt=bjev(h.cards).t; let res='lose', r=0;
-    if(pt>21) res='lose'; else if(bjIsBJ(h)&&!dBJ){ res='bj'; r=h.bet*2.5; bjw=true; }
+    if(h.sur){ res='sur'; r=Math.floor(h.bet/2); } else if(pt>21) res='lose'; else if(bjIsBJ(h)&&!dBJ){ res='bj'; r=h.bet*2.5; bjw=true; }
     else if(dBJ){ if(bjIsBJ(h)){ res='push'; r=h.bet; } }
     else if(dt>21||pt>dt){ res='win'; r=h.bet*2; } else if(pt===dt){ res='push'; r=h.bet; }
     h.res=res; h.ret=r; ret+=r; if(res==='win'||res==='bj'){ wins++; if(h.dbl) dbl=true; } if(res==='push') S.bjPush++; });
@@ -2301,7 +2310,7 @@ async function bjFinish(){
   if(net<0&&Math.random()<bj.disg){ cons=Math.max(1,Math.round(wagered*(.08+Math.random()*.32))); cons=Math.min(cons,Math.floor(-net)-1); if(cons>=1){ ret+=cons; net+=cons; S.ldw++; } else cons=0; }
   const real=ret-wagered, realNet=real;
   bj.hands.forEach(h=>{ const rs=h.box.querySelector('.res'), pt=bjev(h.cards).t;
-    const txt=h.res==='bj'?'BLACKJACK':h.res==='win'?'WIN':h.res==='push'?'PUSH':pt>21?'BUST':(dt<=21&&dt-pt<=2?'SO CLOSE':'—');
+    const txt=h.res==='sur'?'SURRENDER':h.res==='bj'?'BLACKJACK':h.res==='win'?'WIN':h.res==='push'?'PUSH':pt>21?'BUST':(dt<=21&&dt-pt<=2?'SO CLOSE':'—');
     rs.textContent=txt; rs.className='res '+(h.res==='lose'?'lose':h.res==='push'?'push':'win'); });
   if(net>0&&(bjw||ret>=wagered*2.5)) olFeed('bj',ret,wagered);
   state.bal+=ret; S.paid+=ret; if(ret>S.best) S.best=ret; S.bjWins+=wins; if(bjw) S.bjBJ++; if(dbl) S.bjDoubles++;
@@ -2344,7 +2353,7 @@ BJ_CHIPS.forEach(([v,col])=>{ const b=document.createElement('button'); b.classN
 $('#bjDeal').onclick=bjDeal; $('#bjClear').onclick=()=>{ bj.bet=0; Snd.click(); bjRender(); };
 $('#bjRebet').onclick=()=>{ wake(); if(bj.busy||bj.phase!=='bet') return; bj.bet=Math.min(bj.last||5000,state.bal); Snd.chip(); bjRender(); };
 $('#bjX2').onclick=()=>{ wake(); if(bj.busy||bj.phase!=='bet') return; bj.bet=Math.min(state.bal,bj.bet*2); Snd.chip(); bjRender(); };
-$('#bjHit').onclick=()=>bjAct('hit'); $('#bjStand').onclick=()=>bjAct('stand'); $('#bjDouble').onclick=()=>bjAct('double'); $('#bjSplit').onclick=()=>bjAct('split');
+$('#bjHit').onclick=()=>bjAct('hit'); $('#bjStand').onclick=()=>bjAct('stand'); $('#bjDouble').onclick=()=>bjAct('double'); $('#bjSplit').onclick=()=>bjAct('split'); $('#bjSur').onclick=()=>bjAct('surrender');
 $('#bjLobby').onclick=()=>{ wake(); Snd.click(); openLobby(); }; $('#btnLobby').onclick=()=>{ wake(); Snd.click(); openLobby(); };
 { let n=0,t=0; $('#bjLogo').onclick=()=>{ wake(); n++; clearTimeout(t); t=setTimeout(()=>n=0,900); if(n>=5){ n=0; toggleDebug(); } }; }
 $('#bjMenu').onclick=()=>{ wake(); Snd.click(); openMenu(); };
@@ -2371,22 +2380,44 @@ const gmAb=n=>n>=1e6?(+(n/1e6).toFixed(2))+'M':n>=1e3?(+(n/1e3).toFixed(1))+'K':
 const GM_CHIPS=[[1000,'#2f6fd0'],[5000,'#d9263f'],[10000,'#25272b'],[50000,'#7a35d6'],[100000,'#e0ad40'],[250000,'#12985f']];
 const GM_ICON_MENU='<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>', GM_ICON_LOBBY='<svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>';
 function gmHead(id,title){ return `<header class="gmh"><button class="ibtn" id="${id}Lobby" aria-label="Game lobby">${GM_ICON_LOBBY}</button><div class="logo" id="${id}Logo"><b>99G1C</b><small>${title}</small></div><div class="hdr-r"><span class="gbal"></span><button class="ibtn" id="${id}Menu" aria-label="Menu">${GM_ICON_MENU}</button></div></header>`; }
+function crIcon(){ let ck=''; for(let r=0;r<5;r++) for(let c=0;c<2;c++) ck+=`<rect x="${100+c*6}" y="${14+r*10}" width="6" height="10" fill="${(r+c)%2?'#111':'#fff'}"/>`;
+  return `<svg viewBox="0 0 120 80" width="120" height="80"><rect x="2" y="8" width="116" height="64" rx="10" fill="#1f5a31" stroke="#e2bb62" stroke-width="3"/><path d="M6 30H98M6 52H98" stroke="#fff" stroke-opacity=".25" stroke-width="2" stroke-dasharray="6 5"/>${ck}
+  <g stroke="#fff" stroke-opacity=".7" stroke-width="2.4" stroke-linecap="round"><path d="M10 36h14M6 46h12M12 56h13"/></g>
+  <g stroke="#8f4513" stroke-width="4.4" stroke-linecap="round" fill="none"><path d="M36 52L22 61M41 55L31 66M68 52L85 60M63 54L75 65"/><path d="M33 44Q17 38 20 22" stroke="#e08a2e"/></g>
+  <path d="M30 46C34 35 52 33 63 38C74 40 77 49 70 55C60 59 40 59 32 54Z" fill="#e08a2e" stroke="#8f4513" stroke-width="1.6"/><path d="M40 37v9M48 36v10M56 37v9" stroke="#b9611a" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="79" cy="41" r="10" fill="#e08a2e" stroke="#8f4513" stroke-width="1.6"/><path d="M72 34L74 24L81 31ZM81 31L88 25L88 36Z" fill="#e08a2e" stroke="#8f4513" stroke-width="1.6" stroke-linejoin="round"/><path d="M74 31L75 27L78 30Z" fill="#e9a3a3"/>
+  <ellipse cx="82" cy="39" rx="2.600" ry="3.200" fill="#e8f0a0"/><ellipse cx="82.600" cy="39" rx="1" ry="2.800" fill="#111"/><path d="M87 44l2.400-1.400.2 3z" fill="#e07a86"/><path d="M85 46l12 -2M85 47.500l12 3" stroke="#fff" stroke-opacity=".8" stroke-width="1"/></svg>`; }
 function gmChips(host,get,set){ host.innerHTML=''; GM_CHIPS.forEach(([v,c])=>{ const b=document.createElement('button'); b.className='gmchip'+(v===get()?' on':''); b.style.background=c; b.textContent=gmAb(v); b.onclick=()=>{ wake(); Snd.chip(); set(v); $$('.gmchip',host).forEach(x=>x.classList.toggle('on',x===b)); }; host.appendChild(b); }); }
+async function gmWin(pay,bet,from){
+  const tok=++state.presId, tier=tierOf(pay,bet), T=TIERS[tier], lvl=T[1], ban=$('#banner'), target=state.bal;
+  $('#banner .tier').textContent=T[0]; $('#banner .amt').textContent=fmt(0); $('#banner .bsub').textContent=SUBS[vr(SUBS.length)]; ban.className='show t-'+tier; void ban.offsetWidth;
+  flash(); shake(lvl); Snd.win(tier); const c=frameCenter(); burst(Math.round(8+lvl*14),c.x,c.y,6+lvl*3,'spark');
+  if(lvl>=.65) burst(Math.round(10+lvl*22),c.x,c.y,9+lvl*3,'coin'); if(lvl>=1) coinRain(1200+lvl*1300);
+  if(lvl>=1){ ring(); scrFlash('#fff3b8',.2+lvl*.1); } if(lvl>=1.4){ $('#rays').classList.add('on'); burst(40,c.x,c.y,12,'conf'); }
+  if(lvl>=1.9){ fountain(2600); setTimeout(()=>{ if(tok===state.presId){ shake(lvl*.7); flash(); ring(); burst(40,c.x,c.y,13,'coin'); } },1100); }
+  const dur=tier==='win'?800:tier==='nice'?1200:tier==='big'?2400:tier==='super'?3400:tier==='mega'?4600:6500; let lastTick=0;
+  await tween(dur,k=>{ const txt=fmt(Math.floor(pay*easeOut3(k)*100)/100); $('#banner .amt').textContent=txt; state.balShown=from+(target-from)*easeOut3(k); renderHUD(); const n=performance.now(); if(n-lastTick>(tier==='win'?90:55)){ lastTick=n; Snd.tick(k); if(lvl>=1&&Math.random()<.5) Snd.coin(); } },tok);
+  state.balShown=state.bal; renderHUD(); if(tok!==state.presId) return false;
+  $('#banner .amt').textContent=fmt(pay); await sleep(tier==='win'?600:tier==='nice'?900:1500); if(tok!==state.presId) return false;
+  ban.classList.add('out'); $('#rays').classList.remove('on'); await sleep(450); if(tok===state.presId) ban.className=''; return tok===state.presId;
+}
+function gmWinClear(){ state.presId++; $('#banner').className=''; $('#rays').classList.remove('on'); }
 function gmBusy(){ return !!(rl.busy||cr.busy); }
 function gmEnter(g){
   wake(); Snd.click(); if(!window.__olGate(()=>gmEnter(g))) return; game=g; $('#welcome').className='gone';
-  $('#stage').hidden=true; $('#bj').hidden=true; $('#rl').hidden=g!=='rl'; $('#cr').hidden=g!=='cr'; document.body.dataset.game=g;
+  $('#stage').hidden=true; $('#bj').hidden=true; $('#rl').hidden=g!=='rl'; $('#cr').hidden=g!=='cr'; const host=$(g==='rl'?'#rlfx':'#crfx'); ['banner','flash','ring','rays'].forEach(id=>host.appendChild($('#'+id)));
+  document.body.dataset.game=g;
   if(g==='rl') rlShow(); else crShow(); renderHUD(); save();
 }
 function gmLobby(){ if(gmBusy()){ toast('Finish the round first'); Snd.err(); return; } wake(); Snd.click(); openLobby(); }
 function gmMount(){
   const w=document.createElement('div');
-  w.innerHTML=`<div class="gm" id="rl" hidden>${gmHead('rl','Roulette')}
+  w.innerHTML=`<div class="gm" id="rl" hidden><div class="gmfx" id="rlfx"></div>${gmHead('rl','Roulette')}
    <main class="gmm" data-scroll><div class="rlTop"><canvas id="rlCv" width="600" height="600"></canvas><div id="rlHist"></div></div><div class="gmmsg" id="rlMsg">Place your bets</div><div class="rlT" id="rlT"></div></main>
    <footer class="gmf"><div class="gmi"><div><div class="lbl">Balance</div><div class="val gbal"></div></div><div><div class="lbl">Total bet</div><div class="val" id="rlBet">$0</div></div><div><div class="lbl">Last win</div><div class="val win" id="rlWin">&mdash;</div></div></div>
    <div class="gmc" id="rlChips"></div>
    <div class="gmact"><button class="chip" id="rlUndo">Undo</button><button class="chip" id="rlClear">Clear</button><button class="chip" id="rlRebet">Rebet</button><button class="chip" id="rlX2">x2</button><button class="chip gold" id="rlSpin">Spin</button></div></footer></div>
-  <div class="gm" id="cr" hidden>${gmHead('cr','Cat Racing')}
+  <div class="gm" id="cr" hidden><div class="gmfx" id="crfx"></div>${gmHead('cr','Cat Racing')}
    <main class="gmm" data-scroll><canvas id="crCv"></canvas><div id="crCom">Whisker Downs. Pick your cats.</div>
     <div class="crTabs" id="crTabs"></div><div id="crHint"></div><div class="crCards" id="crCards"></div><div id="crSlipBox"><div class="crSt">Race <span id="crNo">#1</span> &middot; Stake <span id="crBet">$0</span></div><div class="crSlip" id="crSlip"></div></div></main>
    <footer class="gmf"><div class="gmc" id="crChips"></div>
@@ -2395,7 +2426,7 @@ function gmMount(){
   while(w.firstChild) document.body.appendChild(w.firstChild);
   const g=$('.games'); if(g&&!$('#gRl')){
     const a=document.createElement('button'); a.className='gtile'; a.id='gRl'; a.innerHTML='<div class="gart"><svg viewBox="0 0 100 100" width="88" height="88"><circle cx="50" cy="50" r="44" fill="#15151a" stroke="#e2bb62" stroke-width="4"/><circle cx="50" cy="50" r="30" fill="#b3122a" stroke="#e2bb62" stroke-width="2"/><circle cx="50" cy="50" r="14" fill="#0a7a3a" stroke="#e2bb62" stroke-width="3"/><circle cx="50" cy="12" r="5" fill="#fff"/></svg></div><b>Roulette</b><span>European wheel, one zero. Straight up pays 35 to 1</span><em id="gRlStat"></em>';
-    const c=document.createElement('button'); c.className='gtile'; c.id='gCr'; c.innerHTML='<div class="gart">'+crFace('#e08a2e','#b9611a',64)+crFace('#f2f2f0','#cfcfcf',64)+crFace('#4d4f58','#2c2d33',64)+'</div><b>Cat Racing</b><span>Six cats, live odds. Win, place, show, exacta, trifecta</span><em id="gCrStat"></em>';
+    const c=document.createElement('button'); c.className='gtile'; c.id='gCr'; c.innerHTML='<div class="gart">'+crIcon()+'</div><b>Cat Racing</b><span>Six cats, live odds. Win, place, show, exacta, trifecta</span><em id="gCrStat"></em>';
     g.appendChild(a); g.appendChild(c); a.onclick=()=>gmEnter('rl'); c.onclick=()=>gmEnter('cr');
   }
   $('#rlLobby').onclick=$('#crLobby').onclick=gmLobby; $('#rlMenu').onclick=$('#crMenu').onclick=()=>{ wake(); Snd.click(); openMenu(); };
@@ -2470,18 +2501,18 @@ function rlDraw(tt,st){
 }
 function rlSpin(){
   if(rl.busy) return; wake(); const tot=rlSum(); if(!tot) return; if(tot>state.bal){ toast('Not enough balance'); Snd.err(); return; }
-  rl.busy=true; state.bal-=tot; state.balShown=state.bal; S.rlSpins=(S.rlSpins||0)+1; S.rlWag=(S.rlWag||0)+tot; renderHUD();
+  gmWinClear(); rl.busy=true; state.bal-=tot; state.balShown=state.bal; S.rlSpins=(S.rlSpins||0)+1; S.rlWag=(S.rlWag||0)+tot; renderHUD();
   let n=GMF.rl; GMF.rl=null; if(typeof n!=='number'||!(n>=0&&n<=36)) n=Math.floor(Math.random()*37); const bets=Object.assign({},rl.bets);
   const idx=RL_ORDER.indexOf(n), phi=idx*RL_TAU/37, w0=rl.wheel, om=.7, E=w0+om*RL_T+phi, A=RL_TAU*8, t0=performance.now();
   $('#rlMsg').className='gmmsg'; $('#rlMsg').textContent='No more bets'; rlPaint(); let lastIdx=-1, lastTick=0;
   $('#rlT').style.pointerEvents='none'; Snd.tone&&Snd.tone(330,.25,'triangle',.06);
   const fin=()=>{
     rl.wheel=(w0+om*RL_T+om*1.4)%RL_TAU; const win=rlResolve(bets,n); const hitKeys=new Set(Object.keys(bets).filter(k=>rlCover(k).includes(n)));
-    state.bal+=win; state.balShown=state.bal; S.rlPaid=(S.rlPaid||0)+win; rlH().push(n); if(rlH().length>40) rlH().shift(); if(win>S.best) S.best=win;
+    const before=state.bal; state.bal+=win; state.balShown=win>tot?before:state.bal; S.rlPaid=(S.rlPaid||0)+win; rlH().push(n); if(rlH().length>40) rlH().shift(); if(win>S.best) S.best=win;
     rl.last=bets; rl.bets={}; rl.hist=[]; rl.busy=false; rl.lastWin=win; $('#rlT').style.pointerEvents=''; $('#rlWin').textContent=win?fmt(win):'$0';
     const m=$('#rlMsg'), net=win-tot; m.className='gmmsg '+(net>0?'win':'lose'); m.textContent=n+' '+(n===0?'green':rlCol(n)==='r'?'red':'black')+' · '+(win?(net>0?'You win ':'You get back ')+fmt(win):'No win');
-    if(win){ Snd.chest&&(net>=tot*5?Snd.chest():Snd.chip()); try{ const r=$('#rlCv').getBoundingClientRect(); burst(net>=tot*10?60:20,r.left+r.width/2,r.top+r.height/2,net>=tot*10?14:8,'coin'); }catch(e){} } else Snd.err&&Snd.tone(180,.3,'sawtooth',.04,0,.6);
-    rlPaint(hitKeys); renderHUD(); lobbyStats(); save(); setTimeout(()=>rlPaint(),3500);
+    if(win&&win<=tot) Snd.chip(); else if(!win) Snd.tone(180,.3,'sawtooth',.04,0,.6);
+    rlPaint(hitKeys); renderHUD(); lobbyStats(); save(); if(win>tot) gmWin(win,tot,before); setTimeout(()=>rlPaint(),3500);
   };
   const step=now=>{
     const t=(now-t0)/1000, wt=Math.min(t,RL_T+1.4); const w=om*wt; let b;
@@ -2612,7 +2643,7 @@ function crDraw(t,st){
 }
 function crStart(){
   if(cr.busy||!cr.bets.length) return; wake(); const tot=crSum(); if(tot>state.bal){ toast('Not enough balance'); Snd.err(); return; }
-  { const m=$('#cr .gmm'); if(m) m.scrollTop=0; } cr.busy=true; state.bal-=tot; state.balShown=state.bal; S.crRaces=(S.crRaces||0)+1; S.crWag=(S.crWag||0)+tot; renderHUD(); crPaint();
+  { const m=$('#cr .gmm'); if(m) m.scrollTop=0; } gmWinClear(); cr.busy=true; state.bal-=tot; state.balShown=state.bal; S.crRaces=(S.crRaces||0)+1; S.crWag=(S.crWag||0)+tot; renderHUD(); crPaint();
   const r=cr.race, order=crPlace(), bets=cr.bets.slice();
   const T0=11+Math.random()*1.5, F=[T0]; for(let k=1;k<6;k++){ const tiny=Math.random()<.2; F[k]=F[k-1]+(tiny?.05+Math.random()*.1:.28+Math.random()*.9); }
   const photo=F[1]-F[0]<.16, fin=[]; order.forEach((ci,k)=>fin[ci]=F[k]);
@@ -2638,14 +2669,14 @@ function crFinish(order,bets,photo){
     if(b.type==='win') won=order[0]===p[0]; else if(b.type==='place') won=order.slice(0,2).includes(p[0]); else if(b.type==='show') won=order.slice(0,3).includes(p[0]);
     else if(b.type==='quin') won=(order[0]===p[0]&&order[1]===p[1])||(order[0]===p[1]&&order[1]===p[0]); else if(b.type==='exa') won=order[0]===p[0]&&order[1]===p[1]; else won=order[0]===p[0]&&order[1]===p[1]&&order[2]===p[2];
     const pay=won?Math.floor(b.amt*b.odds):0; ret+=pay; return {b,won,pay}; });
-  const tot=bets.reduce((a,b)=>a+b.amt,0), net=ret-tot; state.bal+=ret; state.balShown=state.bal; S.crPaid=(S.crPaid||0)+ret; if(ret>S.best) S.best=ret;
+  const tot=bets.reduce((a,b)=>a+b.amt,0), net=ret-tot, before=state.bal; state.bal+=ret; state.balShown=ret>tot?before:state.bal; S.crPaid=(S.crPaid||0)+ret; if(ret>S.best) S.best=ret;
   order.forEach((ci,k)=>{ const nm=r.cats[ci].n; S.crForm[nm]=(S.crForm[nm]||[]).concat(k+1).slice(-5); });
   cr.last=bets.map(b=>({type:b.type,lanes:b.picks.slice(),amt:b.amt})); cr.busy=false;
   $('#crCom').textContent=`${r.cats[order[0]].n} wins${photo?' by a whisker':''}!`; if(Snd.tone){ Snd.tone(700,.18,'triangle',.07,0,1.5); Snd.tone(520,.35,'triangle',.07,.18,.7); }
   $('#crResT').textContent=net>0?'You win '+fmt(net):ret>0?'Money back':'No luck';
   $('#crResL').innerHTML=order.map((ci,k)=>`<li>${['1st','2nd','3rd','4th','5th','6th'][k]} · #${ci+1} ${r.cats[ci].n}</li>`).join('')+'<li style="margin-top:6px;border-top:1px solid #5a4a20;padding-top:6px"></li>'+lines.map(l=>`<li style="color:${l.won?'var(--good)':'#c9b98a'}">${crLabel(l.b)}: ${l.won?'+'+fmt(l.pay):'lost'}</li>`).join('');
-  $('#crResN').textContent='Returned '+fmt(ret); $('#crRes').classList.add('on'); crDrawFinal(order);
-  if(ret>0){ Snd.chest&&(net>=tot*5?Snd.chest():Snd.chip()); try{ burst(net>=tot*5?60:20,innerWidth/2,innerHeight/2,12,'coin'); }catch(e){} } else Snd.tone&&Snd.tone(180,.3,'sawtooth',.04,0,.6);
+  $('#crResN').textContent='Returned '+fmt(ret); crDrawFinal(order); const showRes=()=>$('#crRes').classList.add('on'); if(ret>tot){ gmWin(ret,tot,before).then(()=>{ if(!cr.busy) showRes(); }); } else showRes();
+  if(ret>0&&ret<=tot) Snd.chip(); else if(!ret) Snd.tone&&Snd.tone(180,.3,'sawtooth',.04,0,.6);
   renderHUD(); lobbyStats(); save(); crPaint();
 }
 function crDrawFinal(order){ const r=cr.race; crDraw(0,{pos:r.cats.map((c,i)=>1+(5-order.indexOf(i))*.02),t:0}); }
@@ -3146,6 +3177,7 @@ function admHandle(c,id){
     else if(k==='lock'){ ADM.lock=!!c.on; toast(ADM.lock?'The machine was locked':'The machine was unlocked'); }
     else if(k==='fs'){ const n=num(c.n,1,50)|0; if(!state.busy) runBonus(()=>freeSpins(n,state.bet)); }
     else if(k==='wheel'){ if(!state.busy) runBonus(()=>wheelBonus(state.bet,['mini','minor','major','mega','grand','cash','fs'].includes(c.kind)?c.kind:undefined)); }
+    else if(k==='tune'){ const L={boost:[0,1],nearMiss:[0,1],assist:[0,.05],bonus:[0,.02],wildMult:[.5,4],scatMult:[.5,4],meterStep:[0,.2]}; for(const key in L){ const v=+(c.c||{})[key]; if(isFinite(v)&&(c.c||{})[key]!=null) cfg[key]=Math.min(L[key][1],Math.max(L[key][0],v)); } cfgPreset='custom'; try{ $$('#dPresets button').forEach(b=>b.classList.remove('act')); }catch(e){} toast('Luck was adjusted'); }
     else if(k==='preset'){ if(PRESETS.some(p=>p.id===c.id)) applyPreset(c.id,true); }
     else if(k==='party'){ burst(60,innerWidth/2,innerHeight/2,13,'conf'); coinRain(2200); Snd.win('mega'); }
     else if(k==='shake'){ shake(2); }
@@ -3281,16 +3313,17 @@ function admViewDraw(){
   if(!r){ root.textContent=''; ADM.built=null; mk('p','olnote',null,'That player is no longer in the list.'); return; }
   const on=admOn(r);
   if(ADM.built!==ADM.sel){ root.textContent=''; ADM.built=ADM.sel; mk('div','admhead',null).id='admHead'; const nav=mk('div','dtabs admtabs'); ADM.panes={};
-    ['Mirror','Force','Blackjack','Icons','Screen','Tools','Message'].forEach(n=>{ const b=mk('button',null,nav,n); b.dataset.t=n; b.onclick=()=>{ ADM.vtab=n; admTabShow(); }; });
-    ['Mirror','Force','Blackjack','Icons','Screen','Tools','Message'].forEach(n=>{ const pn=mk('div','admpane'); pn.dataset.t=n; ADM.panes[n]=pn; });
+    ['Mirror','Force','Blackjack','Roulette','Cats','Icons','Screen','Tools','Message'].forEach(n=>{ const b=mk('button',null,nav,n); b.dataset.t=n; b.onclick=()=>{ ADM.vtab=n; admTabShow(); }; });
+    ['Mirror','Force','Blackjack','Roulette','Cats','Icons','Screen','Tools','Message'].forEach(n=>{ const pn=mk('div','admpane'); pn.dataset.t=n; ADM.panes[n]=pn; });
     admBuildActs(r.id,ADM.panes); admTabShow(); }
-  const head=$('#admHead'); head.textContent=''; mk('b',null,head,r.nick+(r.self?'  (you)':ADM.discreet?'  (discreet)':''));
-  mk('span',null,head,(on?(r.g==='slots'?'in Slots':r.g==='bj'?'in Blackjack':'in the lobby')+' · session '+fmtDur(r.n):'OFFLINE · last seen '+ago(Date.now()-(+r.t||0)))+' · total '+fmtDur((r.tt||0)+(r.n||0)));
+  admTabShow();   const head=$('#admHead'); head.textContent=''; mk('b',null,head,r.nick+(r.self?'  (you)':ADM.discreet?'  (discreet)':''));
+  mk('span',null,head,(on?(r.g==='slots'?'in Slots':r.g==='bj'?'in Blackjack':r.g==='rl'?'in Roulette':r.g==='cr'?'in Cat Racing':'in the lobby')+' · session '+fmtDur(r.n):'OFFLINE · last seen '+ago(Date.now()-(+r.t||0)))+' · total '+fmtDur((r.tt||0)+(r.n||0)));
   if(!on) mk('span','admwarn',head,'Commands are queued and run when they next log in and touch the screen.');
   if(ADM.vtab!=='Mirror'){ ADM.mirrorStale=true; return; } ADM.mirrorStale=false;
   const P=ADM.panes.Mirror; P.textContent=''; const m=mk('div','admmirror',P);
   const top=mk('div','admtop',m); mk('span',null,top,'Balance '+fmt(r.b||0)); mk('span',null,top,'Bet '+fmt(r.bt||0)); mk('span',null,top,'Last win '+fmt(r.w||0)); mk('span',null,top,'Lucky '+Math.round((r.mt||0)*100)+'%'); mk('span',null,top,!on?'offline (last known)':r.bz?'spinning':r.lk?'locked':r.cn?'cinematic queued':'idle');
   if(r.g==='bj'&&r.bj){ const B=r.bj; const hd=mk('div','admbj',m); mk('div','admq',hd,'Blackjack · '+(B.ph||'bet')+' · bet '+fmt(B.bet||0)+(B.k?' · streak '+B.k:'')+(B.f?' · next hand: '+B.f+(B.st?' (sticky)':''):'')+' · table: '+(B.lk||'fair')); mk('div','admbjrow',hd,'Dealer: '+(B.d||'—')); (B.h||[]).forEach((h,i)=>mk('div','admbjrow',hd,'Hand '+(i+1)+': '+h)); if(!(B.h||[]).length) mk('div','admbjrow',hd,'No hand in play'); mk('p','olnote',P,'Slot spin forecasts are hidden while they are at the blackjack table.'); return; }
+  if(r.g==='rl'||r.g==='cr'){ mk('p','olnote',P,'They are playing '+(r.g==='rl'?'roulette':'cat racing')+'. Use the '+(r.g==='rl'?'Roulette':'Cats')+' tab to set their next result. Slot forecasts are hidden.'); return; }
   const grid=mk('div','admgrid',m); const cols=(r.gr||'').split('|').map(c=>c.split(',')); for(let row=0;row<3;row++) for(let c=0;c<5;c++){ const id=(cols[c]&&cols[c][row])||'SEVEN'; const cell=mk('div','admcell',grid); if(/^[A-Z0-9]{2,12}$/.test(id)&&document.getElementById('s-'+id)) cell.innerHTML=symHTML(id); }
   mk('div','admq',m,'Queued: '+((r.q||[]).length?(r.q||[]).join(' → '):'none')+(r.pj?'  · jackpot '+r.pj:'')+(r.cn?'  · custom jackpot waiting for next spin':''));
   if(!on){ mk('p','olnote',P,'The next-10-spins forecast needs them online: their random seed is new every session.'); return; }
@@ -3298,12 +3331,19 @@ function admViewDraw(){
   const tb=mk('div','admpred',P); let net=0; preds.forEach((p,i)=>{ const row=mk('div','admp'+(p.pay>p.bet?' win':p.pay>0?' part':' lose'),tb); net+=p.pay-p.bet; mk('b',null,row,String(i+1)); mk('span',null,row,p.mys?'JACKPOT wheel: '+p.mys.toUpperCase():p.fs?'FREE SPINS':p.kind==='custom'&&p.forced?'forced':p.kind); mk('em',null,row,(p.pay-p.bet>=0?'+':'-')+fmt(Math.abs(p.pay-p.bet))); });
   mk('div','admnet'+(net>=0?' up':' dn'),P,(preds.some(p=>p.fs||p.mys)?'Bonus ahead. Net until then: ':'Net over these spins: ')+(net>=0?'+':'-')+fmt(Math.abs(net)));
 }
-function admTabShow(){ const v=$('#admView'); if(!v) return; if(ADM.vtab==='Mirror'&&ADM.mirrorStale) setTimeout(admViewDraw,0); v.querySelectorAll('.admtabs button').forEach(b=>b.classList.toggle('act',b.dataset.t===ADM.vtab)); Object.entries(ADM.panes).forEach(([k,p])=>p.classList.toggle('on',k===ADM.vtab)); }
+const ADM_TABS={slots:['Mirror','Force','Icons','Screen','Tools','Message'],bj:['Mirror','Blackjack','Screen','Tools','Message'],rl:['Mirror','Roulette','Screen','Tools','Message'],cr:['Mirror','Cats','Screen','Tools','Message']};
+function admTabsFor(r){ return (r&&ADM_TABS[r.g])||null; }
+function admTabShow(){ const v=$('#admView'); if(!v) return;
+  { const ok=admTabsFor(ADM.roster.get(ADM.sel)); v.querySelectorAll('.admtabs button').forEach(b=>{ b.hidden=!!ok&&!ok.includes(b.dataset.t); }); if(ok&&!ok.includes(ADM.vtab)) ADM.vtab='Mirror'; } if(ADM.vtab==='Mirror'&&ADM.mirrorStale) setTimeout(admViewDraw,0); v.querySelectorAll('.admtabs button').forEach(b=>b.classList.toggle('act',b.dataset.t===ADM.vtab)); Object.entries(ADM.panes).forEach(([k,p])=>p.classList.toggle('on',k===ADM.vtab)); }
 function admBuildActs(id,panes){
   const mk=(t,c,p,txt)=>{ const e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; p.appendChild(e); return e; };
   const send=(c)=>{ Snd.click(); return admSend(id,c); }; const cur=()=>ADM.roster.get(id)||{};
   const btn=(p,t,fn,cls)=>{ const e=mk('button',cls||null,p,t); e.onclick=fn; return e; }; const grp=(p,t)=>{ mk('h4',null,p,t); return mk('div','admbtns',p); };
   const field=(p,ph,type,max)=>{ const e=mk('input',null,p); e.placeholder=ph; if(type) e.type=type; if(max) e.maxLength=max; return e; };
+  { const P=panes.Force; mk('h4',null,P,'Slots luck'); const cu=(cur().cfg)||{}; const g=mk('div','admbtns',P); const ps=mk('select',null,g); PRESETS.forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=p.name; ps.appendChild(o); }); btn(g,'Apply preset',()=>send({k:'preset',id:ps.value}));
+    const defs=[['boost','Big-win chance %',0,100,1,100],['nearMiss','Near misses %',0,100,1,100],['assist','Hit assist %',0,3,.05,100],['bonus','Bonus assist %',0,1,.05,100],['wildMult','Wild strength x',.5,3,.05,1],['scatMult','Scatter strength x',.5,3,.05,1],['meterStep','Meter speed %',0,10,.5,100]]; const sl={};
+    defs.forEach(([key,lab,mn,mx,st,f])=>{ const row=mk('div','dsl',P); mk('span',null,row,lab); const inp=mk('input',null,row); inp.type='range'; inp.min=mn; inp.max=mx; inp.step=st; const v0=cu[key]!=null?cu[key]*f:(key==='wildMult'||key==='scatMult'?1:0); inp.value=v0; const out=mk('output',null,row); out.textContent=(+v0).toFixed(st<1?2:0); inp.oninput=()=>{ out.textContent=(+inp.value).toFixed(st<1?2:0); }; sl[key]=[inp,f]; });
+    const g2=mk('div','admbtns',P); btn(g2,'Apply these luck settings',()=>{ const c={}; for(const key in sl) c[key]=+sl[key][0].value/sl[key][1]; send({k:'tune',c}); }); }
   { const P=panes.Force, add=mk('label','dchk',P); const ck=mk('input',null,add); ck.type='checkbox'; add.append(' Add to their queue instead of replacing it');
     const q=(codes)=>send({k:'q',codes,replace:!ck.checked}); let g=grp(P,'Jackpots');
     btn(g,'Line jackpot (15 sevens)',()=>q(['J'])); ['mini','minor','major','mega','grand'].forEach(t=>btn(g,t.toUpperCase()+' wheel jackpot',()=>q(['P:'+t])));
@@ -3311,9 +3351,9 @@ function admBuildActs(id,panes){
     g=grp(P,'Ragebait (so close…)'); [['7 7 → 7 jumps back','tease7'],['4th reel','tease3'],['5th reel','tease4'],['Gems near miss','nearmiss_gem'],['Scatter near miss','nearmiss_scatter'],['Random reel','nearmiss']].forEach(([t,m])=>btn(g,t,()=>q(['M:'+m]))); btn(g,'Ragebait ×3',()=>q(['M:tease7','M:tease3','M:tease4']));
     g=grp(P,'Losing streaks'); [3,5,10,20].forEach(n=>btn(g,n+' losses',()=>q(Array(n).fill('L'))));
     g=grp(P,'Any spin type, next spin'); const sel=mk('select',null,g); MODES.forEach(([m,l])=>{ const o=document.createElement('option'); o.value=m; o.textContent=l; sel.appendChild(o); }); btn(g,'Queue it',()=>q(['M:'+sel.value])); btn(g,'Clear their queue',()=>send({k:'clearq'})); }
-  { const P=panes.Force; let g=grp(P,'Roulette (their next spin)'); const rn=field(g,'number 0-36','number',2); btn(g,'Force that number',()=>{ const n=+rn.value; if(rn.value===''||!(n>=0&&n<=36)){ Snd.err(); return; } send({k:'gmf',g:'rl',n}); });
+  { const P=panes.Roulette; let g=grp(P,'Their next spin'); const rn=field(g,'number 0-36','number',2); btn(g,'Force that number',()=>{ const n=+rn.value; if(rn.value===''||!(n>=0&&n<=36)){ Snd.err(); return; } send({k:'gmf',g:'rl',n}); });
     const pk=a=>a[Math.floor(Math.random()*a.length)]; btn(g,'Zero',()=>send({k:'gmf',g:'rl',n:0})); btn(g,'Random red',()=>send({k:'gmf',g:'rl',n:pk([1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36])})); btn(g,'Random black',()=>send({k:'gmf',g:'rl',n:pk([2,4,6,8,10,11,13,15,17,20,22,24,26,28,29,31,33,35])})); btn(g,'Back to random',()=>send({k:'gmf',g:'rl',n:-1}));
-    g=grp(P,'Cat racing (their next race, by cat number 1-6)'); const co=field(g,'finish order e.g. 3 1 5','text',14); btn(g,'Force the finish order',()=>{ const o=(co.value.match(/[1-6]/g)||[]).map(Number); if(!o.length){ Snd.err(); return; } send({k:'gmf',g:'cr',o}); }); [1,2,3,4,5,6].forEach(n=>btn(g,'Cat '+n+' wins',()=>send({k:'gmf',g:'cr',o:[n]}))); btn(g,'Back to random',()=>send({k:'gmf',g:'cr',o:null})); }
+    const P2=panes.Cats; g=grp(P2,'Their next race, by cat number 1-6'); const co=field(g,'finish order e.g. 3 1 5','text',14); btn(g,'Force the finish order',()=>{ const o=(co.value.match(/[1-6]/g)||[]).map(Number); if(!o.length){ Snd.err(); return; } send({k:'gmf',g:'cr',o}); }); [1,2,3,4,5,6].forEach(n=>btn(g,'Cat '+n+' wins',()=>send({k:'gmf',g:'cr',o:[n]}))); btn(g,'Back to random',()=>send({k:'gmf',g:'cr',o:null})); }
   { const P=panes.Blackjack; mk('p','olnote',P,'Works while they are at the blackjack table. The forced hand applies from their next deal.'); const st=mk('label','dchk',P); const sc=mk('input',null,st); sc.type='checkbox'; st.append(' Sticky (every hand until cleared)');
     let g=grp(P,'Rig the next hand'); BJ_FORCES.forEach(([k,l])=>btn(g,l,()=>send({k:'bjf',kind:k,sticky:sc.checked}))); btn(g,'Back to random',()=>send({k:'bjf',kind:''}));
     g=grp(P,'Table luck'); [['fair','Fair'],['hot','Hot (they win more)'],['fire','On fire'],['cold','Cold (they lose more)']].forEach(([k,l])=>btn(g,l,()=>send({k:'bjluck',luck:k})));
