@@ -182,6 +182,5 @@ html[data-bg="sunset"]{--bgA:rgba(255,220,110,.38);--bgB:rgba(255,80,160,.30)}
 html[data-bg="noir"]{--bgA:rgba(226,187,98,.22);--bgB:rgba(255,255,255,.12)}
 html[data-bg="neon"]{--bgA:rgba(0,255,220,.32);--bgB:rgba(255,0,200,.30)}
 html[data-bg="stars"]{--bgA:rgba(120,200,255,.26);--bgB:rgba(190,150,255,.24)}
-.gm,#welcome{background:none!important}
 html.ui-open body::before{animation-play-state:paused}
 @media (prefers-reduced-motion:reduce){body::before{animation:none}}
