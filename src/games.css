@@ -204,3 +204,4 @@ html[data-bg="stars"]{--bgA:rgba(120,200,255,.45);--bgB:rgba(190,150,255,.42)}
 .gart:has(.mc){overflow:visible; height:clamp(52px,14vw,72px); margin-bottom:2px} .gart:has(.mc) .mc{box-shadow:0 3px 8px rgba(0,0,0,.5)}
 body:not([data-game="slots"]) #qback,html:has(#welcome:not(.gone)) #qback{display:none!important}
 html:has(#welcome:not(.gone)) .gm{visibility:hidden}
+@media (max-width:700px){ header .jps{display:none!important} }

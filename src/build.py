@@ -122,8 +122,7 @@ over='''<div id="toast"></div>
   <small>Play money only. Nothing here is real gambling. Sound starts when you pick a game. 18+ only.</small></div></div>'''
 BJHTML='''<div id="bj" hidden>
   <header>
-    <div class="logo" id="bjLogo"><b>99G1C</b><small>Blackjack</small></div>
-    <div class="bjstreak" id="bjStreak" title="Win streak bonus"><svg viewBox="0 0 24 24"><path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c0-1-.4-1.800-1-2.500C16.500 9.500 19 12 19 15a7 7 0 0 1-14 0c0-5 5-7 7-13z"/></svg><b>0</b></div>
+    <div class="logo" id="bjLogo"><b>99G1C</b><small>Blackjack</small><div class="bjstreak" id="bjStreak" title="Win streak bonus"><svg viewBox="0 0 24 24"><path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c0-1-.4-1.800-1-2.500C16.500 9.500 19 12 19 15a7 7 0 0 1-14 0c0-5 5-7 7-13z"/></svg><b>0</b></div></div>
     <div class="hdr-r">
       <button class="ibtn" id="bjLobby" aria-label="Game lobby"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg></button>
       <button class="ibtn" id="bjMusic" aria-label="Music"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="17" cy="16" r="2.5"/></svg></button>
