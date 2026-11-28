@@ -880,6 +880,22 @@ html[data-bg="stars"]{--bgA:rgba(120,200,255,.45);--bgB:rgba(190,150,255,.42)}
 body:not([data-game="slots"]) #qback,html:has(#welcome:not(.gone)) #qback{display:none!important}
 html:has(#welcome:not(.gone)) .gm{visibility:hidden}
 @media (max-width:700px){ header .jps{display:none!important} }
+/* theme-adaptive accents: brass colours, buttons and panels follow the chosen background */
+html[data-bg="midnight"]{--brass:#9fb4ff;--brass-hi:#e4ebff;--brass-lo:#44509a;--tintD:#0c1238;--tintM:#2a3a8a}
+html[data-bg="burgundy"]{--brass:#ff9db0;--brass-hi:#ffe3e8;--brass-lo:#8a2a42;--tintD:#2c0714;--tintM:#6a1830}
+html[data-bg="sunset"]{--brass:#ffd27a;--brass-hi:#fff1c4;--brass-lo:#b0482f;--tintD:#2a0f2c;--tintM:#6a2358}
+html[data-bg="noir"]{--brass:#e2bb62;--brass-hi:#fdeeb2;--brass-lo:#8b6a2a;--tintD:#0a0a0b;--tintM:#2a2a2e}
+html[data-bg="neon"]{--brass:#5ffbe8;--brass-hi:#d8fff9;--brass-lo:#17806f;--tintD:#0a0430;--tintM:#3a1070}
+html[data-bg="stars"]{--brass:#9ed8ff;--brass-hi:#e0f4ff;--brass-lo:#3a6f9a;--tintD:#070e26;--tintM:#17305a}
+html[data-bg] .ibtn,html[data-bg] .chip:not(.gold):not(.on){background:linear-gradient(var(--tintM,#2c2208),var(--tintD,#120c02))}
+html[data-bg] .logo b{background:linear-gradient(var(--brass-hi),var(--brass) 55%,var(--brass-lo)); -webkit-background-clip:text; background-clip:text; color:transparent}
+html[data-bg="midnight"] #panel,html[data-bg="midnight"] .gmf,html[data-bg="midnight"] #bjpanel,html[data-bg="burgundy"] #panel,html[data-bg="burgundy"] .gmf,html[data-bg="burgundy"] #bjpanel,html[data-bg="sunset"] #panel,html[data-bg="sunset"] .gmf,html[data-bg="sunset"] #bjpanel,html[data-bg="noir"] #panel,html[data-bg="noir"] .gmf,html[data-bg="noir"] #bjpanel,html[data-bg="neon"] #panel,html[data-bg="neon"] .gmf,html[data-bg="neon"] #bjpanel,html[data-bg="stars"] #panel,html[data-bg="stars"] .gmf,html[data-bg="stars"] #bjpanel{background:linear-gradient(color-mix(in srgb,var(--tintM) 55%,transparent),color-mix(in srgb,var(--tintD) 62%,transparent))!important}
+html[data-bg] .gtile,html[data-bg] .crCard{border-color:var(--brass-lo)}
+html[data-bg]:not([data-bg="emerald"]) .gtile,html[data-bg]:not([data-bg="emerald"]) .crCard{background:linear-gradient(160deg,color-mix(in srgb,var(--tintM) 55%,transparent),color-mix(in srgb,var(--tintD) 55%,transparent))!important}
+html[data-bg] .jp{border-color:var(--brass-lo)} html[data-bg] .jp i,html[data-bg] .gmh .logo small{color:var(--brass)}
+html[data-bg] #modal .card{border-color:var(--brass-lo)}
+#bjLogo{flex-direction:row!important; align-items:center!important; gap:10px}
+#bj header{align-items:center}
 
 </style>
 
