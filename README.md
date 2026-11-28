@@ -26,7 +26,7 @@ Wins use a shared presentation (WIN, BIG WIN, SUPER WIN, MEGA WIN, JACKPOT) with
 - **Optional online mode.** Leaderboards, a live win feed and (optionally) an email account so the same progress follows you across two devices.
 - **Luck presets.** Slot odds can be tuned from the debug menu (default is the "Fun" preset, about 150% return).
 
-Settings (menu button) hold volume, music style, background, graphics quality, reality check reminders, email login and account deletion.
+Settings (menu button) are split into Sound, Display, Play and Account tabs, plus an Admin tab with the debug menu button for the owner. Backgrounds are animated.
 
 ## Online mode
 

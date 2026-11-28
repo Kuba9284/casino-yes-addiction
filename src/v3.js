@@ -298,7 +298,7 @@ const Snd=(()=>{
     });
   }
   function playStep(st,t,sd){
-    const cfg=MC[M.mode], bar=Math.floor(st/12), s=st%12, vel=cfg.vel, beat=s/3|0;
+    const cfg=MC[M.mode], bar=Math.floor(st/12), s=st%12, vel=cfg.vel*1.7, beat=s/3|0;
     if(s===0){ jBassBar(bar); jSoloBar(bar,t,sd); }
     if(s%3===0) upright(jBass[beat],t,sd*2.6,.2*vel);
     if([0,3,5,6,9,11].includes(s)) noiseT(t,.11,(s%3===0?.032:.022)*vel,7800,1.2,'highpass',mus);
@@ -312,7 +312,7 @@ const Snd=(()=>{
   function voice(n,t,dur,v,type,cut,att){ const o=ctx.createOscillator(), lp=ctx.createBiquadFilter(), g=ctx.createGain(); o.type=type||'triangle'; o.frequency.value=mtof(n); lp.type='lowpass'; lp.frequency.value=cut||2400; const a=att||.01; g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(v,t+a); g.gain.exponentialRampToValueAtTime(.0001,t+Math.max(dur,a+.05)); o.connect(lp); lp.connect(g); g.connect(mus); g.connect(revSend); o.start(t); o.stop(t+dur+.1); }
   const PRG={lounge:[[48,[0,4,7,11]],[45,[0,3,7,10]],[50,[0,3,7,10]],[43,[0,4,7,10]]],synth:[[45,[0,3,7]],[41,[0,4,7]],[48,[0,4,7]],[43,[0,4,7]]],rag:[[48,[0,4,7,9]],[41,[0,4,7,9]],[43,[0,4,7,10]],[48,[0,4,7,9]]],ambient:[[48,[0,7,11,14]],[41,[0,7,11,16]],[45,[0,7,10,14]],[43,[0,7,11,14]]]};
   function playAlt(st,t,sd){
-    const sty=M.style, bar=Math.floor(st/12), s=st%12, pr=PRG[sty][bar%4], root=pr[0], ch=pr[1], vel=MC[M.mode].vel, hz=sd*12;
+    const sty=M.style, bar=Math.floor(st/12), s=st%12, pr=PRG[sty][bar%4], root=pr[0], ch=pr[1], vel=MC[M.mode].vel*1.7, hz=sd*12;
     if(sty==='lounge'){
       if(s===0){ ch.forEach((iv,i)=>voice(root+12+iv,t+i*.012,hz*.95,.05*vel,'sine',1800,.04)); voice(root,t,sd*5,.16*vel,'sine',500,.01); }
       if(s===6) voice(root+(Math.random()<.5?7:0),t,sd*4,.12*vel,'sine',500,.01);
@@ -883,22 +883,29 @@ function openHistory(){
   const draw=c=>{ $('#hbody',c).innerHTML=S.log.map(l=>`<tr><td>#${l.n}</td><td>${fmt(l.bet)}</td><td class="pos">${l.pay>0?'Win '+fmt(l.pay):'—'}</td>${ui.reveal?`<td class="${l.net<0?'neg':'pos'}">${l.net>=0?'+':''}${fmt(l.net)}</td>`:''}</tr>`).join('')||'<tr><td colspan="4">No spins yet.</td></tr>'; };
   openModal({title:'Game history',html:`<div class="field"><label for="hrev">Show net result per spin</label><input type="checkbox" id="hrev" ${ui.reveal?'checked':''}></div><div class="scroll"><table class="tbl"><thead><tr><th>Spin</th><th>Bet</th><th>Win</th>${ui.reveal?'<th>Net</th>':''}</tr></thead><tbody id="hbody"></tbody></table></div>`,
    wire:c=>{ draw(c); $('#hrev',c).onchange=e=>{ ui.reveal=e.target.checked; renderHUD(); closeModal(); setTimeout(openHistory,30); }; }}); }
+let setTab='Sound';
 function openSettings(){
-  openModal({title:'Settings',html:`<div class="field"><label>Sound effects</label><input type="range" id="sSfx" min="0" max="100" value="${Math.round(ui.sfx*100)}"></div>
-  <div class="field"><label>Music</label><input type="range" id="sMus" min="0" max="100" value="${Math.round(ui.mus*100)}"></div>
-  <div class="field"><label>Screen shake</label><input type="range" id="sShk" min="0" max="200" value="${Math.round(ui.shake*100)}"></div>
-  <div class="field"><div><label for="sGfx">Graphics</label><small>Auto picks Balanced on phones: same look, lighter effects</small></div><select id="sGfx">${[['auto','Auto'],['high','High'],['balanced','Balanced'],['lite','Lite']].map(x=>`<option value="${x[0]}" ${ui.gfx===x[0]?'selected':''}>${x[1]}</option>`).join('')}</select></div>
-  <div class="field"><label for="sTur">Turbo spin</label><input type="checkbox" id="sTur" ${state.turbo?'checked':''}></div>
-  <div class="field"><div><label>Come-back alarm</label><small>When you switch tabs or move the cursor away</small></div><div class="seg" id="sAl">${[['off','Off'],['pause','Pause only'],['siren','Pause + siren']].map(a=>`<button data-v="${a[0]}" class="${ui.alarm===a[0]?'on':''}">${a[1]}</button>`).join('')}</div></div>
-  <div class="field"><label>Alarm volume</label><input type="range" id="sAv" min="5" max="100" value="${Math.round(ui.alarmVol*100)}"></div>
-  <div class="field"><div><label>Account</label><small>Remove your username, scores and saved progress</small></div><button class="btn" id="sDel" type="button">Delete account</button></div>
-  <div class="field"><div><label>Music style</label><small>Changes the soundtrack right away</small></div><select id="sMst">${[['jazz','Smoky jazz'],['lounge','Velvet lounge'],['synth','Neon synthwave'],['rag','Ragtime bounce'],['ambient','Night ambient']].map(a=>`<option value="${a[0]}" ${(ui.mstyle||'jazz')===a[0]?'selected':''}>${a[1]}</option>`).join('')}</select></div>
-  <div class="field"><div><label>Background</label><small>Colours behind every game</small></div><select id="sBg">${BG_LIST.map(a=>`<option value="${a[0]}" ${(ui.bg||'emerald')===a[0]?'selected':''}>${a[1]}</option>`).join('')}</select></div>
-  <div class="field"><div><label>Email login</label><small>Optional. Use the same account on two devices</small></div><button class="btn" id="sAcct" type="button">${ui.acct?'Manage':'Log in'}</button></div>
-  <div class="field"><div><label>Reality check</label><small>Reminder with your real session numbers</small></div><select id="sRc">${[[0,'Off'],[10,'Every 10 min'],[20,'Every 20 min'],[30,'Every 30 min'],[60,'Every hour']].map(a=>`<option value="${a[0]}" ${ui.rc===a[0]?'selected':''}>${a[1]}</option>`).join('')}</select></div>`,
-  wire:c=>{ $('#sDel',c).onclick=()=>acctConfirm(); $('#sMst',c).onchange=e=>{ ui.mstyle=e.target.value; Snd.setStyle(ui.mstyle); wake(); save(); }; $('#sBg',c).onchange=e=>{ ui.bg=e.target.value; applyBg(ui.bg); save(); }; $('#sAcct',c).onclick=()=>acctLogin(); $('#sGfx',c).onchange=e=>{ ui.gfx=e.target.value; applyGfx(); save(); }; $('#sSfx',c).oninput=e=>{ ui.sfx=e.target.value/100; Snd.setVol(ui.sfx); }; $('#sMus',c).oninput=e=>{ ui.mus=e.target.value/100; Snd.setMusicVol(ui.mus); }; $('#sShk',c).oninput=e=>{ ui.shake=e.target.value/100; };
-    $('#sTur',c).onchange=e=>{ state.turbo=e.target.checked; $('#chTurbo').classList.toggle('on',state.turbo); }; $('#sAv',c).oninput=e=>{ ui.alarmVol=e.target.value/100; Snd.setAlarmVol(ui.alarmVol); };
-    $$('#sAl button',c).forEach(b=>b.onclick=()=>{ ui.alarm=b.dataset.v; $$('#sAl button',c).forEach(x=>x.classList.toggle('on',x===b)); }); $('#sRc',c).onchange=e=>{ ui.rc=+e.target.value; state.lastRc=Date.now(); save(); }; }}); }
+  const sel=(id,opts,cur)=>`<select id="${id}">${opts.map(a=>`<option value="${a[0]}" ${String(cur)===String(a[0])?'selected':''}>${a[1]}</option>`).join('')}</select>`;
+  const adm=olAdmin(), tabs=['Sound','Display','Play','Account'].concat(adm?['Admin']:[]); if(!tabs.includes(setTab)) setTab='Sound';
+  const pane=(n,h)=>`<div class="sPane" data-t="${n}" ${n===setTab?'':'hidden'}>${h}</div>`;
+  openModal({title:'Settings',html:`<div class="dtabs sTabs">${tabs.map(t=>`<button type="button" data-t="${t}" class="${t===setTab?'act':''}">${t}</button>`).join('')}</div>`+
+  pane('Sound',`<div class="field"><label>Sound effects</label><input type="range" id="sSfx" min="0" max="100" value="${Math.round(ui.sfx*100)}"></div>
+    <div class="field"><label>Music volume</label><input type="range" id="sMus" min="0" max="100" value="${Math.round(ui.mus*100)}"></div>
+    <div class="field"><div><label for="sMst">Music style</label><small>Changes the soundtrack right away</small></div>${sel('sMst',[['jazz','Smoky jazz'],['lounge','Velvet lounge'],['synth','Neon synthwave'],['rag','Ragtime bounce'],['ambient','Night ambient']],ui.mstyle||'jazz')}</div>`)+
+  pane('Display',`<div class="field"><div><label for="sBg">Background</label><small>Animated colours behind every game</small></div>${sel('sBg',BG_LIST,ui.bg||'emerald')}</div>
+    <div class="field"><div><label for="sGfx">Graphics</label><small>Auto picks Balanced on phones: same look, lighter effects</small></div>${sel('sGfx',[['auto','Auto'],['high','High'],['balanced','Balanced'],['lite','Lite']],ui.gfx)}</div>
+    <div class="field"><label>Screen shake</label><input type="range" id="sShk" min="0" max="200" value="${Math.round(ui.shake*100)}"></div>`)+
+  pane('Play',`<div class="field"><div><label>Come-back alarm</label><small>When you switch tabs or move the cursor away</small></div><div class="seg" id="sAl">${[['off','Off'],['pause','Pause only'],['siren','Pause + siren']].map(a=>`<button data-v="${a[0]}" class="${ui.alarm===a[0]?'on':''}">${a[1]}</button>`).join('')}</div></div>
+    <div class="field"><label>Alarm volume</label><input type="range" id="sAv" min="5" max="100" value="${Math.round(ui.alarmVol*100)}"></div>
+    <div class="field"><div><label for="sRc">Reality check</label><small>Reminder with your real session numbers</small></div>${sel('sRc',[[0,'Off'],[10,'Every 10 min'],[20,'Every 20 min'],[30,'Every 30 min'],[60,'Every hour']],ui.rc)}</div>`)+
+  pane('Account',`<div class="field"><div><label>Email login</label><small>Optional. Use the same account on two devices</small></div><button class="btn" id="sAcct" type="button">${ui.acct?'Manage':'Log in'}</button></div>
+    <div class="field"><div><label>Delete account</label><small>Remove your username, scores and saved progress</small></div><button class="btn" id="sDel" type="button">Delete</button></div>`)+
+  (adm?pane('Admin',`<div class="field"><div><label>Debug menu</label><small>Stats, tuning, forcing and player control</small></div><button class="btn" id="sDbg" type="button">Open</button></div>`):''),
+  wire:c=>{ $$('.sTabs button',c).forEach(b=>b.onclick=()=>{ setTab=b.dataset.t; $$('.sTabs button',c).forEach(x=>x.classList.toggle('act',x===b)); $$('.sPane',c).forEach(p=>p.hidden=p.dataset.t!==setTab); });
+    $('#sSfx',c).oninput=e=>{ ui.sfx=e.target.value/100; Snd.setVol(ui.sfx); }; $('#sMus',c).oninput=e=>{ ui.mus=e.target.value/100; Snd.setMusicVol(ui.mus); }; $('#sMst',c).onchange=e=>{ ui.mstyle=e.target.value; Snd.setStyle(ui.mstyle); wake(); save(); };
+    $('#sBg',c).onchange=e=>{ ui.bg=e.target.value; applyBg(ui.bg); save(); }; $('#sGfx',c).onchange=e=>{ ui.gfx=e.target.value; applyGfx(); save(); }; $('#sShk',c).oninput=e=>{ ui.shake=e.target.value/100; };
+    $$('#sAl button',c).forEach(b=>b.onclick=()=>{ ui.alarm=b.dataset.v; $$('#sAl button',c).forEach(x=>x.classList.toggle('on',x===b)); }); $('#sAv',c).oninput=e=>{ ui.alarmVol=e.target.value/100; Snd.setAlarmVol(ui.alarmVol); }; $('#sRc',c).onchange=e=>{ ui.rc=+e.target.value; state.lastRc=Date.now(); save(); };
+    $('#sAcct',c).onclick=()=>acctLogin(); $('#sDel',c).onclick=()=>acctConfirm(); const d=$('#sDbg',c); if(d) d.onclick=()=>{ closeModal(); setTimeout(()=>{ if(!document.body.classList.contains('dbg')) toggleDebug(); },120); }; }}); }
 function openKeys(){ openModal({title:'Keyboard shortcuts',html:`<table class="tbl">${[['Space / Enter','Spin or stop the reels'],['Arrow up / down','Raise or lower bet'],['T','Toggle turbo'],['M','Toggle music'],['` or F2','Debug panel']].map(r=>`<tr><td><span class="hint">${r[0]}</span></td><td>${r[1]}</td></tr>`).join('')}</table>`}); }
 function sessionNumbers(){ const mins=Math.floor((Date.now()-state.sessionT0)/60000), net=state.bal-state.sessionStart;
   return `<div class="kvs"><span>Session time</span><b>${mins} min</b><span>Total wagered</span><b>${fmt(S.wagered)}</b><span>Total returned</span><b>${fmt(S.paid)}</b><span>Real result this session</span><b class="${net<0?'neg':'pos'}">${net>=0?'+':''}${fmt(net)}</b><span>Real return rate</span><b>${S.wagered?(S.paid/S.wagered*100).toFixed(1)+'%':'—'}</b></div>`; }
@@ -1056,7 +1063,8 @@ $('#dDisg').onchange=e=>cfg.disguise=e.target.checked; $('#dAnt').onchange=e=>ui
   try{ let m=document.querySelector('meta[name=viewport]'); if(!m){ m=document.createElement('meta'); m.name='viewport'; document.head.appendChild(m); } m.content='width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover'; }catch(e){}
   ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
   const SCROLLERS='.gmm,.card,#debug,.admlist,.dtabs,.tbl,textarea,select,[data-scroll]';
-  document.addEventListener('touchmove',e=>{ if(e.touches.length>1){ e.preventDefault(); return; } const t=e.target; if(!t||!t.closest) return; if(t.closest('input[type=range]')) return; const sc=t.closest(SCROLLERS); if(sc&&(sc.scrollHeight>sc.clientHeight+1||sc.scrollWidth>sc.clientWidth+1)) return; e.preventDefault(); },{passive:false});
+  const canScroll=el=>{ for(let n=el;n&&n!==document.body&&n!==document.documentElement;n=n.parentElement){ const s=getComputedStyle(n), oy=/(auto|scroll)/.test(s.overflowY), ox=/(auto|scroll)/.test(s.overflowX); if((oy&&n.scrollHeight>n.clientHeight+1)||(ox&&n.scrollWidth>n.clientWidth+1)) return true; } return false; };
+  document.addEventListener('touchmove',e=>{ if(e.touches.length>1){ e.preventDefault(); return; } const t=e.target; if(!t||!t.closest) return; if(t.closest('input[type=range]')) return; if(canScroll(t)) return; const sc=t.closest(SCROLLERS); if(sc&&(sc.scrollHeight>sc.clientHeight+1||sc.scrollWidth>sc.clientWidth+1)) return; e.preventDefault(); },{passive:false});
   const vv=window.visualViewport, root=document.documentElement;
   function fit(){ const h=vv?vv.height:innerHeight, t=vv?vv.offsetTop:0; root.style.setProperty('--vvh',Math.round(h)+'px'); root.style.setProperty('--vvt',Math.round(t)+'px'); if(window.scrollY||window.scrollX) scrollTo(0,0); }
   if(vv){ vv.addEventListener('resize',fit); vv.addEventListener('scroll',fit); } addEventListener('resize',fit); fit();

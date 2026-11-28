@@ -70,7 +70,7 @@ function rlCover(key){
   } return a;
 }
 function rlResolve(bets,n){ let ret=0; for(const k in bets){ if(rlCover(k).includes(n)) ret+=bets[k]*(RL_PAY[k.split(':')[0]]+1); } return ret; }
-const rlH=()=>S.rlHist||(S.rlHist=[]);
+const rlH=()=>{ const h=S.rlHist||(S.rlHist=[]); if(h.some(n=>typeof n!=='number')) S.rlHist=h.filter(n=>typeof n==='number'); return S.rlHist; };
 const rl={bets:{},hist:[],last:null,sel:5000,busy:false,built:false,els:{},wheel:0,ball:null,raf:0,lastWin:0};
 function rlSum(){ let s=0; for(const k in rl.bets) s+=rl.bets[k]; return s; }
 function rlBuild(){
@@ -104,7 +104,7 @@ function rlAdd(k){
 function rlPaint(win){
   for(const k in rl.els) rl.els[k].forEach(el=>{ const b=el.querySelector('.bc'); const a=rl.bets[k]; if(a){ if(!b){ const s=document.createElement('span'); s.className='bc'; s.textContent=gmAb(a); el.appendChild(s); } else b.textContent=gmAb(a); } else if(b) b.remove(); el.classList.toggle('win',!!(win&&win.has(k))); });
   $('#rlBet').textContent=fmt(rlSum()); const d=rl.busy; ['rlUndo','rlClear','rlRebet','rlX2'].forEach(i=>$('#'+i).disabled=d); $('#rlSpin').disabled=d||!rlSum();
-  $('#rlHist').innerHTML=rlH().slice(-14).map(n=>`<i style="background:${RL_HEX[rlCol(n)]}">${n}</i>`).join('');
+  $('#rlHist').innerHTML=rlH().filter(n=>typeof n==='number').slice(-14).map(n=>`<i style="background:${RL_HEX[rlCol(n)]}">${n}</i>`).join('');
 }
 function rlShow(){ if(!rl.built) rlBuild(); rlPaint(); rlDraw(performance.now()); }
 const RL_TAU=Math.PI*2, RL_T=6.4;
@@ -127,13 +127,13 @@ function rlDraw(tt,st){
 }
 function rlSpin(){
   if(rl.busy) return; wake(); const tot=rlSum(); if(!tot) return; if(tot>state.bal){ toast('Not enough balance'); Snd.err(); return; }
-  gmWinClear(); rl.tk=(rl.tk||0)+1; rl.busy=true; $('#rlCv').classList.add('spin'); $('#rlPop').classList.remove('on'); state.bal-=tot; state.balShown=state.bal; S.rlSpins=(S.rlSpins||0)+1; S.rlWag=(S.rlWag||0)+tot; renderHUD();
+  gmWinClear(); rl.tk=(rl.tk||0)+1; rl.busy=true; $('.rlTop').classList.add('spin'); $('#rlPop').classList.remove('on'); state.bal-=tot; state.balShown=state.bal; S.rlSpins=(S.rlSpins||0)+1; S.rlWag=(S.rlWag||0)+tot; renderHUD();
   let n=GMF.rl; GMF.rl=null; if(typeof n!=='number'||!(n>=0&&n<=36)) n=Math.floor(Math.random()*37); const bets=Object.assign({},rl.bets);
   const idx=RL_ORDER.indexOf(n), phi=idx*RL_TAU/37, w0=rl.wheel, om=.7, E=w0+om*RL_T+phi, A=RL_TAU*8, t0=performance.now();
   $('#rlMsg').className='gmmsg'; $('#rlMsg').textContent='No more bets'; rlPaint(); let lastIdx=-1, lastTick=0; const trail=[];
   $('#rlT').style.pointerEvents='none'; Snd.tone&&Snd.tone(330,.25,'triangle',.06);
   const fin=()=>{
-    $('#rlCv').classList.remove('spin'); { const pp=$('#rlPop'); pp.textContent=n; pp.style.background=RL_HEX[rlCol(n)]; void pp.offsetWidth; pp.classList.add('on'); const t1=performance.now(), keepW=w0+om*(RL_T+1.4); const pulse=now=>{ rl.wheel=keepW; rlDraw(now,{w:0,b:{a:keepW+phi-Math.PI/2,r:.68},hl:n}); if(now-t1<1800&&rl.tk===tk) requestAnimationFrame(pulse); else if(rl.tk===tk) rlDraw(now,{w:0,b:{a:keepW+phi-Math.PI/2,r:.68}}); }; const tk=rl.tk; requestAnimationFrame(pulse); }
+    $('.rlTop').classList.remove('spin'); { const pp=$('#rlPop'); pp.textContent=n; pp.style.background=RL_HEX[rlCol(n)]; void pp.offsetWidth; pp.classList.add('on'); const t1=performance.now(), keepW=w0+om*(RL_T+1.4); const pulse=now=>{ rl.wheel=keepW; rlDraw(now,{w:0,b:{a:keepW+phi-Math.PI/2,r:.68},hl:n}); if(now-t1<1800&&rl.tk===tk) requestAnimationFrame(pulse); else if(rl.tk===tk) rlDraw(now,{w:0,b:{a:keepW+phi-Math.PI/2,r:.68}}); }; const tk=rl.tk; requestAnimationFrame(pulse); }
     rl.wheel=(w0+om*RL_T+om*1.4)%RL_TAU; const win=rlResolve(bets,n); const hitKeys=new Set(Object.keys(bets).filter(k=>rlCover(k).includes(n)));
     const before=state.bal; state.bal+=win; state.balShown=win>tot?before:state.bal; S.rlPaid=(S.rlPaid||0)+win; rlH().push(n); if(rlH().length>40) rlH().shift(); if(win>S.best) S.best=win;
     rl.last=bets; rl.bets={}; rl.hist=[]; rl.busy=false; rl.lastWin=win; $('#rlT').style.pointerEvents=''; $('#rlWin').textContent=win?fmt(win):'$0';

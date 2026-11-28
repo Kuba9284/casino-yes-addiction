@@ -279,7 +279,7 @@ body.bal .bq{filter:none}
 #arm.sm .ar-ball{width:46px; height:46px; margin-left:-23px; top:-23px}
 @media (max-height:420px){ #arm{display:none} }
 
-.dtabs{display:flex; gap:4px; overflow-x:auto; margin:8px 0 2px; padding-bottom:6px; position:sticky; top:-10px; z-index:2; background:#08130e; border-bottom:1px solid #1d3a2c}
+.dtabs{display:flex; flex-wrap:wrap; gap:4px; overflow:visible; margin:8px 0 2px; padding-bottom:6px; position:sticky; top:-10px; z-index:2; background:#08130e; border-bottom:1px solid #1d3a2c}
 .dtabs button{flex:0 0 auto; background:#0b1612; border:1px solid #2b4a3b; color:#9fc9b2; border-radius:999px; padding:6px 12px; font:700 11px/1 ui-monospace,Menlo,monospace; letter-spacing:.08em; text-transform:uppercase}
 .dtabs button.act{background:#16402e; color:#eafff3; border-color:#6fe0a8}
 #debug .dpane{display:none} #debug .dpane.on{display:block}

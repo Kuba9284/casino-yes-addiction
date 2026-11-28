@@ -146,8 +146,9 @@ html.ui-open[data-bg="stars"] body{animation:none}
 .rlT .bc{animation:bcDrop .32s cubic-bezier(.3,1.5,.5,1)}
 @keyframes bcDrop{0%{scale:1.9; opacity:0; translate:-50% -230%} 65%{scale:.88; translate:-50% -44%; opacity:1} 100%{scale:1; translate:-50% -50%}}
 .rlTop{position:relative}
-#rlCv.spin{filter:drop-shadow(0 0 16px rgba(255,214,120,.55)); animation:rlPulse 1.1s ease-in-out infinite alternate}
-@keyframes rlPulse{from{filter:drop-shadow(0 0 8px rgba(255,214,120,.3))}to{filter:drop-shadow(0 0 22px rgba(255,214,120,.8))}}
+.rlTop::before{content:''; position:absolute; left:50%; top:0; translate:-50% 0; width:min(300px,72vw,27dvh); aspect-ratio:1; border-radius:50%; box-shadow:0 0 44px 12px rgba(255,214,120,.55); opacity:0; transition:opacity .5s; pointer-events:none}
+.rlTop.spin::before{opacity:1; animation:rlPulse 1.1s ease-in-out infinite alternate}
+@keyframes rlPulse{from{opacity:.35}to{opacity:1}}
 #rlPop{position:absolute; left:50%; top:50%; translate:-50% -50%; width:34%; aspect-ratio:1; border-radius:50%; display:none; place-items:center; font:900 clamp(36px,12vw,64px)/1 var(--display); color:#fff; border:4px solid #fdeeb2; box-shadow:0 0 0 6px rgba(0,0,0,.35),0 0 40px rgba(255,214,120,.8); z-index:4; pointer-events:none}
 #rlPop.on{display:grid; animation:rlPop 2.4s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes rlPop{0%{scale:0; rotate:-120deg; opacity:0} 18%{scale:1.15; rotate:0; opacity:1} 30%{scale:1} 80%{scale:1; opacity:1} 100%{scale:.4; opacity:0; translate:-50% -160%}}
@@ -163,10 +164,24 @@ html.ui-open[data-bg="stars"] body{animation:none}
 @keyframes resPop{from{scale:.2; opacity:0}to{scale:1; opacity:1}}
 @keyframes resShake{0%{scale:.6; opacity:0} 40%{translate:-5px 0; scale:1; opacity:1} 60%{translate:5px 0} 80%{translate:-3px 0} 100%{translate:0 0}}
 #bjtable.winglow{animation:tblGlow 1.4s ease-out} @keyframes tblGlow{0%{box-shadow:0 0 0 0 rgba(255,214,120,0)} 30%{box-shadow:0 0 60px 8px rgba(255,214,120,.55)} 100%{box-shadow:0 0 0 0 rgba(255,214,120,0)}}
-@media (prefers-reduced-motion:reduce){ .rlT .bc,#crRes li,#crRes .box,#rlCv.spin{animation:none} }
+@media (prefers-reduced-motion:reduce){ .rlT .bc,#crRes li,#crRes .box,.rlTop.spin::before{animation:none} }
 html[data-bg="midnight"] #welcome{background:radial-gradient(circle at 50% 40%,#26358a,#04051a 80%)}
 html[data-bg="burgundy"] #welcome{background:radial-gradient(circle at 50% 40%,#7a1a38,#10030a 80%)}
 html[data-bg="sunset"] #welcome{background:linear-gradient(180deg,#ff8a4a 0%,#c4306f 40%,#4a1a6e 75%,#140826 100%)}
 html[data-bg="noir"] #welcome{background:radial-gradient(circle at 50% 40%,#2c2c30,#000 80%)}
 html[data-bg="neon"] #welcome{background:linear-gradient(rgba(0,255,220,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,0,200,.08) 1px,transparent 1px),radial-gradient(circle at 50% 40%,#2a0f5e,#02010c 80%);background-size:36px 36px,36px 36px,auto}
 html[data-bg="stars"] #welcome{background:radial-gradient(1.4px 1.4px at 20px 30px,#fff 50%,transparent 51%),radial-gradient(1px 1px at 90px 80px,#cfe 50%,transparent 51%),radial-gradient(circle at 50% 40%,#12305a,#01030a 80%);background-size:170px 110px,170px 110px,auto}
+.sTabs{position:static; top:auto; background:transparent; border:0; margin:0 0 8px} .sPane[hidden]{display:none!important}
+button,.btn,.chip,.seg button,.dtabs button,.admtabs button{touch-action:pan-x pan-y manipulation}
+/* dynamic backgrounds: slow drifting colour glows over the felt, behind the game UI */
+body::before{content:''; z-index:-1;; position:fixed; inset:-20%; pointer-events:none; opacity:.9; background:radial-gradient(40% 35% at 25% 30%,var(--bgA,rgba(60,220,150,.28)),transparent 70%),radial-gradient(38% 34% at 75% 65%,var(--bgB,rgba(255,210,110,.20)),transparent 70%); animation:bgFloat 22s ease-in-out infinite alternate; will-change:transform}
+@keyframes bgFloat{0%{transform:translate3d(-6%,-4%,0) scale(1)}50%{transform:translate3d(5%,6%,0) scale(1.15)}100%{transform:translate3d(-3%,4%,0) scale(1.05)}}
+html[data-bg="midnight"]{--bgA:rgba(90,120,255,.34);--bgB:rgba(150,90,255,.26)}
+html[data-bg="burgundy"]{--bgA:rgba(255,90,120,.30);--bgB:rgba(255,190,120,.22)}
+html[data-bg="sunset"]{--bgA:rgba(255,220,110,.38);--bgB:rgba(255,80,160,.30)}
+html[data-bg="noir"]{--bgA:rgba(226,187,98,.22);--bgB:rgba(255,255,255,.12)}
+html[data-bg="neon"]{--bgA:rgba(0,255,220,.32);--bgB:rgba(255,0,200,.30)}
+html[data-bg="stars"]{--bgA:rgba(120,200,255,.26);--bgB:rgba(190,150,255,.24)}
+.gm,#welcome{background:none!important}
+html.ui-open body::before{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){body::before{animation:none}}
