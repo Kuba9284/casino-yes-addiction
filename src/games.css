@@ -184,3 +184,20 @@ html[data-bg="neon"]{--bgA:rgba(0,255,220,.32);--bgB:rgba(255,0,200,.30)}
 html[data-bg="stars"]{--bgA:rgba(120,200,255,.26);--bgB:rgba(190,150,255,.24)}
 html.ui-open body::before{animation-play-state:paused}
 @media (prefers-reduced-motion:reduce){body::before{animation:none}}
+/* glass look: panels translucent so the animated background shows through */
+.gm,#welcome{background:none!important}
+html:has(#welcome:not(.gone)) #stage,html:has(#welcome:not(.gone)) #bj{visibility:hidden}
+#panel,.gmf,#bjpanel{background:linear-gradient(rgba(30,22,6,.5),rgba(8,5,1,.55))!important}
+.gtile,.crCard{background:linear-gradient(160deg,rgba(23,80,58,.5),rgba(9,32,26,.5))!important}
+#ticker,#qstrip{background:rgba(0,0,0,.28)!important}
+.jp{background-color:rgba(10,6,0,.45)!important}
+#modal .card{background-color:rgba(18,12,4,.88)!important}
+.crTabs button{background:rgba(16,12,4,.5)}
+/* stronger theme glows */
+body::before{opacity:1; background:radial-gradient(48% 40% at 22% 28%,var(--bgA,rgba(60,220,150,.42)),transparent 72%),radial-gradient(46% 40% at 78% 68%,var(--bgB,rgba(255,210,110,.32)),transparent 72%),radial-gradient(35% 30% at 60% 15%,var(--bgA,rgba(60,220,150,.25)),transparent 70%)}
+html[data-bg="midnight"]{--bgA:rgba(90,130,255,.6);--bgB:rgba(160,90,255,.45)}
+html[data-bg="burgundy"]{--bgA:rgba(255,80,120,.52);--bgB:rgba(255,190,120,.38)}
+html[data-bg="sunset"]{--bgA:rgba(255,225,110,.6);--bgB:rgba(255,70,170,.5)}
+html[data-bg="noir"]{--bgA:rgba(226,187,98,.4);--bgB:rgba(255,255,255,.22)}
+html[data-bg="neon"]{--bgA:rgba(0,255,220,.55);--bgB:rgba(255,0,200,.5)}
+html[data-bg="stars"]{--bgA:rgba(120,200,255,.45);--bgB:rgba(190,150,255,.42)}
