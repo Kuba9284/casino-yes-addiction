@@ -678,7 +678,7 @@ requestAnimationFrame(ambFrame);
 
 /* ---------- jelly engine ---------- */
 const JEL='button,.jp,.logo,.grp,.tile,.lbrow,.qt,.mission,.hint';
-function jelly(el,k){ if(!el) return; el.classList.remove('jig','wob'); void el.offsetWidth; el.classList.add(k); clearTimeout(el._jt); el._jt=setTimeout(()=>el.classList.remove(k),900); }
+function jelly(el,k){ if(!el) return; if(el===cab){ const ar=$('#arm'); if(ar&&ar!==el){ ar.classList.remove('jig','wob'); void ar.offsetWidth; ar.classList.add(k); clearTimeout(ar._jt); ar._jt=setTimeout(()=>ar.classList.remove(k),900); } } el.classList.remove('jig','wob'); void el.offsetWidth; el.classList.add(k); clearTimeout(el._jt); el._jt=setTimeout(()=>el.classList.remove(k),900); }
 document.addEventListener('pointerover',e=>{ const t=e.target.closest&&e.target.closest(JEL); if(t&&!t.disabled&&!(t.contains(e.relatedTarget))) jelly(t,'wob'); });
 document.addEventListener('pointerdown',e=>{ const t=e.target.closest&&e.target.closest(JEL); if(t&&!t.disabled){ t.classList.add('sq'); t._sq=1; Snd.boing&&Snd.boing(); } });
 function unsq(e){ const t=e.target.closest&&e.target.closest(JEL); $$('.sq').forEach(x=>{ x.classList.remove('sq'); jelly(x,'jig'); }); }
@@ -1046,7 +1046,22 @@ $('#dDisg').onchange=e=>cfg.disguise=e.target.checked; $('#dAnt').onchange=e=>ui
 
 /* ---------- debug sub-menus ---------- */
 (function dbgTabs(){
-  const d=$('#debug'), top=d.querySelector('.dtop'); const GROUPS=[['Stats',['Real numbers','Last spins']],['Spin',['Force next spin','Custom grid (reel \u00d7 row)','Luck presets']],['Money',['Bonuses','Bankroll']],['Tuning',['Tuning']],['Blackjack',['Blackjack']],['Icons',['Icons']],['Admin',['Admin control']]];
+  const d=$('#debug'), top=d.querySelector('.dtop'); /* local forcing for roulette and cat racing */
+  { const h1=document.createElement('h3'); h1.textContent='Roulette'; const b1=document.createElement('div'); b1.id='dRl';
+    b1.innerHTML='<div class="chipnext" id="dRlNext">Next spin: random</div><div class="dg" id="dRlGrid">'+Array.from({length:37},(_,n)=>`<button type="button" data-n="${n}">${n}</button>`).join('')+'</div><div class="dg"><button type="button" id="dRlRnd">Random</button></div>';
+    const h2=document.createElement('h3'); h2.textContent='Cat racing'; const b2=document.createElement('div'); b2.id='dCr'; b2.dataset.o='';
+    b2.innerHTML='<div class="chipnext" id="dCrNext">Next race: random</div><div class="dg" id="dCrGrid">'+[1,2,3,4,5,6].map(n=>`<button type="button" data-l="${n}">Lane ${n}</button>`).join('')+'</div><div class="dg"><button type="button" id="dCrWin">Fill rest in order</button><button type="button" id="dCrRnd">Random</button></div><small>Tap lanes in finishing order (first tap = winner).</small>';
+    d.append(h1,b1,h2,b2);
+    const rlShow=()=>{ const g=window.GMF; $('#dRlNext').textContent=g&&typeof g.rl==='number'?'Next spin: '+g.rl:'Next spin: random'; $$('#dRlGrid button').forEach(b=>b.classList.toggle('act',g&&g.rl===+b.dataset.n)); };
+    const crShow=()=>{ const g=window.GMF, o=g&&g.cr; $('#dCrNext').textContent=o?'Next race: '+o.map(x=>x+1).join(' > '):'Next race: random'; };
+    $$('#dRlGrid button').forEach(b=>b.onclick=()=>{ window.GMF=window.GMF||{}; GMF.rl=+b.dataset.n; rlShow(); toast('Next roulette number '+b.dataset.n); });
+    $('#dRlRnd').onclick=()=>{ if(window.GMF) GMF.rl=null; rlShow(); };
+    let seq=[]; const crSet=()=>{ window.GMF=window.GMF||{}; GMF.cr=seq.length?seq.slice():null; crShow(); };
+    $$('#dCrGrid button').forEach(b=>b.onclick=()=>{ const l=+b.dataset.l-1; if(seq.includes(l)) seq=seq.filter(x=>x!==l); else seq.push(l); $$('#dCrGrid button').forEach(x=>x.classList.toggle('act',seq.includes(+x.dataset.l-1))); if(seq.length===6) crSet(); else { $('#dCrNext').textContent='Picking: '+seq.map(x=>x+1).join(' > '); } });
+    $('#dCrWin').onclick=()=>{ for(let i=0;i<6;i++) if(!seq.includes(i)) seq.push(i); crSet(); $$('#dCrGrid button').forEach(x=>x.classList.add('act')); };
+    $('#dCrRnd').onclick=()=>{ seq=[]; crSet(); $$('#dCrGrid button').forEach(x=>x.classList.remove('act')); };
+    window.__dbgRefresh=()=>{ rlShow(); if(window.GMF&&!GMF.cr){ seq=[]; $$('#dCrGrid button').forEach(x=>x.classList.remove('act')); } crShow(); }; }
+  const GROUPS=[['Stats',['Real numbers','Last spins']],['Spin',['Force next spin','Custom grid (reel \u00d7 row)','Luck presets']],['Money',['Bonuses','Bankroll']],['Tuning',['Tuning']],['Blackjack',['Blackjack']],['Roulette',['Roulette']],['Cats',['Cat racing']],['Icons',['Icons']],['Admin',['Admin control']]];
   const kids=Array.from(d.children).filter(e=>e!==top); const secs=[]; let cur=null;
   kids.forEach(e=>{ if(e.tagName==='H3'){ cur={h:e,els:[]}; secs.push(cur); } else if(cur) cur.els.push(e); });
   const nav=document.createElement('div'); nav.className='dtabs'; top.after(nav); const panes={};

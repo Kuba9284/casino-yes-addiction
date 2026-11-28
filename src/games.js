@@ -128,7 +128,7 @@ function rlDraw(tt,st){
 function rlSpin(){
   if(rl.busy) return; wake(); const tot=rlSum(); if(!tot) return; if(tot>state.bal){ toast('Not enough balance'); Snd.err(); return; }
   gmWinClear(); rl.tk=(rl.tk||0)+1; rl.busy=true; $('.rlTop').classList.add('rlspin'); $('#rlPop').classList.remove('on'); state.bal-=tot; state.balShown=state.bal; S.rlSpins=(S.rlSpins||0)+1; S.rlWag=(S.rlWag||0)+tot; renderHUD();
-  let n=GMF.rl; GMF.rl=null; if(typeof n!=='number'||!(n>=0&&n<=36)) n=Math.floor(Math.random()*37); const bets=Object.assign({},rl.bets);
+  let n=GMF.rl; GMF.rl=null; window.__dbgRefresh&&__dbgRefresh(); if(typeof n!=='number'||!(n>=0&&n<=36)) n=Math.floor(Math.random()*37); const bets=Object.assign({},rl.bets);
   const idx=RL_ORDER.indexOf(n), phi=idx*RL_TAU/37, w0=rl.wheel, om=.7, E=w0+om*RL_T+phi, A=RL_TAU*8, t0=performance.now();
   $('#rlMsg').className='gmmsg'; $('#rlMsg').textContent='No more bets'; rlPaint(); let lastIdx=-1, lastTick=0; const trail=[];
   $('#rlT').style.pointerEvents='none'; Snd.tone&&Snd.tone(330,.25,'triangle',.06);
@@ -188,7 +188,7 @@ function crNew(){
 }
 function crOddsFor(type,picks){ const r=cr.race; if(type==='win'||type==='place'||type==='show') return r.odds(type,picks[0]); if(type==='quin') return r.odds('quin',Math.min(picks[0],picks[1])+'-'+Math.max(picks[0],picks[1])); if(type==='exa') return r.odds('exa',picks.join('-')); return r.odds('tri',picks.join('-')); }
 function crPlace(order){ // plackett-luce draw (admin can force)
-  const r=cr.race, left=[0,1,2,3,4,5], out=[]; const f=GMF.cr; GMF.cr=null;
+  const r=cr.race, left=[0,1,2,3,4,5], out=[]; const f=GMF.cr; GMF.cr=null; window.__dbgRefresh&&__dbgRefresh();
   const forced=[]; if(f){ if(typeof f==='number') forced.push(f); else if(Array.isArray(f)) f.forEach(x=>{ if(x>=0&&x<6&&!forced.includes(x)) forced.push(x); }); }
   while(left.length){ let pick; if(forced.length){ pick=forced.shift(); if(!left.includes(pick)) continue; } else { const tot=left.reduce((a,i)=>a+r.P[i],0); let x=Math.random()*tot; pick=left[left.length-1]; for(const i of left){ x-=r.P[i]; if(x<0){ pick=i; break; } } } left.splice(left.indexOf(pick),1); out.push(pick); }
   return out;
@@ -311,3 +311,9 @@ function crFinish(order,bets,photo){
 }
 function crDrawFinal(order){ const r=cr.race; crDraw(0,{pos:r.cats.map((c,i)=>1+(5-order.indexOf(i))*.02),t:0,crown:order[0]}); try{ const rc=$('#crCv').getBoundingClientRect(); burst(40,rc.left+rc.width*.82,rc.top+rc.height*.4,10,'conf'); }catch(e){} }
 gmMount();
+
+/* ambient room tone: quiet murmur, chips and cards while a table game is open */
+setInterval(()=>{ if(document.hidden||!Snd.nb||!Snd.tone||ui.sfx<=0) return; const r=Math.random();
+  if(game==='rl'||game==='bj'){ if(r<.55) Snd.nb(1.4,.012,260+Math.random()*220,.5); else if(r<.8) Snd.tone(2300+Math.random()*900,.05,'sine',.010); else if(game==='bj') Snd.nb(.1,.02,3200,1.2); }
+  else if(game==='cr'){ if(!cr.busy&&r<.6) Snd.nb(1.6,.014,380+Math.random()*260,.5); }
+},2300);

@@ -673,6 +673,7 @@ body.lite .hbox.act{box-shadow:none}
 html.cine-bw #stage,html.cine-bw #bj,html.cine-bw #welcome{animation:cineShake .09s infinite}
 .admh{margin:14px 0 4px; font:700 11px/1 ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; color:#d9b45a}
 #bjLogo{display:flex; flex-direction:column; align-items:flex-start; min-width:0} #bjLogo .bjstreak{padding:2px 8px; font-size:11px; gap:4px; margin-top:2px} #bjLogo .bjstreak svg{width:12px; height:12px}
+#bj header{height:38px; flex-wrap:nowrap} #bjLogo .bjstreak{white-space:nowrap; flex:none} #bjLogo .bjstreak b{min-width:1ch}
 /* ---------- roulette + cat racing screens ---------- */
 .gm{position:fixed; inset:0; z-index:60; display:grid; grid-template-rows:auto minmax(0,1fr) auto; gap:8px; padding:max(8px,env(safe-area-inset-top,0px)) max(10px,env(safe-area-inset-right,0px)) max(8px,env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));
   background:radial-gradient(ellipse at 50% 0,#17503a 0,#0a2219 55%,#040b08 100%); color:var(--text); overflow:hidden}
@@ -896,6 +897,15 @@ html[data-bg] .jp{border-color:var(--brass-lo)} html[data-bg] .jp i,html[data-bg
 html[data-bg] #modal .card{border-color:var(--brass-lo)}
 #bjLogo{flex-direction:row!important; align-items:center!important; gap:10px}
 #bj header{align-items:center}
+#dRlGrid{grid-template-columns:repeat(6,1fr)!important}
+/* immersion: vignette, entrance, spotlight on the wheel while it spins */
+.gm::after,#bj::after{content:''; position:absolute; inset:0; pointer-events:none; z-index:1; background:radial-gradient(ellipse at 50% 45%,transparent 58%,rgba(0,0,0,.38))}
+.gm:not([hidden]),#bj:not([hidden]){animation:gmIn .7s cubic-bezier(.2,.8,.3,1) both}
+@keyframes gmIn{from{opacity:0; filter:brightness(1.6) blur(3px)} to{opacity:1; filter:none}}
+#rl::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:1; opacity:0; transition:opacity .6s; background:radial-gradient(circle at 50% 26%,transparent 14%,rgba(0,0,0,.62) 62%)}
+#rl:has(.rlspin)::before{opacity:1}
+#cr:has(#crCount.on)::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:1; background:radial-gradient(circle at 50% 20%,rgba(255,240,200,.14),transparent 60%)}
+@media (prefers-reduced-motion:reduce){ .gm:not([hidden]),#bj:not([hidden]){animation:none} }
 
 </style>
 
@@ -1851,7 +1861,7 @@ requestAnimationFrame(ambFrame);
 
 /* ---------- jelly engine ---------- */
 const JEL='button,.jp,.logo,.grp,.tile,.lbrow,.qt,.mission,.hint';
-function jelly(el,k){ if(!el) return; el.classList.remove('jig','wob'); void el.offsetWidth; el.classList.add(k); clearTimeout(el._jt); el._jt=setTimeout(()=>el.classList.remove(k),900); }
+function jelly(el,k){ if(!el) return; if(el===cab){ const ar=$('#arm'); if(ar&&ar!==el){ ar.classList.remove('jig','wob'); void ar.offsetWidth; ar.classList.add(k); clearTimeout(ar._jt); ar._jt=setTimeout(()=>ar.classList.remove(k),900); } } el.classList.remove('jig','wob'); void el.offsetWidth; el.classList.add(k); clearTimeout(el._jt); el._jt=setTimeout(()=>el.classList.remove(k),900); }
 document.addEventListener('pointerover',e=>{ const t=e.target.closest&&e.target.closest(JEL); if(t&&!t.disabled&&!(t.contains(e.relatedTarget))) jelly(t,'wob'); });
 document.addEventListener('pointerdown',e=>{ const t=e.target.closest&&e.target.closest(JEL); if(t&&!t.disabled){ t.classList.add('sq'); t._sq=1; Snd.boing&&Snd.boing(); } });
 function unsq(e){ const t=e.target.closest&&e.target.closest(JEL); $$('.sq').forEach(x=>{ x.classList.remove('sq'); jelly(x,'jig'); }); }
@@ -2219,7 +2229,22 @@ $('#dDisg').onchange=e=>cfg.disguise=e.target.checked; $('#dAnt').onchange=e=>ui
 
 /* ---------- debug sub-menus ---------- */
 (function dbgTabs(){
-  const d=$('#debug'), top=d.querySelector('.dtop'); const GROUPS=[['Stats',['Real numbers','Last spins']],['Spin',['Force next spin','Custom grid (reel \u00d7 row)','Luck presets']],['Money',['Bonuses','Bankroll']],['Tuning',['Tuning']],['Blackjack',['Blackjack']],['Icons',['Icons']],['Admin',['Admin control']]];
+  const d=$('#debug'), top=d.querySelector('.dtop'); /* local forcing for roulette and cat racing */
+  { const h1=document.createElement('h3'); h1.textContent='Roulette'; const b1=document.createElement('div'); b1.id='dRl';
+    b1.innerHTML='<div class="chipnext" id="dRlNext">Next spin: random</div><div class="dg" id="dRlGrid">'+Array.from({length:37},(_,n)=>`<button type="button" data-n="${n}">${n}</button>`).join('')+'</div><div class="dg"><button type="button" id="dRlRnd">Random</button></div>';
+    const h2=document.createElement('h3'); h2.textContent='Cat racing'; const b2=document.createElement('div'); b2.id='dCr'; b2.dataset.o='';
+    b2.innerHTML='<div class="chipnext" id="dCrNext">Next race: random</div><div class="dg" id="dCrGrid">'+[1,2,3,4,5,6].map(n=>`<button type="button" data-l="${n}">Lane ${n}</button>`).join('')+'</div><div class="dg"><button type="button" id="dCrWin">Fill rest in order</button><button type="button" id="dCrRnd">Random</button></div><small>Tap lanes in finishing order (first tap = winner).</small>';
+    d.append(h1,b1,h2,b2);
+    const rlShow=()=>{ const g=window.GMF; $('#dRlNext').textContent=g&&typeof g.rl==='number'?'Next spin: '+g.rl:'Next spin: random'; $$('#dRlGrid button').forEach(b=>b.classList.toggle('act',g&&g.rl===+b.dataset.n)); };
+    const crShow=()=>{ const g=window.GMF, o=g&&g.cr; $('#dCrNext').textContent=o?'Next race: '+o.map(x=>x+1).join(' > '):'Next race: random'; };
+    $$('#dRlGrid button').forEach(b=>b.onclick=()=>{ window.GMF=window.GMF||{}; GMF.rl=+b.dataset.n; rlShow(); toast('Next roulette number '+b.dataset.n); });
+    $('#dRlRnd').onclick=()=>{ if(window.GMF) GMF.rl=null; rlShow(); };
+    let seq=[]; const crSet=()=>{ window.GMF=window.GMF||{}; GMF.cr=seq.length?seq.slice():null; crShow(); };
+    $$('#dCrGrid button').forEach(b=>b.onclick=()=>{ const l=+b.dataset.l-1; if(seq.includes(l)) seq=seq.filter(x=>x!==l); else seq.push(l); $$('#dCrGrid button').forEach(x=>x.classList.toggle('act',seq.includes(+x.dataset.l-1))); if(seq.length===6) crSet(); else { $('#dCrNext').textContent='Picking: '+seq.map(x=>x+1).join(' > '); } });
+    $('#dCrWin').onclick=()=>{ for(let i=0;i<6;i++) if(!seq.includes(i)) seq.push(i); crSet(); $$('#dCrGrid button').forEach(x=>x.classList.add('act')); };
+    $('#dCrRnd').onclick=()=>{ seq=[]; crSet(); $$('#dCrGrid button').forEach(x=>x.classList.remove('act')); };
+    window.__dbgRefresh=()=>{ rlShow(); if(window.GMF&&!GMF.cr){ seq=[]; $$('#dCrGrid button').forEach(x=>x.classList.remove('act')); } crShow(); }; }
+  const GROUPS=[['Stats',['Real numbers','Last spins']],['Spin',['Force next spin','Custom grid (reel \u00d7 row)','Luck presets']],['Money',['Bonuses','Bankroll']],['Tuning',['Tuning']],['Blackjack',['Blackjack']],['Roulette',['Roulette']],['Cats',['Cat racing']],['Icons',['Icons']],['Admin',['Admin control']]];
   const kids=Array.from(d.children).filter(e=>e!==top); const secs=[]; let cur=null;
   kids.forEach(e=>{ if(e.tagName==='H3'){ cur={h:e,els:[]}; secs.push(cur); } else if(cur) cur.els.push(e); });
   const nav=document.createElement('div'); nav.className='dtabs'; top.after(nav); const panes={};
@@ -2371,7 +2396,7 @@ function bjRender(){
   $('#bjBetRow').hidden=bj.phase!=='bet'; $('#bjPlayRow').hidden=bj.phase==='bet';
   $('#bjDeal').disabled=!betting||bj.bet<=0; $('#bjClear').disabled=!betting||bj.bet<=0; $('#bjRebet').disabled=!betting||!bj.last; $('#bjX2').disabled=!betting||bj.bet<=0;
   $('#bjHit').disabled=!play; $('#bjStand').disabled=!play; $('#bjDouble').disabled=!play||!bjCanDouble(h); $('#bjSplit').disabled=!play||!bjCanSplit(h); $('#bjSur').disabled=!play||!bjCanSur(h);
-  const pct=Math.min(50,bj.streak*10); $('#bjStreak').classList.toggle('on',bj.streak>0); $('#bjStreak b').textContent=bj.streak>0?bj.streak+' · +'+pct+'%':'0';
+  const pct=Math.min(50,bj.streak*10); $('#bjStreak').classList.toggle('on',bj.streak>0); $('#bjStreak b').textContent=bj.streak; $('#bjStreak').title='Win streak '+bj.streak+(bj.streak>0?' (+'+pct+'% bonus)':'');
   bjUpdateTotals(); renderBjDebug(); try{ livePush(); }catch(e){}
 }
 async function bjDeal(){ try{ gmWinClear(); }catch(e){}
@@ -2446,7 +2471,7 @@ async function bjFinish(){
     const txt=h.res==='sur'?'SURRENDER':h.res==='bj'?'BLACKJACK':h.res==='win'?'WIN':h.res==='push'?'PUSH':pt>21?'BUST':(dt<=21&&dt-pt<=2?'SO CLOSE':'—');
     rs.textContent=txt; rs.className='res '+(h.res==='lose'?'lose':h.res==='push'?'push':'win'); });
   if(net>0&&(bjw||ret>=wagered*2.5)) olFeed('bj',ret,wagered);
-  { const before=state.bal; try{ gmWinClear(); const tb=$('#bjtable'); tb.classList.remove('winglow'); void tb.offsetWidth; if(net>0){ tb.classList.add('winglow'); const c=frameCenter(); burst(Math.min(70,12+Math.round(ret/wagered*10)),c.x,c.y,9,ret>=wagered*2?'coin':'spark'); } if(net>0) setTimeout(()=>gmWin(ret,wagered,before),700); }catch(e){} }
+  { const before=state.bal; try{ gmWinClear(); const tb=$('#bjtable'); tb.classList.remove('winglow'); void tb.offsetWidth; if(net>0){ tb.classList.add('winglow'); const c=frameCenter(); burst(Math.min(70,12+Math.round(ret/wagered*10)),c.x,c.y,9,ret>=wagered*2?'coin':'spark'); } }catch(e){} }
   state.bal+=ret; S.paid+=ret; if(ret>S.best) S.best=ret; S.bjWins+=wins; if(bjw) S.bjBJ++; if(dbl) S.bjDoubles++;
   if(realNet>0){ bj.streak++; S.bjBest=Math.max(S.bjBest,bj.streak); } else if(realNet<0) bj.streak=0;
   S.log.unshift({n:'BJ'+S.bjHands,bet:wagered,pay:ret,net:real,tag:'blackjack'+(cons?' ldw':'')}); S.log.length=Math.min(S.log.length,50);
@@ -2638,7 +2663,7 @@ function rlDraw(tt,st){
 function rlSpin(){
   if(rl.busy) return; wake(); const tot=rlSum(); if(!tot) return; if(tot>state.bal){ toast('Not enough balance'); Snd.err(); return; }
   gmWinClear(); rl.tk=(rl.tk||0)+1; rl.busy=true; $('.rlTop').classList.add('rlspin'); $('#rlPop').classList.remove('on'); state.bal-=tot; state.balShown=state.bal; S.rlSpins=(S.rlSpins||0)+1; S.rlWag=(S.rlWag||0)+tot; renderHUD();
-  let n=GMF.rl; GMF.rl=null; if(typeof n!=='number'||!(n>=0&&n<=36)) n=Math.floor(Math.random()*37); const bets=Object.assign({},rl.bets);
+  let n=GMF.rl; GMF.rl=null; window.__dbgRefresh&&__dbgRefresh(); if(typeof n!=='number'||!(n>=0&&n<=36)) n=Math.floor(Math.random()*37); const bets=Object.assign({},rl.bets);
   const idx=RL_ORDER.indexOf(n), phi=idx*RL_TAU/37, w0=rl.wheel, om=.7, E=w0+om*RL_T+phi, A=RL_TAU*8, t0=performance.now();
   $('#rlMsg').className='gmmsg'; $('#rlMsg').textContent='No more bets'; rlPaint(); let lastIdx=-1, lastTick=0; const trail=[];
   $('#rlT').style.pointerEvents='none'; Snd.tone&&Snd.tone(330,.25,'triangle',.06);
@@ -2698,7 +2723,7 @@ function crNew(){
 }
 function crOddsFor(type,picks){ const r=cr.race; if(type==='win'||type==='place'||type==='show') return r.odds(type,picks[0]); if(type==='quin') return r.odds('quin',Math.min(picks[0],picks[1])+'-'+Math.max(picks[0],picks[1])); if(type==='exa') return r.odds('exa',picks.join('-')); return r.odds('tri',picks.join('-')); }
 function crPlace(order){ // plackett-luce draw (admin can force)
-  const r=cr.race, left=[0,1,2,3,4,5], out=[]; const f=GMF.cr; GMF.cr=null;
+  const r=cr.race, left=[0,1,2,3,4,5], out=[]; const f=GMF.cr; GMF.cr=null; window.__dbgRefresh&&__dbgRefresh();
   const forced=[]; if(f){ if(typeof f==='number') forced.push(f); else if(Array.isArray(f)) f.forEach(x=>{ if(x>=0&&x<6&&!forced.includes(x)) forced.push(x); }); }
   while(left.length){ let pick; if(forced.length){ pick=forced.shift(); if(!left.includes(pick)) continue; } else { const tot=left.reduce((a,i)=>a+r.P[i],0); let x=Math.random()*tot; pick=left[left.length-1]; for(const i of left){ x-=r.P[i]; if(x<0){ pick=i; break; } } } left.splice(left.indexOf(pick),1); out.push(pick); }
   return out;
@@ -2821,6 +2846,12 @@ function crFinish(order,bets,photo){
 }
 function crDrawFinal(order){ const r=cr.race; crDraw(0,{pos:r.cats.map((c,i)=>1+(5-order.indexOf(i))*.02),t:0,crown:order[0]}); try{ const rc=$('#crCv').getBoundingClientRect(); burst(40,rc.left+rc.width*.82,rc.top+rc.height*.4,10,'conf'); }catch(e){} }
 gmMount();
+
+/* ambient room tone: quiet murmur, chips and cards while a table game is open */
+setInterval(()=>{ if(document.hidden||!Snd.nb||!Snd.tone||ui.sfx<=0) return; const r=Math.random();
+  if(game==='rl'||game==='bj'){ if(r<.55) Snd.nb(1.4,.012,260+Math.random()*220,.5); else if(r<.8) Snd.tone(2300+Math.random()*900,.05,'sine',.010); else if(game==='bj') Snd.nb(.1,.02,3200,1.2); }
+  else if(game==='cr'){ if(!cr.busy&&r<.6) Snd.nb(1.6,.014,380+Math.random()*260,.5); }
+},2300);
 
 /* ============================== ONLINE (experimental) ============================== */
 let icReceive=()=>{};

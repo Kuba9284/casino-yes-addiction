@@ -221,3 +221,12 @@ html[data-bg] .jp{border-color:var(--brass-lo)} html[data-bg] .jp i,html[data-bg
 html[data-bg] #modal .card{border-color:var(--brass-lo)}
 #bjLogo{flex-direction:row!important; align-items:center!important; gap:10px}
 #bj header{align-items:center}
+#dRlGrid{grid-template-columns:repeat(6,1fr)!important}
+/* immersion: vignette, entrance, spotlight on the wheel while it spins */
+.gm::after,#bj::after{content:''; position:absolute; inset:0; pointer-events:none; z-index:1; background:radial-gradient(ellipse at 50% 45%,transparent 58%,rgba(0,0,0,.38))}
+.gm:not([hidden]),#bj:not([hidden]){animation:gmIn .7s cubic-bezier(.2,.8,.3,1) both}
+@keyframes gmIn{from{opacity:0; filter:brightness(1.6) blur(3px)} to{opacity:1; filter:none}}
+#rl::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:1; opacity:0; transition:opacity .6s; background:radial-gradient(circle at 50% 26%,transparent 14%,rgba(0,0,0,.62) 62%)}
+#rl:has(.rlspin)::before{opacity:1}
+#cr:has(#crCount.on)::before{content:''; position:absolute; inset:0; pointer-events:none; z-index:1; background:radial-gradient(circle at 50% 20%,rgba(255,240,200,.14),transparent 60%)}
+@media (prefers-reduced-motion:reduce){ .gm:not([hidden]),#bj:not([hidden]){animation:none} }

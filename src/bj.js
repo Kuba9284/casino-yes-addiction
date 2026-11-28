@@ -121,7 +121,7 @@ function bjRender(){
   $('#bjBetRow').hidden=bj.phase!=='bet'; $('#bjPlayRow').hidden=bj.phase==='bet';
   $('#bjDeal').disabled=!betting||bj.bet<=0; $('#bjClear').disabled=!betting||bj.bet<=0; $('#bjRebet').disabled=!betting||!bj.last; $('#bjX2').disabled=!betting||bj.bet<=0;
   $('#bjHit').disabled=!play; $('#bjStand').disabled=!play; $('#bjDouble').disabled=!play||!bjCanDouble(h); $('#bjSplit').disabled=!play||!bjCanSplit(h); $('#bjSur').disabled=!play||!bjCanSur(h);
-  const pct=Math.min(50,bj.streak*10); $('#bjStreak').classList.toggle('on',bj.streak>0); $('#bjStreak b').textContent=bj.streak>0?bj.streak+' · +'+pct+'%':'0';
+  const pct=Math.min(50,bj.streak*10); $('#bjStreak').classList.toggle('on',bj.streak>0); $('#bjStreak b').textContent=bj.streak; $('#bjStreak').title='Win streak '+bj.streak+(bj.streak>0?' (+'+pct+'% bonus)':'');
   bjUpdateTotals(); renderBjDebug(); try{ livePush(); }catch(e){}
 }
 async function bjDeal(){ try{ gmWinClear(); }catch(e){}
@@ -196,7 +196,7 @@ async function bjFinish(){
     const txt=h.res==='sur'?'SURRENDER':h.res==='bj'?'BLACKJACK':h.res==='win'?'WIN':h.res==='push'?'PUSH':pt>21?'BUST':(dt<=21&&dt-pt<=2?'SO CLOSE':'—');
     rs.textContent=txt; rs.className='res '+(h.res==='lose'?'lose':h.res==='push'?'push':'win'); });
   if(net>0&&(bjw||ret>=wagered*2.5)) olFeed('bj',ret,wagered);
-  { const before=state.bal; try{ gmWinClear(); const tb=$('#bjtable'); tb.classList.remove('winglow'); void tb.offsetWidth; if(net>0){ tb.classList.add('winglow'); const c=frameCenter(); burst(Math.min(70,12+Math.round(ret/wagered*10)),c.x,c.y,9,ret>=wagered*2?'coin':'spark'); } if(net>0) setTimeout(()=>gmWin(ret,wagered,before),700); }catch(e){} }
+  { const before=state.bal; try{ gmWinClear(); const tb=$('#bjtable'); tb.classList.remove('winglow'); void tb.offsetWidth; if(net>0){ tb.classList.add('winglow'); const c=frameCenter(); burst(Math.min(70,12+Math.round(ret/wagered*10)),c.x,c.y,9,ret>=wagered*2?'coin':'spark'); } }catch(e){} }
   state.bal+=ret; S.paid+=ret; if(ret>S.best) S.best=ret; S.bjWins+=wins; if(bjw) S.bjBJ++; if(dbl) S.bjDoubles++;
   if(realNet>0){ bj.streak++; S.bjBest=Math.max(S.bjBest,bj.streak); } else if(realNet<0) bj.streak=0;
   S.log.unshift({n:'BJ'+S.bjHands,bet:wagered,pay:ret,net:real,tag:'blackjack'+(cons?' ldw':'')}); S.log.length=Math.min(S.log.length,50);
