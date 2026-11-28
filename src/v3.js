@@ -954,8 +954,8 @@ $('#btnWheel').onclick=()=>{ wake(); Snd.click();
   if(state.meter>=1){ runBonus(()=>wheelBonus(state.bet)).then(()=>{ flushLevels(); checkAch(); }); }
   else toast('Lucky wheel '+Math.floor(state.meter*100)+'% charged \u2014 keep spinning'); };
 $('#btnMenu').onclick=()=>{ wake(); Snd.click(); openMenu(); };
-$('#btnSound').onclick=e=>{ wake(); const m=!Snd.muted; Snd.setMuted(m); $$('#btnSound,#bjSound').forEach(b=>b.classList.toggle('off',m)); $('#sndWave').style.display=m?'none':''; Snd.click(); };
-$('#btnMusic').onclick=e=>{ wake(); musicOn=!musicOn; Snd.setMusicMuted(!musicOn); $$('#btnMusic,#bjMusic').forEach(b=>b.classList.toggle('off',!musicOn)); };
+$('#btnSound').onclick=e=>{ wake(); const m=!Snd.muted; Snd.setMuted(m); $$('#btnSound,#bjSound,#rlSound,#crSound').forEach(b=>b.classList.toggle('off',m)); $('#sndWave').style.display=m?'none':''; Snd.click(); };
+$('#btnMusic').onclick=e=>{ wake(); musicOn=!musicOn; Snd.setMusicMuted(!musicOn); $$('#btnMusic,#bjMusic,#rlMusic,#crMusic').forEach(b=>b.classList.toggle('off',!musicOn)); };
 let giftAt=Date.now()+90000;
 function updateGift(){ const ms=giftAt-Date.now(), b=$('#chGift'); if(ms<=0){ b.textContent='Collect gift'; b.classList.add('ready'); } else { const s=Math.ceil(ms/1000); b.textContent='Gift '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); b.classList.remove('ready'); } }
 setInterval(updateGift,1000); updateGift();

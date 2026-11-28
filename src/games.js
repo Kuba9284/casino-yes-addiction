@@ -3,7 +3,7 @@ const GMF={rl:null,cr:null}; window.GMF=GMF;
 const gmAb=n=>n>=1e6?(+(n/1e6).toFixed(2))+'M':n>=1e3?(+(n/1e3).toFixed(1))+'K':String(n);
 const GM_CHIPS=[[1000,'#2f6fd0'],[5000,'#d9263f'],[10000,'#25272b'],[50000,'#7a35d6'],[100000,'#e0ad40'],[250000,'#12985f']];
 const GM_ICON_MENU='<svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>', GM_ICON_LOBBY='<svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>';
-function gmHead(id,title){ return `<header class="gmh"><button class="ibtn" id="${id}Lobby" aria-label="Game lobby">${GM_ICON_LOBBY}</button><div class="logo" id="${id}Logo"><b>99G1C</b><small>${title}</small></div><div class="hdr-r"><span class="gbal"></span><button class="ibtn" id="${id}Menu" aria-label="Menu">${GM_ICON_MENU}</button></div></header>`; }
+function gmHead(id,title){ return `<header class="gmh"><div class="logo" id="${id}Logo"><b>99G1C</b><small>${title}</small></div><div class="hdr-r"><button class="ibtn" id="${id}Lobby" aria-label="Game lobby">${GM_ICON_LOBBY}</button><button class="ibtn" id="${id}Music" aria-label="Music"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2.5"/><circle cx="17" cy="16" r="2.5"/></svg></button><button class="ibtn" id="${id}Sound" aria-label="Sound"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></button><button class="ibtn" id="${id}Menu" aria-label="Menu">${GM_ICON_MENU}</button></div></header>`; }
 function crIcon(){ let ck=''; for(let r=0;r<5;r++) for(let c=0;c<2;c++) ck+=`<rect x="${100+c*6}" y="${14+r*10}" width="6" height="10" fill="${(r+c)%2?'#111':'#fff'}"/>`;
   return `<svg viewBox="0 0 120 80" width="120" height="80"><rect x="2" y="8" width="116" height="64" rx="10" fill="#1f5a31" stroke="#e2bb62" stroke-width="3"/><path d="M6 30H98M6 52H98" stroke="#fff" stroke-opacity=".25" stroke-width="2" stroke-dasharray="6 5"/>${ck}
   <g stroke="#fff" stroke-opacity=".7" stroke-width="2.4" stroke-linecap="round"><path d="M10 36h14M6 46h12M12 56h13"/></g>
@@ -43,7 +43,7 @@ function gmMount(){
    <div class="gmact"><button class="chip" id="rlUndo">Undo</button><button class="chip" id="rlClear">Clear</button><button class="chip" id="rlRebet">Rebet</button><button class="chip" id="rlX2">x2</button><button class="chip gold" id="rlSpin">Spin</button></div></footer></div>
   <div class="gm" id="cr" hidden><div class="gmfx" id="crfx"><div id="crCount"></div></div>${gmHead('cr','Cat Racing')}
    <main class="gmm" data-scroll><canvas id="crCv"></canvas><div id="crCom">Whisker Downs. Pick your cats.</div>
-    <div class="crTabs" id="crTabs"></div><div id="crHint"></div><div class="crCards" id="crCards"></div><div id="crSlipBox"><div class="crSt">Race <span id="crNo">#1</span> &middot; Stake <span id="crBet">$0</span></div><div class="crSlip" id="crSlip"></div></div></main>
+    <div class="crTabs" id="crTabs"></div><div id="crHint"></div><div class="crCards" id="crCards"></div><div id="crSlipBox"><div class="crSt">Race <span id="crNo">#1</span> &middot; Stake <span id="crBet">$0</span> &middot; Balance <span class="gbal"></span></div><div class="crSlip" id="crSlip"></div></div></main>
    <footer class="gmf"><div class="gmc" id="crChips"></div>
    <div class="gmact"><button class="chip" id="crSame">Same bets</button><button class="chip" id="crClear">Clear</button><button class="chip gold" id="crGo">Start</button></div></footer>
    <div id="crRes"><div class="box"><h3 id="crResT"></h3><ol id="crResL"></ol><div class="tot" id="crResN"></div><button class="chip gold" id="crNext">Next race</button></div></div></div>`;
@@ -53,7 +53,7 @@ function gmMount(){
     const c=document.createElement('button'); c.className='gtile'; c.id='gCr'; c.innerHTML='<div class="gart">'+crIcon()+'</div><b>Cat Racing</b><span>Six cats, live odds. Win, place, show, exacta, trifecta</span><em id="gCrStat"></em>';
     g.appendChild(a); g.appendChild(c); a.onclick=()=>gmEnter('rl'); c.onclick=()=>gmEnter('cr');
   }
-  $('#rlLobby').onclick=$('#crLobby').onclick=gmLobby; $('#rlMenu').onclick=$('#crMenu').onclick=()=>{ wake(); Snd.click(); openMenu(); };
+  $('#rlLobby').onclick=$('#crLobby').onclick=gmLobby; $('#rlSound').onclick=$('#crSound').onclick=()=>$('#btnSound').click(); $('#rlMusic').onclick=$('#crMusic').onclick=()=>$('#btnMusic').click(); $('#rlMenu').onclick=$('#crMenu').onclick=()=>{ wake(); Snd.click(); openMenu(); };
 }
 
 /* ============================== ROULETTE ============================== */
