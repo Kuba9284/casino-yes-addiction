@@ -821,7 +821,7 @@ html.ui-open[data-bg="stars"] body{animation:none}
 @keyframes bcDrop{0%{scale:1.9; opacity:0; translate:-50% -230%} 65%{scale:.88; translate:-50% -44%; opacity:1} 100%{scale:1; translate:-50% -50%}}
 .rlTop{position:relative}
 .rlTop::before{content:''; position:absolute; left:50%; top:0; translate:-50% 0; width:min(300px,72vw,27dvh); aspect-ratio:1; border-radius:50%; box-shadow:0 0 44px 12px rgba(255,214,120,.55); opacity:0; transition:opacity .5s; pointer-events:none}
-.rlTop.spin::before{opacity:1; animation:rlPulse 1.1s ease-in-out infinite alternate}
+.rlTop.rlspin::before{opacity:1; animation:rlPulse 1.1s ease-in-out infinite alternate}
 @keyframes rlPulse{from{opacity:.35}to{opacity:1}}
 #rlPop{position:absolute; left:50%; top:50%; translate:-50% -50%; width:34%; aspect-ratio:1; border-radius:50%; display:none; place-items:center; font:900 clamp(36px,12vw,64px)/1 var(--display); color:#fff; border:4px solid #fdeeb2; box-shadow:0 0 0 6px rgba(0,0,0,.35),0 0 40px rgba(255,214,120,.8); z-index:4; pointer-events:none}
 #rlPop.on{display:grid; animation:rlPop 2.4s cubic-bezier(.2,1.4,.4,1) both}
@@ -838,7 +838,7 @@ html.ui-open[data-bg="stars"] body{animation:none}
 @keyframes resPop{from{scale:.2; opacity:0}to{scale:1; opacity:1}}
 @keyframes resShake{0%{scale:.6; opacity:0} 40%{translate:-5px 0; scale:1; opacity:1} 60%{translate:5px 0} 80%{translate:-3px 0} 100%{translate:0 0}}
 #bjtable.winglow{animation:tblGlow 1.4s ease-out} @keyframes tblGlow{0%{box-shadow:0 0 0 0 rgba(255,214,120,0)} 30%{box-shadow:0 0 60px 8px rgba(255,214,120,.55)} 100%{box-shadow:0 0 0 0 rgba(255,214,120,0)}}
-@media (prefers-reduced-motion:reduce){ .rlT .bc,#crRes li,#crRes .box,.rlTop.spin::before{animation:none} }
+@media (prefers-reduced-motion:reduce){ .rlT .bc,#crRes li,#crRes .box,.rlTop.rlspin::before{animation:none} }
 html[data-bg="midnight"] #welcome{background:radial-gradient(circle at 50% 40%,#26358a,#04051a 80%)}
 html[data-bg="burgundy"] #welcome{background:radial-gradient(circle at 50% 40%,#7a1a38,#10030a 80%)}
 html[data-bg="sunset"] #welcome{background:linear-gradient(180deg,#ff8a4a 0%,#c4306f 40%,#4a1a6e 75%,#140826 100%)}
@@ -2427,7 +2427,7 @@ async function bjFinish(){
     const txt=h.res==='sur'?'SURRENDER':h.res==='bj'?'BLACKJACK':h.res==='win'?'WIN':h.res==='push'?'PUSH':pt>21?'BUST':(dt<=21&&dt-pt<=2?'SO CLOSE':'—');
     rs.textContent=txt; rs.className='res '+(h.res==='lose'?'lose':h.res==='push'?'push':'win'); });
   if(net>0&&(bjw||ret>=wagered*2.5)) olFeed('bj',ret,wagered);
-  { const before=state.bal; try{ gmWinClear(); const tb=$('#bjtable'); tb.classList.remove('winglow'); void tb.offsetWidth; if(net>0){ tb.classList.add('winglow'); const c=frameCenter(); burst(Math.min(70,12+Math.round(ret/wagered*10)),c.x,c.y,9,ret>=wagered*2?'coin':'spark'); } if(net>0&&(bjw||ret>=wagered*2.5)) setTimeout(()=>gmWin(ret,wagered,before),700); }catch(e){} }
+  { const before=state.bal; try{ gmWinClear(); const tb=$('#bjtable'); tb.classList.remove('winglow'); void tb.offsetWidth; if(net>0){ tb.classList.add('winglow'); const c=frameCenter(); burst(Math.min(70,12+Math.round(ret/wagered*10)),c.x,c.y,9,ret>=wagered*2?'coin':'spark'); } if(net>0) setTimeout(()=>gmWin(ret,wagered,before),700); }catch(e){} }
   state.bal+=ret; S.paid+=ret; if(ret>S.best) S.best=ret; S.bjWins+=wins; if(bjw) S.bjBJ++; if(dbl) S.bjDoubles++;
   if(realNet>0){ bj.streak++; S.bjBest=Math.max(S.bjBest,bj.streak); } else if(realNet<0) bj.streak=0;
   S.log.unshift({n:'BJ'+S.bjHands,bet:wagered,pay:ret,net:real,tag:'blackjack'+(cons?' ldw':'')}); S.log.length=Math.min(S.log.length,50);
@@ -2618,13 +2618,13 @@ function rlDraw(tt,st){
 }
 function rlSpin(){
   if(rl.busy) return; wake(); const tot=rlSum(); if(!tot) return; if(tot>state.bal){ toast('Not enough balance'); Snd.err(); return; }
-  gmWinClear(); rl.tk=(rl.tk||0)+1; rl.busy=true; $('.rlTop').classList.add('spin'); $('#rlPop').classList.remove('on'); state.bal-=tot; state.balShown=state.bal; S.rlSpins=(S.rlSpins||0)+1; S.rlWag=(S.rlWag||0)+tot; renderHUD();
+  gmWinClear(); rl.tk=(rl.tk||0)+1; rl.busy=true; $('.rlTop').classList.add('rlspin'); $('#rlPop').classList.remove('on'); state.bal-=tot; state.balShown=state.bal; S.rlSpins=(S.rlSpins||0)+1; S.rlWag=(S.rlWag||0)+tot; renderHUD();
   let n=GMF.rl; GMF.rl=null; if(typeof n!=='number'||!(n>=0&&n<=36)) n=Math.floor(Math.random()*37); const bets=Object.assign({},rl.bets);
   const idx=RL_ORDER.indexOf(n), phi=idx*RL_TAU/37, w0=rl.wheel, om=.7, E=w0+om*RL_T+phi, A=RL_TAU*8, t0=performance.now();
   $('#rlMsg').className='gmmsg'; $('#rlMsg').textContent='No more bets'; rlPaint(); let lastIdx=-1, lastTick=0; const trail=[];
   $('#rlT').style.pointerEvents='none'; Snd.tone&&Snd.tone(330,.25,'triangle',.06);
   const fin=()=>{
-    $('.rlTop').classList.remove('spin'); { const pp=$('#rlPop'); pp.textContent=n; pp.style.background=RL_HEX[rlCol(n)]; void pp.offsetWidth; pp.classList.add('on'); const t1=performance.now(), keepW=w0+om*(RL_T+1.4); const pulse=now=>{ rl.wheel=keepW; rlDraw(now,{w:0,b:{a:keepW+phi-Math.PI/2,r:.68},hl:n}); if(now-t1<1800&&rl.tk===tk) requestAnimationFrame(pulse); else if(rl.tk===tk) rlDraw(now,{w:0,b:{a:keepW+phi-Math.PI/2,r:.68}}); }; const tk=rl.tk; requestAnimationFrame(pulse); }
+    $('.rlTop').classList.remove('rlspin'); { const pp=$('#rlPop'); pp.textContent=n; pp.style.background=RL_HEX[rlCol(n)]; void pp.offsetWidth; pp.classList.add('on'); const t1=performance.now(), keepW=w0+om*(RL_T+1.4); const pulse=now=>{ rl.wheel=keepW; rlDraw(now,{w:0,b:{a:keepW+phi-Math.PI/2,r:.68},hl:n}); if(now-t1<1800&&rl.tk===tk) requestAnimationFrame(pulse); else if(rl.tk===tk) rlDraw(now,{w:0,b:{a:keepW+phi-Math.PI/2,r:.68}}); }; const tk=rl.tk; requestAnimationFrame(pulse); }
     rl.wheel=(w0+om*RL_T+om*1.4)%RL_TAU; const win=rlResolve(bets,n); const hitKeys=new Set(Object.keys(bets).filter(k=>rlCover(k).includes(n)));
     const before=state.bal; state.bal+=win; state.balShown=win>tot?before:state.bal; S.rlPaid=(S.rlPaid||0)+win; rlH().push(n); if(rlH().length>40) rlH().shift(); if(win>S.best) S.best=win;
     rl.last=bets; rl.bets={}; rl.hist=[]; rl.busy=false; rl.lastWin=win; $('#rlT').style.pointerEvents=''; $('#rlWin').textContent=win?fmt(win):'$0';

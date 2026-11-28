@@ -196,7 +196,7 @@ async function bjFinish(){
     const txt=h.res==='sur'?'SURRENDER':h.res==='bj'?'BLACKJACK':h.res==='win'?'WIN':h.res==='push'?'PUSH':pt>21?'BUST':(dt<=21&&dt-pt<=2?'SO CLOSE':'—');
     rs.textContent=txt; rs.className='res '+(h.res==='lose'?'lose':h.res==='push'?'push':'win'); });
   if(net>0&&(bjw||ret>=wagered*2.5)) olFeed('bj',ret,wagered);
-  { const before=state.bal; try{ gmWinClear(); const tb=$('#bjtable'); tb.classList.remove('winglow'); void tb.offsetWidth; if(net>0){ tb.classList.add('winglow'); const c=frameCenter(); burst(Math.min(70,12+Math.round(ret/wagered*10)),c.x,c.y,9,ret>=wagered*2?'coin':'spark'); } if(net>0&&(bjw||ret>=wagered*2.5)) setTimeout(()=>gmWin(ret,wagered,before),700); }catch(e){} }
+  { const before=state.bal; try{ gmWinClear(); const tb=$('#bjtable'); tb.classList.remove('winglow'); void tb.offsetWidth; if(net>0){ tb.classList.add('winglow'); const c=frameCenter(); burst(Math.min(70,12+Math.round(ret/wagered*10)),c.x,c.y,9,ret>=wagered*2?'coin':'spark'); } if(net>0) setTimeout(()=>gmWin(ret,wagered,before),700); }catch(e){} }
   state.bal+=ret; S.paid+=ret; if(ret>S.best) S.best=ret; S.bjWins+=wins; if(bjw) S.bjBJ++; if(dbl) S.bjDoubles++;
   if(realNet>0){ bj.streak++; S.bjBest=Math.max(S.bjBest,bj.streak); } else if(realNet<0) bj.streak=0;
   S.log.unshift({n:'BJ'+S.bjHands,bet:wagered,pay:ret,net:real,tag:'blackjack'+(cons?' ldw':'')}); S.log.length=Math.min(S.log.length,50);
